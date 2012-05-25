@@ -49,8 +49,7 @@ describe Maven::Tools::RailsProject do
       <version>[0,)</version>
       <type>gem</type>
     </dependency>' 
-}
-    <dependency>
+}    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>#{ defined?(JRUBY_VERSION) ? 'jdbc-' : ''}sqlite3</artifactId>
       <version>[0,)</version>
@@ -344,8 +343,7 @@ XML
       <version>[0,)</version>
       <type>gem</type>
     </dependency>' 
-}
-  </dependencies>
+}  </dependencies>
   <build>
     <plugins>
       <plugin>

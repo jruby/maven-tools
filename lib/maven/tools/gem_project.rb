@@ -340,7 +340,7 @@ module Maven
               :lifecycleMappingMetadata => { 
                 :pluginExecutions => Maven::Model::NamedArray.new(:pluginExecution) do |e|
                   # sort them for testing
-                  configs.sort {|m,n| -1 *( p n.first;n.first[1][:artifactId].to_s <=> m.first[1][:artifactId].to_s) }.each { |c| e << c }
+                  configs.sort {|m,n| -1 *(n.first[1][:artifactId].to_s <=> m.first[1][:artifactId].to_s) }.each { |c| e << c }
                 end
               }
             }
