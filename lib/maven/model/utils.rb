@@ -1,4 +1,3 @@
-require 'orderedhash'
 module Maven
   module Model
     class Tag
