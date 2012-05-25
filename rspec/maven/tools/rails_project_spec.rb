@@ -48,7 +48,8 @@ describe Maven::Tools::RailsProject do
       <artifactId>activerecord-jdbc-adapter</artifactId>
       <version>[0,)</version>
       <type>gem</type>
-    </dependency>' 
+    </dependency>
+'
 }    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>#{ defined?(JRUBY_VERSION) ? 'jdbc-' : ''}sqlite3</artifactId>
@@ -342,7 +343,8 @@ XML
       <artifactId>activerecord-jdbc-adapter</artifactId>
       <version>[0,)</version>
       <type>gem</type>
-    </dependency>' 
+    </dependency>
+' 
 }  </dependencies>
   <build>
     <plugins>
