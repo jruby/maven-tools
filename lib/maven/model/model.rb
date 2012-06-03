@@ -331,7 +331,7 @@ module Maven
 
       def execute_in_phase(phase, name = nil, &block)
         gem_plugin = plugin("gem")
-        gem_plugin.in_phase(phase.to_s, name).execute_goal("execute_in_phase").with(:file => File.basename(current_file), :phase => phase)
+        gem_plugin.in_phase(phase.to_s, name).execute_goal("execute_in_phase").with(:file => File.basename('Mavenfile'), :phase => phase)
         executions_in_phase[phase.to_s] = block
         gem_plugin
       end

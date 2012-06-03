@@ -161,8 +161,6 @@ module Maven
             if @lock.size == 0
               @lock = nil
             else
-             # loaded_files << file + ".lock"
-              # just make sure bundler is there and has a version
               @lock.hull.each do |dep|
                 dependency_management.gem dep
               end
@@ -205,13 +203,14 @@ module Maven
         packaging "gem" unless packaging
 
         repository("rubygems-releases").url = "http://rubygems-proxy.torquebox.org/releases" unless repository("rubygems-releases").url
-        
-        unless repository("rubygems-prereleases").url
-          repository("rubygems-prereleases") do |r|
-            r.url = "http://rubygems-proxy.torquebox.org/prereleases"
-            r.releases(:enabled => false)
-            r.snapshots(:enabled => true)
-          end
+
+        has_prereleases = dependencies.detect { |d| d.type.to_sym == :gem && d.version =~ /[a-zA-Z]/ }
+        if has_prereleases && repository("rubygems-prereleases").url.nil?
+           repository("rubygems-prereleases") do |r|
+             r.url = "http://rubygems-proxy.torquebox.org/prereleases"
+        #     r.releases(:enabled => false)
+             r.snapshots(:enabled => true)
+           end
         end 
 
         # TODO go through all plugins to find out any SNAPSHOT version !!
@@ -307,13 +306,13 @@ module Maven
         if has_plugin_gems
           plugin_repository("rubygems-releases").url = "http://rubygems-proxy.torquebox.org/releases" unless plugin_repository("rubygems-releases").url
         
-          unless plugin_repository("rubygems-prereleases").url
-            plugin_repository("rubygems-prereleases") do |r|
-              r.url = "http://rubygems-proxy.torquebox.org/prereleases"
-              r.releases(:enabled => false)
-              r.snapshots(:enabled => true)
-            end
-          end
+          # unless plugin_repository("rubygems-prereleases").url
+          #   plugin_repository("rubygems-prereleases") do |r|
+          #     r.url = "http://rubygems-proxy.torquebox.org/prereleases"
+          #     r.releases(:enabled => false)
+          #     r.snapshots(:enabled => true)
+          #   end
+          # end
         end
         # TODO
         configs = {

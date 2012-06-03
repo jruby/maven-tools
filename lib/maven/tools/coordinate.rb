@@ -57,7 +57,7 @@ module Maven
       def convert(arg, low = nil, high = nil)
         if arg =~ /~>/
           val = arg.sub(/~>\s*/, '')
-          last = val.sub(/\.[^.]+$/, '.99999')
+          last = val.sub(/\.[0-9]*[a-z]+.*$/, '').sub(/\.[^.]+$/, '.99999')
           ["[#{val}", "#{last}]"]
         elsif arg =~ />=/
           val = arg.sub(/>=\s*/, '')

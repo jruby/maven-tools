@@ -83,12 +83,13 @@ module Maven
               end
             end
           }
-          options[:webXml] = 'config/web.xml' if File.exists?('config/web.xml')
+          options[:webXml] = 'config/web.xml' if File.exists?('config/web.xml') || !File.exists?('src/main/webapp/WEB-INF/web.xml')
           w.with options
         end
 
         profile(:assets).activation.by_default if profiles.key?(:assets)
         profile(:development).activation.by_default
+        profile(:test).activation.by_default
         profile(:test).activation.property("rails.env", "test")
         profile(:production) do |prod|   
           prod.activation.property("rails.env", "production")

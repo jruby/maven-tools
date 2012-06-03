@@ -16,7 +16,7 @@ module Maven
       end
 
       def initialize(file)
-        super
+        super()
         current = nil
         f = file.is_a?(File) ? file.path: file
         if File.exists? f
@@ -38,8 +38,10 @@ module Maven
         if d = self[dep]
           d.dependencies.each do |name, version|
             unless result.key? name
-              result[name] = self[name].nil?? version : self[name].version
-              recurse(result, name)
+              if name != 'bundler'
+                result[name] = self[name].nil?? version : self[name].version
+                recurse(result, name)
+              end
             end
           end
         end
