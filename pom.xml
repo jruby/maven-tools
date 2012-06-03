@@ -12,6 +12,11 @@
   <packaging>jar</packaging>
   <description><![CDATA[adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc]]></description>
   <url>http://github.com/torquebox/maven-tools</url>
+  <scm>
+    <connection>scm:git:git://github.com/torquebox/maven-tools.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/torquebox/maven-tools.git</developerConnection>
+    <url>http://github.com/torquebox/maven-tools</url>
+  </scm>
   <developers>
     <developer>
       <id>m_dot_kristian_at_web_dot_de</id>
