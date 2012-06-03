@@ -56,14 +56,15 @@ module Maven
                 container.add_artifact(coord)
               end
             elsif line =~ /^\s*(repository|source)\s/
-              # allow source :name, "http://url"
-              # allow source name, "http://url"
-              # allow source "http://url"
-              # also allow repository instead of source
-              name, url = line.sub(/.*(repository|source)\s+/, '').gsub(/^:/, '').split(/,/)
+              # allow `source :name, "http://url"`
+              # allow `source "name", "http://url"`
+              # allow `source "http://url"`
+              # also allow `repository` instead of `source`
+              name, url = line.sub(/.*(repository|source)\s+/, '').split(/,/)
               url = name unless url
               # remove whitespace and trailing/leading ' or "
               name.strip!
+              name.gsub!(/^:/, '')
               name.gsub!(/^['"]|['"]$/,'')
               url.strip!
               url.gsub!(/^['"]|['"]$/,'')

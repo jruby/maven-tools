@@ -183,6 +183,7 @@
           </execution>
         </executions>
       </plugin>
+      <!-- need a plugin which is already deployed -->
       <!--plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>minitest-maven-plugin</artifactId>

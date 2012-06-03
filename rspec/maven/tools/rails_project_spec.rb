@@ -25,16 +25,6 @@ describe Maven::Tools::RailsProject do
       <id>rubygems-releases</id>
       <url>http://rubygems-proxy.torquebox.org/releases</url>
     </repository>
-    <repository>
-      <id>rubygems-prereleases</id>
-      <url>http://rubygems-proxy.torquebox.org/prereleases</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -143,6 +133,7 @@ describe Maven::Tools::RailsProject do
               <targetPath>WEB-INF/gems</targetPath>
             </resource>
           </webResources>
+          <webXml>config/web.xml</webXml>
         </configuration>
       </plugin>
     </plugins>
@@ -191,6 +182,7 @@ describe Maven::Tools::RailsProject do
     <profile>
       <id>test</id>
       <activation>
+        <activeByDefault>true</activeByDefault>
         <property>
           <name>rails.env</name>
           <value>test</value>
