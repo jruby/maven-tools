@@ -1,3 +1,4 @@
+#-*- mode: ruby -*-
 require 'rubygems'
 require 'bundler/setup'
 #require 'rspec/core/rake_task'
@@ -19,3 +20,4 @@ task :minispec do
 
   Dir['spec/*_spec.rb'].each { |f| require File.basename(f.sub(/.rb$/, '')) }
 end
+# vim: syntax=Ruby
