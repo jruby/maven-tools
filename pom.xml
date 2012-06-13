@@ -7,7 +7,7 @@
   </parent>
   <groupId>de.saumya.mojo</groupId>
   <artifactId>maven-tools</artifactId>
-  <version>0.29.1-SNAPSHOT</version>
+  <version>0.29.2-SNAPSHOT</version>
   <name><![CDATA[helpers for maven related tasks]]></name>
   <packaging>jar</packaging>
   <description><![CDATA[adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc]]></description>
