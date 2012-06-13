@@ -427,7 +427,7 @@ module Maven
         if args.last.is_a?(Hash)
           options = args.delete(args.last)
           unless options.key?(:git) || options.key?(:path)
-            if options[:platforms].nil? || is_jruby_platform(*(options[:platforms] || []))
+            if (options[:platform].nil? && options[:platforms].nil?) || is_jruby_platform(*(options[:platform] || options[:platforms] || []))
               group = options[:group] || options[:groups]
               if group
                 [group].flatten.each do |g|

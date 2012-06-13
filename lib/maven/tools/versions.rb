@@ -2,7 +2,6 @@ module Maven
   module Tools
     unless defined? VERSIONS
       VERSIONS = { 
-        :jetty_plugin => "7.6.4.v20120524",
         :jruby_rack => "1.1.6",
         :war_plugin => "2.2",
         :jar_plugin => "2.4",

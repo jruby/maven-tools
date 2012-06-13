@@ -78,7 +78,6 @@ describe Maven::Tools::RailsProject do
     <gem.home>${project.build.directory}/rubygems</gem.home>
     <gem.includeRubygemsInTestResources>false</gem.includeRubygemsInTestResources>
     <gem.path>${project.build.directory}/rubygems</gem.path>
-    <jetty.version>_jetty.version_</jetty.version>
     <jruby.plugins.version>_project.version_</jruby.plugins.version>
     <jruby.version>_jruby.version_</jruby.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -201,112 +200,6 @@ describe Maven::Tools::RailsProject do
         <gem.home>${project.build.directory}/rubygems-production</gem.home>
         <gem.path>${project.build.directory}/rubygems-production</gem.path>
       </properties>
-    </profile>
-    <profile>
-      <id>war</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty-maven-plugin</artifactId>
-            <version>${jetty.version}</version>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>run</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty-maven-plugin</artifactId>
-            <version>${jetty.version}</version>
-            <configuration>
-              <connectors>
-                <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                  <port>8080</port>
-                </connector>
-                <connector implementation="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
-                  <port>8443</port>
-                  <keystore>${project.basedir}/src/test/resources/server.keystore</keystore>
-                  <keyPassword>123456</keyPassword>
-                  <password>123456</password>
-                </connector>
-              </connectors>
-              <systemProperties>
-                <systemProperty>
-                  <name>jbundle.skip</name>
-                  <value>true</value>
-                </systemProperty>
-              </systemProperties>
-              <webAppConfig>
-                <overrideDescriptor>${project.build.directory}/jetty/override-${rails.env}-web.xml</overrideDescriptor>
-              </webAppConfig>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>warshell</id>
-      <pluginRepositories>
-        <pluginRepository>
-          <id>kos</id>
-          <url>http://opensource.kantega.no/nexus/content/groups/public/</url>
-        </pluginRepository>
-      </pluginRepositories>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.simplericity.jettyconsole</groupId>
-            <artifactId>jetty-console-maven-plugin</artifactId>
-            <version>1.42</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>createconsole</goal>
-                </goals>
-                <configuration>
-                <!--
-                                  see http://simplericity.com/2009/11/10/1257880778509.html for more info
-                -->
-                <!--
-		  <backgroundImage>${basedir}/src/main/jettyconsole/puffin.jpg</backgroundImage>
-		  <additionalDependencies>
-		    <additionalDependency>
-		      <artifactId>jetty-console-winsrv-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-requestlog-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-log4j-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-jettyxml-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-ajp-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-gzip-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-startstop-plugin</artifactId>
-		    </additionalDependency>
-		  </additionalDependencies>
-
-                -->
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 </project>

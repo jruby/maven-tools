@@ -49,14 +49,13 @@ module Maven
 
         self.properties = {
           "jruby.version" => versions[:jruby_version],
-          "jetty.version" => versions[:jetty_plugin],
           "rails.env" => "development",
           "gem.includeRubygemsInTestResources" => false
         }.merge(self.properties)
 
         plugin(:rails3) do |rails|
           rails.version = "${jruby.plugins.version}" unless rails.version
-          rails.in_phase(:validate).execute_goal(:initialize)#.goals << "initialize"
+          rails.in_phase(:validate).execute_goal(:initialize)
         end
 
         plugin(:war, versions[:war_plugin]) unless plugin?(:war)
@@ -99,76 +98,6 @@ module Maven
           }.merge(prod.properties)
         end
 
-        profile(:war).plugin("org.mortbay.jetty:jetty-maven-plugin",
-                             "${jetty.version}")
-         
-        profile(:run) do |run|
-          overrideDescriptor = '${project.build.directory}/jetty/override-${rails.env}-web.xml'
-          run.activation.by_default
-          run.plugin("org.mortbay.jetty:jetty-maven-plugin",
-                       "${jetty.version}") do |jetty|
-            options = {
-                :webAppConfig => {
-                  :overrideDescriptor => overrideDescriptor           
-                },
-                :systemProperties => {
-                  :systemProperty => {
-                    :name => 'jbundle.skip',
-                    :value => 'true'
-                  }
-                },
-                :connectors => <<-XML
-
-                <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                  <port>8080</port>
-                </connector>
-                <connector implementation="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
-                  <port>8443</port>
-                  <keystore>${project.basedir}/src/test/resources/server.keystore</keystore>
-                  <keyPassword>123456</keyPassword>
-                  <password>123456</password>
-                </connector>
-XML
-              }
-            options[:webXml] = 'config/web.xml' if File.exists?('config/web.xml')
-            jetty.with options
-          end
-        end
-        profile(:warshell) do |exec|
-          exec.plugin_repository('kos').url = 'http://opensource.kantega.no/nexus/content/groups/public/'
-          exec.plugin('org.simplericity.jettyconsole:jetty-console-maven-plugin', '1.42').execution do |jetty|
-            jetty.execute_goal(:createconsole)
-            jetty.configuration.comment <<-TEXT
-                  see http://simplericity.com/2009/11/10/1257880778509.html for more info
-                -->
-                <!--
-		  <backgroundImage>${basedir}/src/main/jettyconsole/puffin.jpg</backgroundImage>
-		  <additionalDependencies>
-		    <additionalDependency>
-		      <artifactId>jetty-console-winsrv-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-requestlog-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-log4j-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-jettyxml-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-ajp-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-gzip-plugin</artifactId>
-		    </additionalDependency>
-		    <additionalDependency>
-		      <artifactId>jetty-console-startstop-plugin</artifactId>
-		    </additionalDependency>
-		  </additionalDependencies>
-TEXT
-          end
-        end
       end
     end
   end
