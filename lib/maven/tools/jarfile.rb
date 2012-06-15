@@ -84,7 +84,7 @@ module Maven
         else
           File.open(@lockfile, 'w') do |f|
             dependency_coordinates.each do |d|
-              f.puts d.to_s
+              f.puts d.to_s unless d.to_s =~ /^ruby.bundler:/
             end
           end
         end

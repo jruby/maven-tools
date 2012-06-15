@@ -36,7 +36,7 @@ describe Maven::Tools::Jarfile do
   end
 
   it 'generates lockfile' do
-    subject.generate_lockfile(%w( a b c d e f))
+    subject.generate_lockfile(%w( a b c d e f ruby.bundler:bla))
     File.read(jfile_lock).must_equal <<-EOF
 a
 b
