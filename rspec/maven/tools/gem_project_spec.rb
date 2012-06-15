@@ -397,7 +397,7 @@ XML
         <plugins>
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.2-beta-5</version>
+            <version>_assembly.version_</version>
             <configuration>
               <archive>
                 <manifest>
@@ -885,7 +885,7 @@ XML
         <plugins>
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.2-beta-5</version>
+            <version>_assembly.version_</version>
             <configuration>
               <archive>
                 <manifest>

@@ -350,7 +350,8 @@ module Maven
         if packaging =~ /gem/ || plugin?(:gem)
           profile('executable') do |exe|
             exe.jar('de.saumya.mojo:gem-assembly-descriptors', '${jruby.plugins.version}').scope :runtime
-            exe.plugin(:assembly, '2.2-beta-5') do |a|
+            exe.plugin(:assembly) do |a|
+              a.version = versions[:assembly_plugin] unless a.version
               options = {
                 :descriptorRefs => ['jar-with-dependencies-and-gems'],
                 :archive => {:manifest => { :mainClass => 'de.saumya.mojo.assembly.Main' } }
