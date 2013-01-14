@@ -1,6 +1,6 @@
 #-*- mode: ruby -*-
-require 'rubygems'
-require 'bundler/setup'
+#require 'rubygems'
+#require 'bundler/setup'
 #require 'rspec/core/rake_task'
 
 #RSpec::Core::RakeTask.new(:rspec) do |t|
