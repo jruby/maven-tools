@@ -86,14 +86,14 @@ XML
     <plugins>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
+        <artifactId>bundler-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <configuration>
           <gemspec>rspec/maven/tools/minimal.gemspec</gemspec>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>bundler-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
@@ -157,17 +157,6 @@ XML
   </build>
   <profiles>
     <profile>
-      <id>test</id>
-      <dependencies>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>dm-sqlite3-adapter</artifactId>
-          <version>[0.10.0,0.10.99999]</version>
-          <type>gem</type>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
       <id>development</id>
       <dependencies>
         <dependency>
@@ -191,6 +180,17 @@ XML
           <groupId>rubygems</groupId>
           <artifactId>dm-mysql-adapter</artifactId>
           <version>[0.10.0,0.10.3)</version>
+          <type>gem</type>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>test</id>
+      <dependencies>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>dm-sqlite3-adapter</artifactId>
+          <version>[0.10.0,0.10.99999]</version>
           <type>gem</type>
         </dependency>
       </dependencies>
@@ -338,40 +338,6 @@ XML
   </build>
   <profiles>
     <profile>
-      <id>test</id>
-      <dependencies>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>ixtlan-core</artifactId>
-          <version>[0,)</version>
-          <type>gem</type>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>production</id>
-      <dependencies>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>ixtlan-core</artifactId>
-          <version>[0,)</version>
-          <type>gem</type>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>dm-mysql-adapter</artifactId>
-          <version>[1.0.0,1.0.3)</version>
-          <type>gem</type>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>dm-postgres-adapter</artifactId>
-          <version>[0,1.0.0]</version>
-          <type>gem</type>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
       <id>development</id>
       <dependencies>
         <dependency>
@@ -428,6 +394,40 @@ XML
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>production</id>
+      <dependencies>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>ixtlan-core</artifactId>
+          <version>[0,)</version>
+          <type>gem</type>
+        </dependency>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>dm-mysql-adapter</artifactId>
+          <version>[1.0.0,1.0.3)</version>
+          <type>gem</type>
+        </dependency>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>dm-postgres-adapter</artifactId>
+          <version>[0,1.0.0]</version>
+          <type>gem</type>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>test</id>
+      <dependencies>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>ixtlan-core</artifactId>
+          <version>[0,)</version>
+          <type>gem</type>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>
@@ -700,13 +700,13 @@ XML
   <url>http://example.com</url>
   <developers>
     <developer>
+      <id>Me_And_The_Corner</id>
+      <name>Me And The Corner</name>
+    </developer>
+    <developer>
       <id>k_at_example_dot_com</id>
       <name>Krysh Sample</name>
       <email>k@example.com</email>
-    </developer>
-    <developer>
-      <id>Me_And_The_Corner</id>
-      <name>Me And The Corner</name>
     </developer>
   </developers>
   <licenses>

@@ -149,10 +149,6 @@ XML
   <version>0.0.0</version>
   <repositories>
     <repository>
-      <id>rubygems-releases</id>
-      <url>http://rubygems-proxy.torquebox.org/releases</url>
-    </repository>
-    <repository>
       <id>jboss-public-repository-group</id>
       <name>JBoss Public Maven Repository Group</name>
       <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
@@ -166,6 +162,10 @@ XML
         <enabled>true</enabled>
         <updatePolicy>daily</updatePolicy>
       </snapshots>
+    </repository>
+    <repository>
+      <id>rubygems-releases</id>
+      <url>http://rubygems-proxy.torquebox.org/releases</url>
     </repository>
   </repositories>
   <pluginRepositories>
@@ -323,9 +323,6 @@ XML
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-      </plugin>
-      <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <version>2.4.1</version>
       </plugin>
@@ -336,6 +333,9 @@ XML
           <source>1.5</source>
           <target>1.5</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
@@ -357,20 +357,6 @@ XML
     <plugins>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-maven-plugin</artifactId>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
-            <id>in_phase_pre_integration_test</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>install</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
         <artifactId>cucumber-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -382,6 +368,20 @@ XML
             <configuration>
               <cucumberArgs>--no-colors</cucumberArgs>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>in_phase_pre_integration_test</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -435,6 +435,31 @@ XML
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>public</directory>
+            </resource>
+            <resource>
+              <directory>.</directory>
+              <includes>
+                <include>app/**</include>
+                <include>config/**</include>
+                <include>lib/**</include>
+                <include>vendor/**</include>
+                <include>Gemfile</include>
+              </includes>
+              <targetPath>WEB-INF</targetPath>
+            </resource>
+            <resource>
+              <directory>${gem.path}</directory>
+              <targetPath>WEB-INF/gems</targetPath>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
         <version>2.1.0</version>
@@ -468,31 +493,6 @@ XML
 		  <password>123456</password>
 		</connector>
           </connectors>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <webResources>
-            <resource>
-              <directory>public</directory>
-            </resource>
-            <resource>
-              <directory>.</directory>
-              <includes>
-                <include>app/**</include>
-                <include>config/**</include>
-                <include>lib/**</include>
-                <include>vendor/**</include>
-                <include>Gemfile</include>
-              </includes>
-              <targetPath>WEB-INF</targetPath>
-            </resource>
-            <resource>
-              <directory>${gem.path}</directory>
-              <targetPath>WEB-INF/gems</targetPath>
-            </resource>
-          </webResources>
         </configuration>
       </plugin>
     </plugins>

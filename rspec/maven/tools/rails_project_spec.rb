@@ -86,25 +86,6 @@ describe Maven::Tools::RailsProject do
   <build>
     <plugins>
       <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>bundler-maven-plugin</artifactId>
-        <version>${jruby.plugins.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>rails3-maven-plugin</artifactId>
-        <version>${jruby.plugins.version}</version>
-        <executions>
-          <execution>
-            <id>in_phase_validate</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>initialize</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>_war.version_</version>
         <configuration>
@@ -134,6 +115,25 @@ describe Maven::Tools::RailsProject do
           </webResources>
           <webXml>config/web.xml</webXml>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>bundler-maven-plugin</artifactId>
+        <version>${jruby.plugins.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rails3-maven-plugin</artifactId>
+        <version>${jruby.plugins.version}</version>
+        <executions>
+          <execution>
+            <id>in_phase_validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>initialize</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <pluginManagement>
@@ -179,16 +179,6 @@ describe Maven::Tools::RailsProject do
       </activation>
     </profile>
     <profile>
-      <id>test</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <property>
-          <name>rails.env</name>
-          <value>test</value>
-        </property>
-      </activation>
-    </profile>
-    <profile>
       <id>production</id>
       <activation>
         <property>
@@ -200,6 +190,16 @@ describe Maven::Tools::RailsProject do
         <gem.home>${project.build.directory}/rubygems-production</gem.home>
         <gem.path>${project.build.directory}/rubygems-production</gem.path>
       </properties>
+    </profile>
+    <profile>
+      <id>test</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>rails.env</name>
+          <value>test</value>
+        </property>
+      </activation>
     </profile>
   </profiles>
 </project>
@@ -258,22 +258,22 @@ XML
       </dependencies>
     </profile>
     <profile>
-      <id>test</id>
+      <id>production</id>
       <dependencies>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>rspec</artifactId>
+          <artifactId>#{ defined?(JRUBY_VERSION) ? 'jdbc-' : ''}mysql</artifactId>
           <version>[0,)</version>
           <type>gem</type>
         </dependency>
       </dependencies>
     </profile>
     <profile>
-      <id>production</id>
+      <id>test</id>
       <dependencies>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>#{ defined?(JRUBY_VERSION) ? 'jdbc-' : ''}mysql</artifactId>
+          <artifactId>rspec</artifactId>
           <version>[0,)</version>
           <type>gem</type>
         </dependency>
