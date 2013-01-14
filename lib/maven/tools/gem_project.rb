@@ -54,8 +54,13 @@ module Maven
         name spec.summary || "#{self.artifact_id} - gem"
         description spec.description if spec.description
         url spec.homepage if spec.homepage
+        done_authors = []
         (spec.email || []).zip(spec.authors || []).map do |email, author|
+          done_authors << author
           self.developers.new(author, email)
+        end
+        (spec.authors - done_authors).each do |author|
+          self.developers.new(author, nil)
         end
 
         #  TODO work with collection of licenses - there can be more than one !!!

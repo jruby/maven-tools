@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.summary = 'no dependencies project'
   s.description = 'a no dependencies project to demonstrat how gemspec2pom works'
   s.homepage = 'http://example.com'
-  s.authors = ['Krysh Sample']
+  s.authors = ['Krysh Sample', 'Me And The Corner']
   s.email = ['k@example.com']
   s.licenses += ['AGPL']
   s.autorequire = 'my'

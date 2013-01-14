@@ -704,6 +704,10 @@ XML
       <name>Krysh Sample</name>
       <email>k@example.com</email>
     </developer>
+    <developer>
+      <id>Me_And_The_Corner</id>
+      <name>Me And The Corner</name>
+    </developer>
   </developers>
   <licenses>
     <license>

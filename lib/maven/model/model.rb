@@ -250,7 +250,7 @@ module Maven
           @email = args[2]
         end
         @email = @email[0] if @email.is_a? Array # this produces a partial list
-        @id = @email.sub(/@/, '_at_').gsub(/\./, '_dot_') unless @id
+        @id = (@email || @name).sub(/@/, '_at_').gsub(/\./, '_dot_').gsub(/ /, '_') unless @id
         self
       end
     end
