@@ -81,7 +81,7 @@ EOF
           when Hash
             if val.size > 0
               buf << "#{indent}  <#{var}>\n"
-              val.keys.sort{ |n,m| n.to_s <=> m.tos }.each do |k|
+              val.keys.sort{ |n,m| n.to_s <=> m.to_s }.each do |k|
                 v = val[k]
                 if v.is_a? Tag
                   v.to_xml(buf, indent + "    ")
