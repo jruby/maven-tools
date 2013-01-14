@@ -67,6 +67,7 @@ EOF
           case val
           when Array
             val.flatten!
+            val.sort! rescue nil
             if val.size > 0
               buf << "#{indent}  <#{var}>\n"
               val.each do |v|
