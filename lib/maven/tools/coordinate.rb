@@ -4,11 +4,19 @@ module Maven
 
       def to_coordinate(line)
         if line =~ /^\s*(jar|pom)\s/
-          
-          group_id, artifact_id, version, second_version = line.sub(/\s*[a-z]+\s+/, '').sub(/#.*/,'').gsub(/\s+/,'').gsub(/['"],/, ':').gsub(/['"]/, '').split(/:/)
+          packaging = line.strip.sub(/\s+.*/, '')
+
+          # Remove packaging, comments and whitespaces
+          sanitized_line = line.sub(/\s*[a-z]+\s+/, '').sub(/#.*/,'').gsub(/\s+/,'')
+
+          # Remove version(s) and quotes to find the group id, artifact id and classifier
+          group_id, artifact_id, classifier = sanitized_line.split(',')[0].gsub(/['"]/, '').split(/:/)
+
+          # Remove the group id, artifact id and classifier to find the version(s)
+          version, second_version = sanitized_line.split(',')[1..-1].join(',').gsub(/['"],/, ':').gsub(/['"]/, '').split(/:/)
           mversion = second_version ? to_version(version, second_version) : to_version(version)
-          extension = line.strip.sub(/\s+.*/, '')
-          "#{group_id}:#{artifact_id}:#{extension}:#{mversion}"
+
+          classifier ? "#{group_id}:#{artifact_id}:#{packaging}:#{classifier}:#{mversion}" : "#{group_id}:#{artifact_id}:#{packaging}:#{mversion}"
         end
       end
 

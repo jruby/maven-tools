@@ -44,4 +44,15 @@ describe Maven::Tools::Coordinate do
     subject.to_coordinate('pom "e:f", "[1.8,1.9.9)"').must_equal "e:f:pom:[1.8,1.9.9)"
     subject.to_coordinate('pom "f:g", ">1.2", "<=2.0"').must_equal "f:g:pom:(1.2,2.0]"
   end
+
+  it 'should support classifiers' do
+    subject.to_coordinate('something "a:b:jdk15"').must_be_nil
+    subject.to_coordinate('#jar "a:b:jdk15"').must_be_nil
+    subject.to_coordinate('jar "a:b:jdk15" # bla').must_equal "a:b:jar:jdk15:[0,)"
+    subject.to_coordinate("pom 'b:c:jdk15', '!2.3.4'").must_equal "b:c:pom:jdk15:(2.3.4,)"
+    subject.to_coordinate('jar "c:d:jdk15", "2.3.4"').must_equal "c:d:jar:jdk15:2.3.4"
+    subject.to_coordinate("jar 'd:e:jdk15', '~>1.8.2'").must_equal "d:e:jar:jdk15:[1.8.2,1.8.99999]"
+    subject.to_coordinate('pom "e:f:jdk15", "[1.8,1.9.9)"').must_equal "e:f:pom:jdk15:[1.8,1.9.9)"
+    subject.to_coordinate('pom "f:g:jdk15", ">1.2", "<=2.0"').must_equal "f:g:pom:jdk15:(1.2,2.0]"
+  end
 end
