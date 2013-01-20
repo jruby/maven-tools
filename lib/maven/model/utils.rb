@@ -167,7 +167,9 @@ EOF
         end
       end
 
-      def do_get( key, value, block = nil)
+      def do_get( clazz, args, method, block = nil)
+        value = new_instance( clazz, args )
+        key = obj.send method
         keys << key unless keys.member? key
         self[ key ] = value
         if block
@@ -175,26 +177,23 @@ EOF
         end
         value
       end
+      def get; end
+      alias :new :get
+      alias :add :get
     end
 
     class DeveloperHash < NamedHash
 
       def get( *args, &block )
-        developer = new_instance( Developer, args )
-        do_get( developer.id, developer, block )
+        do_get( Developer, args, :id, block )
       end
-      alias :new :get
-      alias :add :get
     end
 
     class LicenseHash < NamedHash
 
       def get( *args, &block )
-        license = new_instance( License, args )
-        do_get( license.name, license, block )
+        do_get( License, args, :name, block )
       end
-      alias :new :get
-      alias :add :get
     end
 
     class PluginHash < Hash
