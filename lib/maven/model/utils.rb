@@ -191,7 +191,6 @@ EOF
 
       def get( *args, &block )
         license = new_instance( License, args )
-                    end
         do_get( license.name, license, block )
       end
       alias :new :get
