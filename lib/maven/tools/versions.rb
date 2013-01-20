@@ -8,7 +8,7 @@ module Maven
         :jar_plugin => "2.4",
         :jruby_plugins => "0.29.0",
         :bundler_version => "1.1.4",
-        :jruby_version => defined?(JRUBY_VERSION) ? JRUBY_VERSION : "1.6.7.2"
+        :jruby_version => defined?(JRUBY_VERSION) ? JRUBY_VERSION : "1.6.8"
       }.freeze
     end
   end
