@@ -152,12 +152,24 @@ EOF
         default_model.send(method, *args, &block)
       end
     end
-    
-    class DeveloperHash < Hash
+
+    class NamedHash < Hash
 
       def keys
         @keys ||= []
       end
+
+      def do_get( key, value, block = nil)
+        keys << key unless keys.member? key
+        self[key] = value
+        if block
+          block.call(value)
+        end
+        value
+      end
+    end
+
+    class DeveloperHash < NamedHash
 
       def get(*args, &block)
         developer = if args.size == 1 && args[0].is_a?(Developer)
@@ -165,22 +177,13 @@ EOF
                     else 
                       Developer.new(*args)
                     end
-        keys << developer.id unless keys.member? developer.id
-        self[developer.id] = developer
-        if block
-          block.call(developer)
-        end
-        developer
+        do_get( developer.id, developer, block )
       end
       alias :new :get
       alias :add :get
     end
 
-    class LicenseHash < Hash
-
-      def keys
-        @keys ||= []
-      end
+    class LicenseHash < NamedHash
 
       def get(*args, &block)
         license = if args.size == 1 && args[0].is_a?(License)
@@ -188,12 +191,7 @@ EOF
                     else 
                       License.new(*args)
                     end
-        keys << license.name unless keys.member? license.name
-        self[license.name] = license
-        if block
-          block.call(license)
-        end
-        license
+        do_get( license.name, license, block )
       end
       alias :new :get
       alias :add :get

@@ -198,11 +198,11 @@ module Maven
       end
       private :add_gem
 
-      def add_something(method, *args, &block)
+      def add_something(method, args, block = nil)
         if args.last.is_a?(Hash)
           raise "hash not allowed for #{method.to_s.sub /new_/, ''}"
         end
-        add_dependency(Dependency.send( method, args), args.size > 1, &block)
+        add_dependency(Dependency.send( method, *args), *args.size > 1, &block)
       end
       private :add_something
 

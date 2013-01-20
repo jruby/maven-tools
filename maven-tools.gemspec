@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.files += Dir['spec/**/*']
   s.files += Dir['MIT-LICENSE'] + Dir['*.md']
   s.test_files += Dir['spec/**/*_spec.rb']
-  s.add_development_dependency 'rake', '0.9.2.2'
-  s.add_development_dependency 'minitest', '2.10.0'
-  s.add_development_dependency 'rspec', '2.7.0'
+  s.add_development_dependency 'rake', '~> 10.0.3'
+  s.add_development_dependency 'minitest', '~> 4.4'
+  s.add_development_dependency 'rspec', '~> 2.7'
 end
