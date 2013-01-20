@@ -8,7 +8,7 @@ describe Maven::Tools::RailsProject do
   end
   
   it 'should load Gemfile from a simple rails application with applied defaults' do
-    pending "hash is differently orderd in ruby1.8" if RUBY_VERSION =~ /^1.8/ && !defined? JRUBY_VERSION
+    pending "hash is differently orderd in ruby1.8" if nil == (RUBY_VERSION =~ /^1.8/) && !defined? JRUBY_VERSION
     @project.load_gemfile(File.join(File.dirname(__FILE__), 'Gemfile.simple'))
     @project.name "test"
     @project.add_defaults
@@ -207,7 +207,7 @@ XML
   end
 
   it 'should load Gemfile from a rails application"' do
-    pending "hash is differently orderd in ruby1.8" if RUBY_VERSION =~ /^1.8/ && !defined? JRUBY_VERSION
+    pending "hash is differently orderd in ruby1.8" if nil == (RUBY_VERSION =~ /^1.8/) && !defined? JRUBY_VERSION
     @project.load_gemfile(File.join(File.dirname(__FILE__), 'Gemfile.rails'))
     @project.to_xml.should == <<-XML
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
