@@ -2,8 +2,7 @@ maven tools
 ===========
 
 * [![Build Status](https://secure.travis-ci.org/torquebox/maven-tools.png)](http://travis-ci.org/torquebox/maven-tools)
-* [![Dependency Status](https://gemnasium.com/mkristian/maven-tools.png)](https://gemnasium.com/mkristian/maven-tools)
-* [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/mkristian/maven-tools)
+* [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/torquebox/maven-tools)
 
 
 Contributing
