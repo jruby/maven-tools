@@ -198,18 +198,20 @@ module Maven
       end
       private :add_gem
 
-      def jar(*args, &block)
+      def add_something(method, *args, &block)
         if args.last.is_a?(Hash)
-          raise "hash not allowed for jar"
+          raise "hash not allowed for #{method.to_s.sub /new_/, ''}"
         end
-        add_dependency(Dependency.new_jar(args), args.size > 1, &block)
+        add_dependency(Dependency.send( method, args), args.size > 1, &block)
+      end
+      private :add_something
+
+      def jar(*args, &block)
+        add_something( :new_jar, args, block )
       end
 
       def test_jar(*args, &block)
-        if args.last.is_a?(Hash)
-          raise "hash not allowed for test_jar"
-        end
-        add_dependency(Dependency.new_test_jar(args), args.size > 1, &block)
+        add_something( :new_test_jar, args, block )
       end
       
       def gem(*args, &block)
@@ -220,10 +222,7 @@ module Maven
       end
 
       def pom(*args, &block)
-        if args.last.is_a?(Hash)
-          raise "hash not allowed in that context"
-        end
-        add_dependency(Dependency.new_pom(args), args.size > 1, &block)
+        add_something( :new_pom, args, block )
       end
     end
   end
