@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.description = 'adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc'
   s.homepage = 'http://github.com/torquebox/maven-tools'
 
-  s.authors = ['Kristian Meier']
+  s.authors = ['Christian Meier']
   s.email = ['m.kristian@web.de']
 
   s.files += Dir['lib/**/*']
@@ -17,5 +17,5 @@ Gem::Specification.new do |s|
   s.test_files += Dir['spec/**/*_spec.rb']
   s.add_development_dependency 'rake', '~> 10.0.3'
   s.add_development_dependency 'minitest', '~> 4.4'
-  s.add_development_dependency 'rspec', '~> 2.7'
+  s.add_development_dependency 'rspec', '2.7'
 end

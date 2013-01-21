@@ -7,20 +7,15 @@
   </parent>
   <groupId>de.saumya.mojo</groupId>
   <artifactId>maven-tools</artifactId>
-  <version>0.30.2-SNAPSHOT</version>
+  <version>0.32.0-SNAPSHOT</version>
   <name><![CDATA[helpers for maven related tasks]]></name>
   <packaging>jar</packaging>
   <description><![CDATA[adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc]]></description>
-  <url>http://github.com/torquebox/maven-tools</url>
-  <scm>
-    <connection>scm:git:git://github.com/torquebox/maven-tools.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/torquebox/maven-tools.git</developerConnection>
-    <url>http://github.com/torquebox/maven-tools</url>
-  </scm>
+  <url>github.com/torquebox/maven-tools</url>
   <developers>
     <developer>
       <id>m_dot_kristian_at_web_dot_de</id>
-      <name>Kristian Meier</name>
+      <name>Christian Meier</name>
       <email>m.kristian@web.de</email>
     </developer>
   </developers>
@@ -36,18 +31,12 @@
       <id>rubygems-releases</id>
       <url>http://rubygems-proxy.torquebox.org/releases</url>
     </repository>
-    <repository>
-      <id>rubygems-prereleases</id>
-      <url>http://rubygems-proxy.torquebox.org/prereleases</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
   </repositories>
   <pluginRepositories>
+    <pluginRepository>
+      <id>rubygems-releases</id>
+      <url>http://rubygems-proxy.torquebox.org/releases</url>
+    </pluginRepository>
     <pluginRepository>
       <id>sonatype-snapshots</id>
       <url>http://oss.sonatype.org/content/repositories/snapshots</url>
@@ -59,6 +48,11 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+  <scm>
+    <connection>scm:git:git://github.com/torquebox/maven-tools.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/torquebox/maven-tools.git</developerConnection>
+    <url>github.com/torquebox/maven-tools</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
@@ -82,35 +76,36 @@
       <groupId>rubygems</groupId>
       <artifactId>rspec-core</artifactId>
       <type>gem</type>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec-expectations</artifactId>
       <type>gem</type>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>diff-lcs</artifactId>
       <type>gem</type>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec-mocks</artifactId>
       <type>gem</type>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>bundler</artifactId>
       <type>gem</type>
-      <scope>test</scope>
     </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>maven-tools</artifactId>
+        <version>0.32.0</version>
+        <type>gem</type>
+      </dependency>
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>diff-lcs</artifactId>
@@ -120,13 +115,13 @@
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>minitest</artifactId>
-        <version>2.10.0</version>
+        <version>4.4.0</version>
         <type>gem</type>
       </dependency>
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>rake</artifactId>
-        <version>0.9.2.2</version>
+        <version>10.0.3</version>
         <type>gem</type>
       </dependency>
       <dependency>
@@ -165,31 +160,74 @@
     <gem.home>${project.build.directory}/rubygems</gem.home>
     <gem.path>${project.build.directory}/rubygems</gem.path>
     <jruby.18and19>true</jruby.18and19>
-    <jruby.plugins.version>0.29.1</jruby.plugins.version>
+    <jruby.plugins.version>0.29.2-SNAPSHOT</jruby.plugins.version>
+    <jruby.version>1.7.2</jruby.version>
     <jruby.versions>1.5.6,1.6.8,1.7.2</jruby.versions>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
-    <resources>
-      <resource>
-        <directory>${basedir}/lib</directory>
-      </resource>
-    </resources>
     <plugins>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>./</directory>
+              <includes>
+                <include>Gemfile.lock</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>bundler-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <version>${jruby.plugins.version}</version>
+        <configuration>
+          <files>lib/maven_tools.rb,lib/maven-tools.rb,lib/maven-tools.rb~,lib/maven_tools.rb~,lib/maven,lib/maven/jarfile.rb~,lib/maven/tools,lib/maven/tools/coordinate.rb,lib/maven/tools/execute_in_phase.rb,lib/maven/tools/version.rb,lib/maven/tools/jarfile.rb~,lib/maven/tools/jarfile.rb,lib/maven/tools/rails_project.rb,lib/maven/tools/versions.rb~,lib/maven/tools/gem_project.rb,lib/maven/tools/gem_project.rb~,lib/maven/tools/pom_generator.rb,lib/maven/tools/gemfile_lock.rb~,lib/maven/tools/gemfile_lock.rb,lib/maven/tools/minimal_project.rb,lib/maven/tools/coordinate.rb~,lib/maven/tools/versions.rb,lib/maven/model,lib/maven/model/utils.rb,lib/maven/model/dependencies.rb~,lib/maven/model/model.rb,lib/maven/model/dependencies.rb,lib/maven/model/model_utils.rb~,lib/maven/model/utils.rb~,lib/maven/model/model.rb~,lib/maven/maven_util.rb~,spec/coordinate_spec.rb,spec/jarfile_spec.rb,MIT-LICENSE,README.md</files>
+          <gemspec>maven-tools.gemspec</gemspec>
+          <testFiles>spec/coordinate_spec.rb,spec/jarfile_spec.rb</testFiles>
+        </configuration>
         <executions>
           <execution>
+            <id>in_phase_initialize</id>
+            <phase>initialize</phase>
             <goals>
-              <goal>install</goal>
+              <goal>execute_in_phase</goal>
             </goals>
+            <configuration>
+              <file>Mavenfile</file>
+              <phase>initialize</phase>
+            </configuration>
+          </execution>
+          <execution>
+            <id>in_phase_package</id>
+            <phase>package</phase>
+            <goals>
+              <goal>package</goal>
+            </goals>
+            <configuration>
+              <gemspec>maven-tools.gemspec</gemspec>
+            </configuration>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>rubygems</groupId>
+            <artifactId>jruby-openssl</artifactId>
+            <version>[0,)</version>
+            <type>gem</type>
+          </dependency>
+        </dependencies>
       </plugin>
-      <!-- need a plugin which is already deployed -->
-      <!--plugin>
+      <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>minitest-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
@@ -203,7 +241,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin-->
+      </plugin>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>rspec-maven-plugin</artifactId>
@@ -231,12 +269,12 @@
               <pluginExecutions>
                 <pluginExecution>
                   <action>
-                    <ignore />
+                    <ignore></ignore>
                   </action>
                   <pluginExecutionFilter>
-                    <artifactId>gem-maven-plugin</artifactId>
+                    <artifactId>bundler-maven-plugin</artifactId>
                     <goals>
-                      <goal>initialize</goal>
+                      <goal>install</goal>
                     </goals>
                     <groupId>de.saumya.mojo</groupId>
                     <versionRange>[0,)</versionRange>
@@ -244,12 +282,12 @@
                 </pluginExecution>
                 <pluginExecution>
                   <action>
-                    <ignore />
+                    <ignore></ignore>
                   </action>
                   <pluginExecutionFilter>
-                    <artifactId>bundler-maven-plugin</artifactId>
+                    <artifactId>gem-maven-plugin</artifactId>
                     <goals>
-                      <goal>install</goal>
+                      <goal>initialize</goal>
                     </goals>
                     <groupId>de.saumya.mojo</groupId>
                     <versionRange>[0,)</versionRange>
@@ -261,5 +299,90 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/lib</directory>
+      </resource>
+    </resources>
   </build>
+  <profiles>
+    <profile>
+      <id>executable</id>
+      <dependencies>
+        <dependency>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>gem-assembly-descriptors</artifactId>
+          <version>${jruby.plugins.version}</version>
+          <type>jar</type>
+          <scope>runtime</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.3</version>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>de.saumya.mojo.assembly.Main</mainClass>
+                </manifest>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies-and-gems</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+            <executions>
+              <execution>
+                <id>in_phase_package</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>assembly</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>de.saumya.mojo</groupId>
+                <artifactId>gem-assembly-descriptors</artifactId>
+                <version>${jruby.plugins.version}</version>
+                <type>jar</type>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>sonatype-oss-release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>gem-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>in_phase_deploy</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>push</goal>
+                </goals>
+                <configuration>
+                  <gem>maven-tools-0.32.0.gem</gem>
+                </configuration>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>rubygems</groupId>
+                <artifactId>jruby-openssl</artifactId>
+                <version>[0,)</version>
+                <type>gem</type>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
