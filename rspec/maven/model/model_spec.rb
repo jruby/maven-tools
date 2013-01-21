@@ -209,6 +209,27 @@ XML
 XML
     end
 
+    it 'should setup a project with source control management' do
+      @project.source_control do |sc|
+        sc.connection 'scm:git:git://github.com/torquebox/maven-tools.git'
+        sc.developer_connection 'scm:git:ssh://git@github.com/torquebox/maven-tools.git'
+        sc.url 'http://github.com/torquebox/maven-tools'
+      end
+      @project.to_xml.should == <<-XML
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>test</groupId>
+  <artifactId>project</artifactId>
+  <version>0.0.0</version>
+  <scm>
+    <connection>scm:git:git://github.com/torquebox/maven-tools.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/torquebox/maven-tools.git</developerConnection>
+    <url>http://github.com/torquebox/maven-tools</url>
+  </scm>
+</project>
+XML
+    end
+
     it 'should setup a project with dependencies and dependency_management' do
       @project.dependency_management do |deps|
         deps.gem "slf4r", "0.4.2"
@@ -517,6 +538,63 @@ XML
       @build.to_xml.should == <<-XML
 <build>
   <finalName>final</finalName>
+</build>
+XML
+    end
+
+    it 'should setup a build with resources' do
+      @build.resources.add do |r|
+        r.target_path "${project.basedir}"
+        r.filtering false
+        r.directory "${project.build.directory}/apache-maven-${maven.version}"
+        r.includes += ["**/*.rb", "*.java"]
+        r.excludes << 'test.rb'
+      end
+      @build.to_xml.should == <<-XML
+<build>
+  <resources>
+    <resource>
+      <directory>${project.build.directory}/apache-maven-${maven.version}</directory>
+      <includes>
+        <include>**/*.rb</include>
+        <include>*.java</include>
+      </includes>
+      <excludes>
+        <exclude>test.rb</exclude>
+      </excludes>
+      <targetPath>${project.basedir}</targetPath>
+    </resource>
+  </resources>
+</build>
+XML
+    end
+
+    it 'should setup a build with test-resources' do
+      @build.test_resources do |res|
+        res.add do |r|
+          r.target_path "${project.basedir}"
+          r.directory "${project.build.directory}/apache-maven-${maven.version}"
+          r.filtering false
+        end
+        res.add do |r|
+          r.target_path "${project.basedir}"
+          r.directory "${project.build.directory}"
+          r.filtering true
+        end
+      end
+      @build.to_xml.should == <<-XML
+<build>
+  <testResources>
+    <testResource>
+      <directory>${project.build.directory}/apache-maven-${maven.version}</directory>
+      <targetPath>${project.basedir}</targetPath>
+    </testResource>
+    <testResource>
+      <directory>${project.build.directory}</directory>
+      <targetPath>${project.basedir}</targetPath>
+      <filtering>true</filtering>
+    </testResource>
+  </testResources>
 </build>
 XML
     end

@@ -5,8 +5,54 @@ require File.join(File.dirname(__FILE__), 'dependencies.rb')
 module Maven
   module Model
 
+    class Resource  < Tag
+      
+      tags :directory, :includes, :excludes, :target_path, :filtering
+
+      def includes(&block)
+        @includes ||= NamedArray.new( 'includes' )
+        if block
+          block.call( @includes )
+        end
+        @includes
+      end
+
+      def excludes(&block)
+        @excludes ||= NamedArray.new( 'excludes' )
+        if block
+          block.call(@excludes)
+        end
+        @excludes
+      end
+
+    end
+
+    class TestResource < Resource
+      tags :dummy
+
+      def _name
+        'testResource'
+      end
+    end
+
     class Build < Tag
-      tags :source_directory, :script_source_directory, :test_source_directory, :output_directory, :test_output_directory, :default_goal, :directory, :final_name, :plugins, :plugin_management
+      tags :source_directory, :script_source_directory, :test_source_directory, :output_directory, :test_output_directory, :default_goal, :directory, :final_name, :plugins, :plugin_management, :resources, :test_resources
+
+      def resources(&block)
+        @resources ||= ResourceArray.new
+        if block
+          block.call(@resources)
+        end        
+        @resources
+      end
+
+      def test_resources(&block)
+        @test_resources ||= ResourceArray.new( 'testResources', TestResource )
+        if block
+          block.call(@test_resources)
+        end        
+        @test_resources
+      end
 
       def plugins(&block)
         @plugins ||= PluginHash.new
@@ -29,7 +75,7 @@ module Maven
       end
 
       def to_xml(buf = "", indent = "")
-        if @final_name.nil? && (@plugins.nil? || @plugins.size == 0) && @plugin_management.nil? #TODO check the rest
+        if @final_name.nil? && (@resources.nil? || @resources.size == 0) && (@test_resources.nil? || @test_resources.size == 0) && (@plugins.nil? || @plugins.size == 0) && @plugin_management.nil? #TODO check the rest
           ""
         else
           super
@@ -276,12 +322,20 @@ module Maven
         self
       end
     end
+    
+    class SourceControl < Tag
 
+      tags :connection, :developer_connection, :url
+
+      def _name
+        'scm'
+      end
+    end
 
     class Project < Coordinate
       prepend_tags :model_version, :parent
 
-      tags :name, :packaging, :description, :url, :developers, :licenses, :repositories, :plugin_repositories
+      tags :name, :packaging, :description, :url, :developers, :licenses, :repositories, :plugin_repositories, :scm
 
       include Dependencies
 
@@ -325,9 +379,16 @@ module Maven
       
       def parent(*args, &block)
         @parent ||= Parent.new(*args)
-        @parent.call(block) if block
+        block.call( @parent ) if block
         @parent
       end
+      
+      def source_control(&block)
+        @scm ||= SourceControl.new
+        block.call( @scm ) if block
+        @scm
+      end
+      alias :scm :source_control
 
       def execute_in_phase(phase, name = nil, &block)
         gem_plugin = plugin("gem")

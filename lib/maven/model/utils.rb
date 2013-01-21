@@ -114,6 +114,29 @@ EOF
       end
     end
 
+    class ResourceArray < Array
+
+      def initialize( name = 'resources', child = Resource, &block )
+        @_child = child
+        #super( name, &block )
+        if block
+          block.call self
+        end
+        self
+      end
+
+      alias :do_add :<<
+
+      def add( &block )
+        r = @_child.new
+        block.call( r )
+        do_add r
+        r
+      end
+      alias :<< :add
+      
+    end
+
     class ModelHash < Hash
 
       def initialize(clazz)
@@ -326,7 +349,14 @@ EOF
             buf << "#{indent}  <#{k}>\n"
             singular = k.to_s.sub(/s$/, '')
             v.each do |i|
-              buf << "#{indent}    <#{singular}>#{i}</#{singular}>\n"
+              case i
+              when Hash
+                buf << "#{indent}    <#{singular}>\n"
+                map_to_xml(buf, indent + "    ", i)
+                buf << "#{indent}    </#{singular}>\n"
+              else
+                buf << "#{indent}    <#{singular}>#{i}</#{singular}>\n"
+              end
             end
             buf << "#{indent}  </#{k}>\n"
           when /\n$/
