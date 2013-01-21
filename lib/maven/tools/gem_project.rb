@@ -233,7 +233,7 @@ module Maven
           if packaging =~ /gem/
             gem.extensions = true
             if @gemspec && !(self.gem?('jruby-openssl') || self.gem?('jruby-openssl-maven'))
-              gem.gem('jruby-openssl-maven')
+              gem.gem('jruby-openssl')
             end
           end
           if File.exists?('lib') && File.exists?(File.join('src', 'main', 'java'))

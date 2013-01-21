@@ -837,7 +837,7 @@ XML
         <dependencies>
           <dependency>
             <groupId>rubygems</groupId>
-            <artifactId>jruby-openssl-maven</artifactId>
+            <artifactId>jruby-openssl</artifactId>
             <version>[0,)</version>
             <type>gem</type>
           </dependency>
