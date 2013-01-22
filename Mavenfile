@@ -7,7 +7,6 @@ group_id 'de.saumya.mojo'
 
 spec_version = version.to_s
 version spec_version + '-SNAPSHOT'
-#spec = Gem::Specification.load('maven-tools.gemspec')
 
 source_control do |sc|
   u = url.sub!( /^https?:\/\//, '' ) if url
@@ -61,7 +60,7 @@ execute_in_phase( :initialize ) do
 end
 
 # just lock the versions
-properties['jruby.plugins.version'] = '0.29.2-SNAPSHOT'
+properties['jruby.plugins.version'] = '0.29.2'
 properties['jruby.version'] = '1.7.2'
 
 build.resources.add do |r|
