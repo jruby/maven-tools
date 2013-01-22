@@ -46,23 +46,24 @@ plugin(:clean, '2.5' ).with :filesets =>
    { :directory => './', :includes => ['Gemfile.lock'] } 
   ]
 
-# needed for following execute_in_phase
-plugin :gem do |g|
-  g.gem 'jruby-openssl'
-end
-
-execute_in_phase( :initialize ) do
-  pom = File.read( 'pom.xml' )
-  dot_pom = File.read( '.pom.xml' )
-  if pom != dot_pom
-    File.open( 'pom.xml', 'w' ) { |f| f.puts dot_pom }
-  end
-end
-
 # just lock the versions
 properties['jruby.plugins.version'] = '0.29.2'
 properties['jruby.version'] = '1.7.2'
 
 build.resources.add do |r|
   r.directory '${project.basedir}/lib'
+end
+
+plugin( :release ).with :pomFileName => 'pom.xml'
+
+plugin( :gem ).gem 'jruby-openssl'
+
+execute_in_phase( :initialize ) do
+  if File.exists?( '.pom.xml' )
+    pom = File.read( 'pom.xml' )
+    dot_pom = File.read( '.pom.xml' )
+    if pom != dot_pom && nil != (pom =~ /-SNAPSHOT/)
+      File.open( 'pom.xml', 'w' ) { |f| f.puts dot_pom }
+    end
+  end
 end

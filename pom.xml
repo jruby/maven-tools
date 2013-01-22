@@ -172,6 +172,12 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <pomFileName>pom.xml</pomFileName>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>bundler-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
