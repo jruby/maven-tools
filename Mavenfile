@@ -21,8 +21,6 @@ properties['jruby.versions'] = ['1.5.6','1.6.8','1.7.2'].join(',')
 # overwrite via cli -Djruby.use18and19=false
 properties['jruby.18and19'] = true
 
-properties['jruby.plugins.version'] = '0.29.1'
-
 plugin(:minitest) do |m|
   m.with :minispecDirectory =>"spec/*spec.rb"
   m.execute_goal(:spec)
@@ -46,7 +44,7 @@ plugin(:clean, '2.5' ).with :filesets =>
   ]
 
 # just lock the versions
-properties['jruby.plugins.version'] = '0.29.2'
+properties['jruby.plugins.version'] = '0.29.1'
 properties['jruby.version'] = '1.7.2'
 
 # add the ruby files to jar
