@@ -52,44 +52,28 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rake</artifactId>
+      <version>[10.0.3,10.0.99999]</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>minitest</artifactId>
+      <version>[4.4,4.99999]</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
+      <version>[2.7,2.7.0.0.0.0.1)</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>rspec-core</artifactId>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rspec-expectations</artifactId>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>diff-lcs</artifactId>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rspec-mocks</artifactId>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
       <artifactId>copyright-header</artifactId>
+      <version>[1.0.7,1.0.99999]</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
@@ -101,60 +85,6 @@
   </dependencies>
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>maven-tools</artifactId>
-        <version>0.32.1</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>copyright-header</artifactId>
-        <version>1.0.7</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>diff-lcs</artifactId>
-        <version>1.1.3</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>minitest</artifactId>
-        <version>4.4.0</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>rake</artifactId>
-        <version>10.0.3</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>rspec</artifactId>
-        <version>2.7.0</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>rspec-core</artifactId>
-        <version>2.7.1</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>rspec-expectations</artifactId>
-        <version>2.7.0</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>rspec-mocks</artifactId>
-        <version>2.7.0</version>
-        <type>gem</type>
-      </dependency>
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>bundler</artifactId>
