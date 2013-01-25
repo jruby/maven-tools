@@ -7,7 +7,7 @@
   </parent>
   <groupId>de.saumya.mojo</groupId>
   <artifactId>maven-tools</artifactId>
-  <version>0.32.1-SNAPSHOT</version>
+  <version>0.32.1</version>
   <name><![CDATA[helpers for maven related tasks]]></name>
   <packaging>jar</packaging>
   <description><![CDATA[adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc]]></description>
@@ -141,17 +141,6 @@
             </goals>
             <configuration>
               <gem>${project.build.directory}/maven-tools-0.32.1.gem</gem>
-            </configuration>
-          </execution>
-          <execution>
-            <id>in_phase_initialize</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>execute_in_phase</goal>
-            </goals>
-            <configuration>
-              <file>Mavenfile</file>
-              <phase>initialize</phase>
             </configuration>
           </execution>
           <execution>
