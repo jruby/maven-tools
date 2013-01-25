@@ -44,7 +44,7 @@ plugin(:clean, '2.5' ).with :filesets =>
   ]
 
 # just lock the versions
-properties['jruby.plugins.version'] = '0.29.1'
+properties['jruby.plugins.version'] = '0.29.0'
 properties['jruby.version'] = '1.7.2'
 
 # add the ruby files to jar
