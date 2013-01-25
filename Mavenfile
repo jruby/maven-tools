@@ -21,6 +21,8 @@ properties['jruby.versions'] = ['1.5.6','1.6.8','1.7.2'].join(',')
 # overwrite via cli -Djruby.use18and19=false
 properties['jruby.18and19'] = true
 
+properties['jruby.plugins.version'] = '0.29.1'
+
 plugin(:minitest) do |m|
   m.with :minispecDirectory =>"spec/*spec.rb"
   m.execute_goal(:spec)
