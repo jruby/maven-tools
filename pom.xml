@@ -21,6 +21,11 @@
   </developers>
   <licenses>
     <license>
+      <name>MIT</name>
+      <url>./MIT</url>
+      <distribution>repo</distribution>
+    </license>
+    <license>
       <name>MIT-LICENSE</name>
       <url>./MIT-LICENSE</url>
       <distribution>repo</distribution>
@@ -84,6 +89,12 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>copyright-header</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>bundler</artifactId>
       <type>gem</type>
     </dependency>
@@ -93,7 +104,13 @@
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>maven-tools</artifactId>
-        <version>0.32.0</version>
+        <version>0.32.1</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>copyright-header</artifactId>
+        <version>1.0.7</version>
         <type>gem</type>
       </dependency>
       <dependency>
@@ -172,12 +189,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <pomFileName>pom.xml</pomFileName>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>bundler-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
@@ -187,11 +198,21 @@
         <artifactId>gem-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
         <configuration>
-          <files>lib/maven_tools.rb,lib/maven-tools.rb,lib/maven-tools.rb~,lib/maven_tools.rb~,lib/maven,lib/maven/jarfile.rb~,lib/maven/tools,lib/maven/tools/coordinate.rb,lib/maven/tools/execute_in_phase.rb,lib/maven/tools/version.rb,lib/maven/tools/jarfile.rb~,lib/maven/tools/jarfile.rb,lib/maven/tools/rails_project.rb,lib/maven/tools/versions.rb~,lib/maven/tools/gem_project.rb,lib/maven/tools/gem_project.rb~,lib/maven/tools/pom_generator.rb,lib/maven/tools/gemfile_lock.rb~,lib/maven/tools/gemfile_lock.rb,lib/maven/tools/minimal_project.rb,lib/maven/tools/coordinate.rb~,lib/maven/tools/versions.rb,lib/maven/model,lib/maven/model/utils.rb,lib/maven/model/dependencies.rb~,lib/maven/model/model.rb,lib/maven/model/dependencies.rb,lib/maven/model/model_utils.rb~,lib/maven/model/utils.rb~,lib/maven/model/model.rb~,lib/maven/maven_util.rb~,spec/coordinate_spec.rb,spec/jarfile_spec.rb,MIT-LICENSE,README.md</files>
+          <files>lib/maven_tools.rb,lib/maven-tools.rb,lib/maven/tools/coordinate.rb,lib/maven/tools/execute_in_phase.rb,lib/maven/tools/version.rb,lib/maven/tools/jarfile.rb,lib/maven/tools/rails_project.rb,lib/maven/tools/gem_project.rb,lib/maven/tools/pom_generator.rb,lib/maven/tools/gemfile_lock.rb,lib/maven/tools/minimal_project.rb,lib/maven/tools/versions.rb,lib/maven/model/utils.rb,lib/maven/model/model.rb,lib/maven/model/dependencies.rb,spec/coordinate_spec.rb,spec/jarfile_spec.rb,rspec/maven,rspec/maven/tools,rspec/maven/tools/Gemfile.withlock,rspec/maven/tools/Gemfile.lockfile.lock,rspec/maven/tools/rails_project_spec.rb,rspec/maven/tools/Gemfile.nolock,rspec/maven/tools/maven-tools.gemspec,rspec/maven/tools/Gemfile.groups,rspec/maven/tools/Gemfile.minimal,rspec/maven/tools/spec_helper.rb,rspec/maven/tools/Gemfile.lockfile,rspec/maven/tools/no-deps.gemspec,rspec/maven/tools/Gemfile.ignored,rspec/maven/tools/Gemfile.rails,rspec/maven/tools/gem_project_spec.rb,rspec/maven/tools/Gemfile.gems,rspec/maven/tools/Gemfile.simple,rspec/maven/tools/Jarfile.with,rspec/maven/tools/minimal.gemspec,rspec/maven/tools/Gemfile.withlock.lock,rspec/maven/tools/Jarfile.with.lock,rspec/maven/tools/Jarfile.without,rspec/maven/tools/deps.gemspec,rspec/maven/model,rspec/maven/model/model_spec.rb,rspec/maven/model/dependencies_spec.rb,MIT-LICENSE,README.md</files>
           <gemspec>maven-tools.gemspec</gemspec>
-          <testFiles>spec/coordinate_spec.rb,spec/jarfile_spec.rb</testFiles>
+          <testFiles>spec/coordinate_spec.rb,spec/jarfile_spec.rb,rspec/maven,rspec/maven/tools,rspec/maven/tools/Gemfile.withlock,rspec/maven/tools/Gemfile.lockfile.lock,rspec/maven/tools/rails_project_spec.rb,rspec/maven/tools/Gemfile.nolock,rspec/maven/tools/maven-tools.gemspec,rspec/maven/tools/Gemfile.groups,rspec/maven/tools/Gemfile.minimal,rspec/maven/tools/spec_helper.rb,rspec/maven/tools/Gemfile.lockfile,rspec/maven/tools/no-deps.gemspec,rspec/maven/tools/Gemfile.ignored,rspec/maven/tools/Gemfile.rails,rspec/maven/tools/gem_project_spec.rb,rspec/maven/tools/Gemfile.gems,rspec/maven/tools/Gemfile.simple,rspec/maven/tools/Jarfile.with,rspec/maven/tools/minimal.gemspec,rspec/maven/tools/Gemfile.withlock.lock,rspec/maven/tools/Jarfile.with.lock,rspec/maven/tools/Jarfile.without,rspec/maven/tools/deps.gemspec,rspec/maven/model,rspec/maven/model/model_spec.rb,rspec/maven/model/dependencies_spec.rb</testFiles>
         </configuration>
         <executions>
+          <execution>
+            <id>in_phase_deploy</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>push</goal>
+            </goals>
+            <configuration>
+              <gem>${project.build.directory}/maven-tools-0.32.1.gem</gem>
+            </configuration>
+          </execution>
           <execution>
             <id>in_phase_initialize</id>
             <phase>initialize</phase>
@@ -265,7 +286,7 @@
               <pluginExecutions>
                 <pluginExecution>
                   <action>
-                    <ignore />
+                    <ignore></ignore>
                   </action>
                   <pluginExecutionFilter>
                     <artifactId>bundler-maven-plugin</artifactId>
@@ -278,7 +299,7 @@
                 </pluginExecution>
                 <pluginExecution>
                   <action>
-                    <ignore />
+                    <ignore></ignore>
                   </action>
                   <pluginExecutionFilter>
                     <artifactId>gem-maven-plugin</artifactId>
@@ -343,37 +364,6 @@
                 <artifactId>gem-assembly-descriptors</artifactId>
                 <version>${jruby.plugins.version}</version>
                 <type>jar</type>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>sonatype-oss-release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>de.saumya.mojo</groupId>
-            <artifactId>gem-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>in_phase_deploy</id>
-                <phase>deploy</phase>
-                <goals>
-                  <goal>push</goal>
-                </goals>
-                <configuration>
-                  <gem>maven-tools-0.32.0.gem</gem>
-                </configuration>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>rubygems</groupId>
-                <artifactId>jruby-openssl</artifactId>
-                <version>[0,)</version>
-                <type>gem</type>
               </dependency>
             </dependencies>
           </plugin>
