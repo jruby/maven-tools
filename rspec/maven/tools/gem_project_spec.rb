@@ -163,6 +163,7 @@ XML
     end
 
     it 'should load Gemfile with gemspec but with Gemfile.lock' do
+      pending "hash is differently orderd in ruby1.8" if RUBY_VERSION =~ /^1.8/ && !defined? JRUBY_VERSION
       @project.load_gemfile(File.join(File.dirname(__FILE__), 'Gemfile.withlock'))
       @project.to_xml.should == <<-XML
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
