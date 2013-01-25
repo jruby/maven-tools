@@ -44,7 +44,7 @@ plugin(:clean, '2.5' ).with :filesets =>
   ]
 
 # just lock the versions
-properties['jruby.plugins.version'] = '0.29.0'
+properties['jruby.plugins.version'] = '0.29.2'
 properties['jruby.version'] = '1.7.2'
 
 # add the ruby files to jar
@@ -55,10 +55,10 @@ end
 plugin :gem do |g|
   # push is broken with jruby-plugin version 0.29.2
   g.in_phase( :deploy ).execute_goal( :push ).with( :gem => "${project.build.directory}/maven-tools-#{spec_version}.gem" )
-  g.gem 'jruby-openssl'
+  g.gem 'jruby-openssl', '0.8.2'
 end
 
-execute_in_phase( :initialize ) do
+execute_in_phase( 'generate-sources' ) do
   if File.exists?( '.pom.xml' )
     pom = File.read( 'pom.xml' )
     dot_pom = File.read( '.pom.xml' )
