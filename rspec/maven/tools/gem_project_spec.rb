@@ -101,6 +101,201 @@ XML
 XML
     end
 
+    it 'should load Gemfile with gemspec but no Gemfile.lock' do
+      @project.load_gemfile(File.join(File.dirname(__FILE__), 'Gemfile.nolock'))
+      @project.to_xml.should == <<-XML
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>rubygems</groupId>
+  <artifactId>maven-tools</artifactId>
+  <version>0.32.0</version>
+  <name><![CDATA[helpers for maven related tasks]]></name>
+  <packaging>gem</packaging>
+  <description><![CDATA[adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc]]></description>
+  <url>http://github.com/torquebox/maven-tools</url>
+  <developers>
+    <developer>
+      <id>m_dot_kristian_at_web_dot_de</id>
+      <name>Christian Meier</name>
+      <email>m.kristian@web.de</email>
+    </developer>
+  </developers>
+  <dependencies>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rake</artifactId>
+      <version>[10.0.3,10.0.99999]</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>minitest</artifactId>
+      <version>[4.4,4.99999]</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec</artifactId>
+      <version>[2.7,2.7.0.0.0.0.1)</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>bundler-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <configuration>
+          <gemspec>rspec/maven/tools/maven-tools.gemspec</gemspec>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+XML
+    end
+
+    it 'should load Gemfile with gemspec but with Gemfile.lock' do
+      @project.load_gemfile(File.join(File.dirname(__FILE__), 'Gemfile.withlock'))
+      @project.to_xml.should == <<-XML
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>rubygems</groupId>
+  <artifactId>maven-tools</artifactId>
+  <version>0.32.0</version>
+  <name><![CDATA[helpers for maven related tasks]]></name>
+  <packaging>gem</packaging>
+  <description><![CDATA[adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc]]></description>
+  <url>http://github.com/torquebox/maven-tools</url>
+  <developers>
+    <developer>
+      <id>m_dot_kristian_at_web_dot_de</id>
+      <name>Christian Meier</name>
+      <email>m.kristian@web.de</email>
+    </developer>
+  </developers>
+  <dependencies>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rake</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>minitest</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec-core</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec-expectations</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>diff-lcs</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec-mocks</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>maven-tools</artifactId>
+        <version>0.32.0</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>diff-lcs</artifactId>
+        <version>1.1.3</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>minitest</artifactId>
+        <version>4.4.0</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rake</artifactId>
+        <version>10.0.3</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rspec</artifactId>
+        <version>2.7.0</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rspec-core</artifactId>
+        <version>2.7.1</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rspec-expectations</artifactId>
+        <version>2.7.0</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rspec-mocks</artifactId>
+        <version>2.7.0</version>
+        <type>gem</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>bundler-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <configuration>
+          <gemspec>rspec/maven/tools/maven-tools.gemspec</gemspec>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+XML
+    end
+
     it 'should load Gemfile with "source", "path" and "platform"' do
       @project.load_gemfile(File.join(File.dirname(__FILE__), 'Gemfile.ignored'))
       @project.to_xml.should == <<-XML
@@ -229,6 +424,7 @@ XML
       <groupId>rubygems</groupId>
       <artifactId>bundler</artifactId>
       <type>gem</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <dependencyManagement>

@@ -53,6 +53,8 @@ module Maven
           "gem.includeRubygemsInTestResources" => false
         }.merge(self.properties)
 
+        dependencies.find { |d| d.artifact_id == 'bundler' }.scope = nil
+
         plugin(:rails3) do |rails|
           rails.version = "${jruby.plugins.version}" unless rails.version
           rails.in_phase(:validate).execute_goal(:initialize)
@@ -97,7 +99,6 @@ module Maven
             "gem.path" => "${project.build.directory}/rubygems-production" 
           }.merge(prod.properties)
         end
-
       end
     end
   end

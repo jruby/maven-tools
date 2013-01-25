@@ -125,7 +125,14 @@ module Maven
             # use this construct to get the same result in 1.8.x and 1.9.x
             req.collect{ |i| i.to_s }.join
           end
-          gem(dep.name, versions).scope = scope
+          add_gem(dep.name, versions).scope = scope
+          if @lock
+            # add its dependencies as well to have the version
+            # determine by the dependencyManagement
+            @lock.dependency_hull(dep.name).map.each do |d|
+              add_gem(d[0], d[1]).scope = scope unless gem? d[0]
+            end
+          end
         end
 
         spec.requirements.each do |req|
@@ -175,6 +182,15 @@ module Maven
 
           # we have a Gemfile so we add the bundler plugin
           plugin(:bundler)
+
+          # cleanup versions from deps
+          if @lock
+            dependencies.each do |d|
+              if d.group_id == 'rubygems' && @lock.keys.member?( d.artifact_id ) 
+                d.version = nil 
+              end
+            end
+          end
         else
           self
         end
@@ -280,7 +296,7 @@ module Maven
           bundler = plugin(:bundler)
           bundler.version = "${jruby.plugins.version}" unless bundler.version
           unless gem?(:bundler)
-            gem("bundler")
+            gem("bundler").scope :test
           end
         end
 
