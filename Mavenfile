@@ -38,8 +38,10 @@ plugin :gem do |g|
   # push gem to rubygems on deploy
   g.in_phase( :deploy ).execute_goal( :push ).with( :gem => "${project.build.directory}/maven-tools-#{spec_version}.gem" )
 
-  # copy .pom.xml from ruby-maven
-  g.in_phase( :validate ).execute_goal( :pom ).with( :tmpPom => '.pom.xml', :skipGeneration => true )
+  # DO NOT copy .pom.xml from ruby-maven
+  # it does have all gem artifacts as dependencies
+  # which will NOT work on maven central repository
+  #g.in_phase( :validate ).execute_goal( :pom ).with( :tmpPom => '.pom.xml', :skipGeneration => true )
 
   # build the gem along with the jar
   g.in_phase( :package ).execute_goal( :package ).with( :gemspec => 'maven-tools.gemspec' )
