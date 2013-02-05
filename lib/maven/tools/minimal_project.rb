@@ -46,8 +46,9 @@ module Maven
           self.developers.new( author, email )
         end
 
-        #  TODO work with collection of licenses - there can be more than one !!!
-        ( spec.licenses + spec.files.select {|file| file.to_s =~ /license|gpl/i } ).each do |license|
+        # flatten the array since copyright-header-1.0.3.gemspec has a double
+        # nested array
+        ( spec.licenses + spec.files.select {|file| file.to_s =~ /license|gpl/i } ).flatten.each do |license|
           # TODO make this better, i.e. detect the right license name from the file itself
           self.licenses.new( license )
         end
