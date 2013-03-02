@@ -309,6 +309,15 @@ module Maven
               bdeps.each do |d|
                 bundler.gem(d)
               end
+              
+              # use the locked down version if available
+              if @lock
+                bundler.dependencies.each do |d|
+                  if d.group_id == 'rubygems' && @lock.keys.member?( d.artifact_id ) 
+                    d.version = @lock[ d.artifact_id ].version
+                  end
+               end
+              end
             end
           end
         end
