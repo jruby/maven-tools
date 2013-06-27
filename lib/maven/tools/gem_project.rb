@@ -17,31 +17,14 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
-# TODO make nice require after ruby-maven uses the same ruby files
-require File.join(File.dirname(File.dirname(__FILE__)), 'model', 'model.rb')
 require File.join(File.dirname(__FILE__), 'gemfile_lock.rb')
 require File.join(File.dirname(__FILE__), 'versions.rb')
-require File.join(File.dirname(__FILE__), 'jarfile.rb')
+require File.join(File.dirname(__FILE__), 'maven_project.rb')
 
 module Maven
   module Tools
 
-    class ArtifactPassthrough
-
-      def initialize(&block)
-        @block = block
-      end
-
-      def add_artifact(a)
-        @block.call(a)
-      end
-      
-      def add_repository(name, url)
-      end
-    end
-    
-    class GemProject < Maven::Model::Project
+    class GemProject < MavenProject
       tags :dummy
 
       def initialize(artifact_id = dir_name, version = "0.0.0", &block)
@@ -61,7 +44,7 @@ module Maven
 
       def load_gemspec(specfile)
         require 'rubygems'
-        if specfile.is_a? ::Gem::Specification 
+        if specfile.is_a? ::Gem::Specification
           spec = specfile
         else
           spec = ::Gem::Specification.load(specfile)
@@ -104,12 +87,12 @@ module Maven
         add_param(config, "rdocOptions", spec.rdoc_options)
         add_param(config, "requirePaths", spec.require_paths, ["lib"])
         add_param(config, "rubyforgeProject", spec.rubyforge_project)
-        add_param(config, "requiredRubygemsVersion", 
+        add_param(config, "requiredRubygemsVersion",
                   spec.required_rubygems_version && spec.required_rubygems_version != ">= 0" ? "<![CDATA[#{spec.required_rubygems_version}]]>" : nil)
         add_param(config, "bindir", spec.bindir, "bin")
-        add_param(config, "requiredRubyVersion", 
+        add_param(config, "requiredRubyVersion",
                   spec.required_ruby_version && spec.required_ruby_version != ">= 0" ? "<![CDATA[#{spec.required_ruby_version}]]>" : nil)
-        add_param(config, "postInstallMessage", 
+        add_param(config, "postInstallMessage",
                   spec.post_install_message ? "<![CDATA[#{spec.post_install_message}]]>" : nil)
         add_param(config, "executables", spec.executables)
         add_param(config, "extensions", spec.extensions)
@@ -127,11 +110,11 @@ module Maven
         # end
         #add_param(config, "extraFiles", files)
         add_param(config, "files", spec.files)
-        
+
         plugin('gem').with(config) if config.size > 0
 
         spec.dependencies.each do |dep|
-          scope = 
+          scope =
             case dep.type
             when :runtime
               "compile"
@@ -172,17 +155,6 @@ module Maven
         end
       end
 
-      def load_mavenfile(file)
-        file = file.path if file.is_a?(File)
-        if File.exists? file
-          @current_file = file
-          content = File.read(file)
-          eval content
-        else
-          self
-        end
-      end
-
       def load_gemfile(file)
         file = file.path if file.is_a?(File)
         if File.exists? file
@@ -208,26 +180,12 @@ module Maven
           if @lock
             dependencies.each do |d|
               if d.group_id == 'rubygems' && @lock.keys.member?( d.artifact_id ) 
-                d.version = nil 
+                d.version = nil
               end
             end
           end
         else
           self
-        end
-      end
-      
-      def load_jarfile(file)
-        jars = Jarfile.new(file)
-        if jars.exists?
-          container = ArtifactPassthrough.new do |a|
-            artifactId, groupId, extension, version = a.split(/:/)
-            send(extension.to_sym, "#{artifactId}:#{groupId}", version)
-          end
-          if !jars.exists_lock? || jars.mtime > jars.mtime_lock
-            jars.populate_unlocked container
-          end
-          jars.populate_locked container
         end
       end
 
@@ -241,7 +199,7 @@ module Maven
         versions = versions.merge(args) if args
 
         name "#{dir_name} - gem" unless name
-        
+
         packaging "gem" unless packaging
 
         repository("rubygems-releases").url = "http://rubygems-proxy.torquebox.org/releases" unless repository("rubygems-releases").url
@@ -253,7 +211,7 @@ module Maven
         #     r.releases(:enabled => false)
              r.snapshots(:enabled => true)
            end
-        end 
+        end
 
         # TODO go through all plugins to find out any SNAPSHOT version !!
         if versions[:jruby_plugins] =~ /-SNAPSHOT$/ || properties['jruby.plugins.version'] =~ /-SNAPSHOT$/
@@ -280,7 +238,7 @@ module Maven
             end
           end
         end
-        
+
         if @bundler_deps && @bundler_deps.size > 0
           plugin(:bundler)
           bdeps = []
@@ -298,10 +256,10 @@ module Maven
           @bundler_deps.each do |args, dep|
             bdeps << args unless has_gem? args[0]
           end
-          
+
           # now add the deps to bundler plugin
           # avoid to setup bundler if it has no deps
-          if bdeps.size > 0 
+          if bdeps.size > 0
             plugin(:bundler) do |bundler|
               # install will be triggered on initialize phase
               bundler.execution.goals << "install"
@@ -309,7 +267,7 @@ module Maven
               bdeps.each do |d|
                 bundler.gem(d)
               end
-              
+
               # use the locked down version if available
               if @lock
                 bundler.dependencies.each do |d|
@@ -344,8 +302,8 @@ module Maven
         end
 
         self.properties = {
-          "project.build.sourceEncoding" => "UTF-8", 
-          "gem.home" => "${project.build.directory}/rubygems", 
+          "project.build.sourceEncoding" => "UTF-8",
+          "gem.home" => "${project.build.directory}/rubygems",
           "gem.path" => "${project.build.directory}/rubygems",
           "jruby.plugins.version" => versions[:jruby_plugins]
         }.merge(self.properties)
@@ -353,10 +311,10 @@ module Maven
         has_plugin_gems = build.plugins.detect do |k, pl|
           pl.dependencies.detect { |d| d.type.to_sym == :gem } if pl.dependencies
         end
-        
+
         if has_plugin_gems
           plugin_repository("rubygems-releases").url = "http://rubygems-proxy.torquebox.org/releases" unless plugin_repository("rubygems-releases").url
-        
+
           # unless plugin_repository("rubygems-prereleases").url
           #   plugin_repository("rubygems-prereleases") do |r|
           #     r.url = "http://rubygems-proxy.torquebox.org/prereleases"
@@ -367,8 +325,8 @@ module Maven
         end
         # TODO
         configs = {
-          :gem => [:initialize], 
-          :rails3 => [:initialize, :pom], 
+          :gem => [:initialize],
+          :rails3 => [:initialize, :pom],
           :bundler => [:install]
         }.collect do |name, goals|
           if plugin?(name)
@@ -386,8 +344,8 @@ module Maven
         configs.delete_if { |c| c.nil? }
         if configs.size > 0
           build.plugin_management do |pm|
-            options = { 
-              :lifecycleMappingMetadata => { 
+            options = {
+              :lifecycleMappingMetadata => {
                 :pluginExecutions => Maven::Model::NamedArray.new(:pluginExecution) do |e|
                   # sort them - handy for testing
                   configs.sort {|m,n| m[:pluginExecutionFilter][:artifactId].to_s <=> n[:pluginExecutionFilter][:artifactId].to_s }.each { |c| e << c }
@@ -414,7 +372,7 @@ module Maven
           end
         end
       end
-      
+
       def has_gem?(gem)
         self.gem?(gem)
       end
@@ -436,7 +394,7 @@ module Maven
         @stack ||= [[:default]]
       end
       private :stack
-        
+
       def group(*args, &block)
         stack << args
         block.call if block
