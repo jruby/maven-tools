@@ -374,8 +374,9 @@ module Maven
         'project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"'
       end
 
-      def dump_pom( file )
+      def dump_pom( file = nil )
         @dump_pom = file if file
+        @dump_pom
       end
 
       def version(val = nil)
