@@ -22,5 +22,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake', '~> 10.0.3'
   s.add_development_dependency 'minitest', '~> 4.4'
   s.add_development_dependency 'rspec', '2.7'
-  s.add_development_dependency 'copyright-header', '~> 1.0.7'
+  s.add_development_dependency 'copyright-header', '1.0.7'
 end
