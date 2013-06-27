@@ -88,10 +88,10 @@ module Maven
         add_param(config, "requirePaths", spec.require_paths, ["lib"])
         add_param(config, "rubyforgeProject", spec.rubyforge_project)
         add_param(config, "requiredRubygemsVersion",
-                  spec.required_rubygems_version && spec.required_rubygems_version != ">= 0" ? "<![CDATA[#{spec.required_rubygems_version}]]>" : nil)
+                  spec.required_rubygems_version && spec.required_rubygems_version.to_s != ">= 0" ? "<![CDATA[#{spec.required_rubygems_version}]]>" : nil)
         add_param(config, "bindir", spec.bindir, "bin")
         add_param(config, "requiredRubyVersion",
-                  spec.required_ruby_version && spec.required_ruby_version != ">= 0" ? "<![CDATA[#{spec.required_ruby_version}]]>" : nil)
+                  spec.required_ruby_version && spec.required_ruby_version.to_s != ">= 0" ? "<![CDATA[#{spec.required_ruby_version}]]>" : nil)
         add_param(config, "postInstallMessage",
                   spec.post_install_message ? "<![CDATA[#{spec.post_install_message}]]>" : nil)
         add_param(config, "executables", spec.executables)
