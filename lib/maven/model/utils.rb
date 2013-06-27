@@ -101,7 +101,7 @@ EOF
           when Hash
             if val.size > 0
               buf << "#{indent}  <#{var}>\n"
-              val.keys.sort{ |n,m| n.to_s <=> m.to_s }.each do |k|
+              val.keys.each do |k|
                 v = val[k]
                 if v.is_a? Tag
                   v.to_xml(buf, indent + "    ")
@@ -347,8 +347,7 @@ EOF
       end
       
       def map_to_xml(buf, indent, map)
-        # sort the hash over the keys
-        map.collect { |k,v| [k.to_s, v]}.sort.each do |k,v|
+        map.each do |k,v|
           case v
           when Hash
             buf << "#{indent}  <#{k}>\n"
@@ -374,6 +373,8 @@ EOF
                 buf << "#{indent}    <#{singular}>\n"
                 map_to_xml(buf, indent + "    ", i)
                 buf << "#{indent}    </#{singular}>\n"
+              when /^<.*>$/ #allow any kind of xml as is
+                buf << "#{indent}    #{i}\n"
               else
                 buf << "#{indent}    <#{singular}>#{i}</#{singular}>\n"
               end

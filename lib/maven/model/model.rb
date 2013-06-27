@@ -591,23 +591,15 @@ module Maven
       end
 
       def releases(args = {})
-        @releases ||=  OHash.new.replace(args)
+        @releases ||= args
       end
 
       def snapshots(args = {})
-        @snapshots ||= OHash.new.replace(args)
+        @snapshots ||= args
       end
 
       def to_xml(*args)
         super
-      end
-    end
-
-    class OHash < Hash
-      
-      def keys
-        k = super
-        k.sort { |n,m| n.to_s <=> m.to_s }
       end
     end
 

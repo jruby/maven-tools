@@ -8,7 +8,6 @@ describe Maven::Tools::RailsProject do
   end
   
   it 'should load Gemfile from a simple rails application with applied defaults' do
-    pending "hash is differently orderd in ruby1.8" if nil == (RUBY_VERSION =~ /^1.8/) && !defined? JRUBY_VERSION
     @project.load_gemfile(File.join(File.dirname(__FILE__), 'Gemfile.simple'))
     @project.name "test"
     @project.add_defaults
@@ -75,47 +74,16 @@ describe Maven::Tools::RailsProject do
     </dependencies>
   </dependencyManagement>
   <properties>
-    <gem.home>${project.build.directory}/rubygems</gem.home>
+    <jruby.version>_jruby.version_</jruby.version>
+    <rails.env>development</rails.env>
     <gem.includeRubygemsInTestResources>false</gem.includeRubygemsInTestResources>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <gem.home>${project.build.directory}/rubygems</gem.home>
     <gem.path>${project.build.directory}/rubygems</gem.path>
     <jruby.plugins.version>_project.version_</jruby.plugins.version>
-    <jruby.version>_jruby.version_</jruby.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <rails.env>development</rails.env>
   </properties>
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>_war.version_</version>
-        <configuration>
-          <webResources>
-            <resource>
-              <directory>public</directory>
-            </resource>
-            <resource>
-              <directory>.</directory>
-              <includes>
-                <include>app/**</include>
-                <include>config/**</include>
-                <include>lib/**</include>
-                <include>vendor/**</include>
-                <include>Gemfile</include>
-              </includes>
-              <targetPath>WEB-INF</targetPath>
-            </resource>
-            <resource>
-              <directory>${gem.path}</directory>
-              <includes>
-                <include>gems/**</include>
-                <include>specifications/**</include>
-              </includes>
-              <targetPath>WEB-INF/gems</targetPath>
-            </resource>
-          </webResources>
-          <webXml>config/web.xml</webXml>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>bundler-maven-plugin</artifactId>
@@ -135,6 +103,37 @@ describe Maven::Tools::RailsProject do
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>_war.version_</version>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>public</directory>
+            </resource>
+            <resource>
+              <directory>.</directory>
+              <targetPath>WEB-INF</targetPath>
+              <includes>
+                <include>app/**</include>
+                <include>config/**</include>
+                <include>lib/**</include>
+                <include>vendor/**</include>
+                <include>Gemfile</include>
+              </includes>
+            </resource>
+            <resource>
+              <directory>${gem.path}</directory>
+              <targetPath>WEB-INF/gems</targetPath>
+              <includes>
+                <include>gems/**</include>
+                <include>specifications/**</include>
+              </includes>
+            </resource>
+          </webResources>
+          <webXml>config/web.xml</webXml>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -146,17 +145,17 @@ describe Maven::Tools::RailsProject do
             <lifecycleMappingMetadata>
               <pluginExecutions>
                 <pluginExecution>
-                  <action>
-                    <ignore></ignore>
-                  </action>
                   <pluginExecutionFilter>
+                    <groupId>de.saumya.mojo</groupId>
                     <artifactId>bundler-maven-plugin</artifactId>
+                    <versionRange>[0,)</versionRange>
                     <goals>
                       <goal>install</goal>
                     </goals>
-                    <groupId>de.saumya.mojo</groupId>
-                    <versionRange>[0,)</versionRange>
                   </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
                 </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
@@ -179,6 +178,16 @@ describe Maven::Tools::RailsProject do
       </activation>
     </profile>
     <profile>
+      <id>test</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>rails.env</name>
+          <value>test</value>
+        </property>
+      </activation>
+    </profile>
+    <profile>
       <id>production</id>
       <activation>
         <property>
@@ -191,23 +200,12 @@ describe Maven::Tools::RailsProject do
         <gem.path>${project.build.directory}/rubygems-production</gem.path>
       </properties>
     </profile>
-    <profile>
-      <id>test</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <property>
-          <name>rails.env</name>
-          <value>test</value>
-        </property>
-      </activation>
-    </profile>
   </profiles>
 </project>
 XML
   end
 
   it 'should load Gemfile from a rails application"' do
-    pending "hash is differently orderd in ruby1.8" if nil == (RUBY_VERSION =~ /^1.8/) && !defined? JRUBY_VERSION
     @project.load_gemfile(File.join(File.dirname(__FILE__), 'Gemfile.rails'))
     @project.to_xml.should == <<-XML
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -258,22 +256,22 @@ XML
       </dependencies>
     </profile>
     <profile>
-      <id>production</id>
+      <id>test</id>
       <dependencies>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>#{ defined?(JRUBY_VERSION) ? 'jdbc-' : ''}mysql</artifactId>
+          <artifactId>rspec</artifactId>
           <version>[0,)</version>
           <type>gem</type>
         </dependency>
       </dependencies>
     </profile>
     <profile>
-      <id>test</id>
+      <id>production</id>
       <dependencies>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>rspec</artifactId>
+          <artifactId>#{ defined?(JRUBY_VERSION) ? 'jdbc-' : ''}mysql</artifactId>
           <version>[0,)</version>
           <type>gem</type>
         </dependency>
