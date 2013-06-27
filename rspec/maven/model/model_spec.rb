@@ -21,6 +21,7 @@ XML
     
     it 'should setup a minimal project' do
       project = Maven::Model::Project.new
+      project.dump_pom 'pom-ng.xml'
       project.artifact_id = 'mini'
       project.parent('test:parent', '1.2.3')
       project.to_xml.should == <<-XML
