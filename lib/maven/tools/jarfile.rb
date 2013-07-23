@@ -68,6 +68,91 @@ module Maven
         locked.detect { |l| l.sub(/^([^:]+:[^:]+):.+/) { $1 } == coord } != nil
       end
 
+      class DSL
+        include Coordinate
+
+        def self.eval_file( file )
+          jarfile = self.new
+          jarfile.eval_file( file )
+        end
+
+        def eval_file( file )
+          if File.exists?( file )
+            eval( File.read( file ) )
+            self
+          end
+        end
+
+        def artifacts
+          @artifacts ||= []
+        end
+
+        def repositories
+          @repositories ||= []
+        end
+
+        def artifact( type, *args )
+          if args.last.is_a? Hash
+            options = args.last.dup
+            args = args[0..-2]
+          end
+          case args.size
+          when 1
+            # jar "asd:Asd:123
+            # jar "asd:Asd:123:test"
+            # jar "asd:Asd:123:[dsa:rew,fe:fer]"
+            # jar "asd:Asd:123:test:[dsa:rew,fe:fer]"
+            group_id, artifact_id, version, classifier, exclusions = args[0].split( /:/ )
+            
+            artifacts << Artifact.new( type, group_id, artifact_id,
+                                       version, classifier, exclusions,
+                                       options )
+          when 2
+            # jar "asd:Asd", 123
+            # jar "asd:Asd:test", 123
+            # jar "asd:Asd:[dsa:rew,fe:fer]", 123
+            # jar "asd:Asd:test:[dsa:rew,fe:fer]", 123
+            group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
+            artifacts << Artifact.new( type, group_id, artifact_id,
+                                       args[ 1 ], classifier, exclusions,
+                                       options )
+          when 3
+            # jar "asd:Asd",'>123', '<345'
+            # jar "asd:Asd:test",'>123', '<345'
+            # jar "asd:Asd:[dsa:rew,fe:fer]",'>123', '<345'
+            # jar "asd:Asd:test:[dsa:rew,fe:fer]",'>123', '<345'
+            group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
+            artifacts << Artifact.new( type, group_id, artifact_id,
+                                       to_version( args[1..-1] ),
+                                       classifier, exclusions,
+                                       options )
+          end
+        end
+
+        def jar( *args )
+          artifact( :jar, *args )
+        end
+
+        def pom( *args )
+          artifact( :pom, *args )
+        end
+
+        def snapshot_repository( name, url )
+          repositories << { :name => name, :url => url, :snapshot => true, :releases => false }
+        end
+
+        def repository( *args )
+          repositories << { :name => name, :url => url }
+        end
+        alias :source :repository
+
+        def jruby( version = nil )
+          p version
+          @jruby = version if version
+        end
+          
+      end
+
       def populate_unlocked(container)
         if File.exists?(@file)
           File.read(@file).each_line do |line| 

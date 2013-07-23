@@ -20,6 +20,37 @@
 #
 module Maven
   module Tools
-    VERSION = '0.33.0'.freeze
+    class Artifact < Hash
+
+      def initialize( group_id, artifact_id, type,  
+                      classifier = nil, version = nil, exclusions = nil,
+                      options = {} )
+        if exclusions.nil?
+          if version.nil?
+            version = classifier
+            classifier = nil
+          elsif version.is_a?( Array )
+            exclusions = version
+            version = classifier
+            classifier = nil
+          end
+        end
+        self[ :type ] = type
+        self[ :group_id ] = group_id
+        self[ :artifact_id ] = artifact_id
+        self[ :version ] = version || "[0,)"
+        self[ :classifier ] = classifier if classifier
+        self[ :exclusions ] = exclusions if exclusions
+        self.merge!( options ) if options
+      end
+
+      def gav_coordinate
+        "#{self[:group_id]}:#{self[:artifact_id]}:#{self[:version]}"
+      end
+
+      def to_s
+        [ self[:group_id], self[:artifact_id], self[:type], self[:classifier], self[:version], key?( :exclusions )? self[:exclusions].inspect.gsub( /[" ]/, '' ) : nil ].select { |o| o }.join( ':' )
+      end
+    end
   end
 end

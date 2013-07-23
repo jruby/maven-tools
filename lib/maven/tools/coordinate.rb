@@ -21,25 +21,64 @@
 module Maven
   module Tools
     module Coordinate
-
-      def to_coordinate(line)
+      def to_split_coordinate( line )
         if line =~ /^\s*(jar|pom)\s/
           packaging = line.strip.sub(/\s+.*/, '')
 
           # Remove packaging, comments and whitespaces
           sanitized_line = line.sub(/\s*[a-z]+\s+/, '').sub(/#.*/,'').gsub(/\s+/,'')
 
-          # Remove version(s) and quotes to find the group id, artifact id and classifier
-          group_id, artifact_id, classifier = sanitized_line.split(',')[0].gsub(/['"]/, '').split(/:/)
 
-          # Remove the group id, artifact id and classifier to find the version(s)
-          version, second_version = sanitized_line.split(',')[1..-1].join(',').gsub(/['"],/, ':').gsub(/['"]/, '').split(/:/)
-          mversion = second_version ? to_version(version, second_version) : to_version(version)
+          exclusions = nil
+          sanitized_line.gsub!( /[,:](\[.+:.+\]|'\[.+:.+\]'|"\[.+:.+\]")/ ) do |match|
+            exclusions = match.gsub( /['"]/, '' )[2..-2].split( /,\s*/ )
+            nil
+          end
 
-          classifier ? "#{group_id}:#{artifact_id}:#{packaging}:#{classifier}:#{mversion}" : "#{group_id}:#{artifact_id}:#{packaging}:#{mversion}"
+          # split to compartments
+          parts = sanitized_line.split( /[,]/ ).collect{|o| o.gsub( /['"]/, '' ) }
+          # fix no version on one argument
+          if parts.size == 1
+            parts << '[0,)'
+          end
+
+          # split first argument
+          parts[ 0 ] = parts[ 0 ].split( /:/ )
+          parts.flatten!
+         
+          # convert ruby version to maven version
+          versions = parts.select { |i| i.match( /[~><=!]/ ) }
+          if ! versions.empty?
+            version = to_version( *versions )
+            parts = parts - versions
+            parts << version
+          else
+            # concat maven version ranges
+            versions = parts.select { |i| i.match( /[\[\]()]/ ) }
+            if ! versions.empty?
+              version = versions.join( ',' )
+              parts = parts - versions
+              parts << version
+            end
+          end
+          
+          # insert packing and exclusion
+          parts.insert( 2, packaging )
+          parts << exclusions
+                       
+          # make sure there are not nils
+          parts.select { |o| !o.nil? }
         end
       end
 
+      def to_coordinate( line )
+        result = to_split_coordinate( line )
+        if result
+          exclusion = result.last.inspect.gsub( /[" ]/, '' )
+          ( result[0..-2] + [ exclusion ] ).join( ':' )
+        end
+      end
+      
       def group_artifact(*args)
         case args.size
         when 1
