@@ -1,3 +1,4 @@
+require File.expand_path( 'spec_helper', File.dirname( __FILE__ ) )
 require 'maven/tools/gemspec_dependencies'
 
 describe Maven::Tools::GemspecDependencies do
