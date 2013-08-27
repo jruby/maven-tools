@@ -26,9 +26,10 @@ module Maven
         :assembly_plugin => "2.4",
         :war_plugin => "2.2",
         :jar_plugin => "2.4",
+        :clean_plugin => "2.4",
         :jruby_plugins => "1.0.0-beta",
         :bundler_version => "1.3.5",
-        :jruby_version => defined?(JRUBY_VERSION) ? JRUBY_VERSION : "1.7.4"
+        :jruby_version => "1.7.4"
       }.freeze
     end
   end

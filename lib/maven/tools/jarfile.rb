@@ -19,6 +19,8 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 require File.join(File.dirname(__FILE__), 'coordinate.rb')
+require File.join(File.dirname(__FILE__), 'artifact.rb')
+require 'fileutils'
 module Maven
   module Tools
 
@@ -91,89 +93,66 @@ module Maven
           @repositories ||= []
         end
 
-        def artifact( type, *args )
-          if args.last.is_a? Hash
-            options = args.last.dup
-            args = args[0..-2]
-          end
-          case args.size
-          when 1
-            # jar "asd:Asd:123
-            # jar "asd:Asd:123:test"
-            # jar "asd:Asd:123:[dsa:rew,fe:fer]"
-            # jar "asd:Asd:123:test:[dsa:rew,fe:fer]"
-            group_id, artifact_id, version, classifier, exclusions = args[0].split( /:/ )
-            
-            artifacts << Artifact.new( type, group_id, artifact_id,
-                                       version, classifier, exclusions,
-                                       options )
-          when 2
-            # jar "asd:Asd", 123
-            # jar "asd:Asd:test", 123
-            # jar "asd:Asd:[dsa:rew,fe:fer]", 123
-            # jar "asd:Asd:test:[dsa:rew,fe:fer]", 123
-            group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
-            artifacts << Artifact.new( type, group_id, artifact_id,
-                                       args[ 1 ], classifier, exclusions,
-                                       options )
-          when 3
-            # jar "asd:Asd",'>123', '<345'
-            # jar "asd:Asd:test",'>123', '<345'
-            # jar "asd:Asd:[dsa:rew,fe:fer]",'>123', '<345'
-            # jar "asd:Asd:test:[dsa:rew,fe:fer]",'>123', '<345'
-            group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
-            artifacts << Artifact.new( type, group_id, artifact_id,
-                                       to_version( args[1..-1] ),
-                                       classifier, exclusions,
-                                       options )
-          end
+        def snapshot_repositories
+          @snapshot_repositories ||= []
+        end
+
+        def local( path )
+          artifacts << Artifact.new_local( File.expand_path( path ), :jar )
         end
 
         def jar( *args )
-          artifact( :jar, *args )
+          artifacts << Artifact.from( :jar, *args )
         end
 
         def pom( *args )
-          artifact( :pom, *args )
+          artifacts << Artifact.from( :pom, *args )
         end
 
-        def snapshot_repository( name, url )
-          repositories << { :name => name, :url => url, :snapshot => true, :releases => false }
+        def snapshot_repository( name, url = nil )
+          if url.nil?
+            url = name
+          end
+          snapshot_repositories << { :name => name.to_s, :url => url }
         end
 
-        def repository( *args )
-          repositories << { :name => name, :url => url }
+        def repository( name, url = nil )
+          if url.nil?
+            url = name
+          end
+          repositories << { :name => name.to_s, :url => url }
         end
         alias :source :repository
 
         def jruby( version = nil )
-          p version
           @jruby = version if version
         end
           
       end
 
-      def populate_unlocked(container)
+      def populate_unlocked( container = nil, &block )
         if File.exists?(@file)
-          File.read(@file).each_line do |line| 
-            if coord = to_coordinate(line)
-              unless locked?(coord)
-                container.add_artifact(coord)
+          dsl = DSL.new
+          dsl.eval_file( @file )
+
+          if block
+            block.call( dsl )
+          end
+          if container
+            dsl.artifacts.each do |a|
+              if path = a[ :system_path ]
+                container.add_local_jar( path )
+              elsif not locked?( a.to_s )
+                container.add_artifact( a.to_s )
               end
-            elsif line =~ /^\s*(repository|source)\s/
-              # allow `source :name, "http://url"`
-              # allow `source "name", "http://url"`
-              # allow `source "http://url"`
-              # also allow `repository` instead of `source`
-              name, url = line.sub(/.*(repository|source)\s+/, '').split(/,/)
-              url = name unless url
-              # remove whitespace and trailing/leading ' or "
-              name.strip!
-              name.gsub!(/^:/, '')
-              name.gsub!(/^['"]|['"]$/,'')
-              url.strip!
-              url.gsub!(/^['"]|['"]$/,'')
-              container.add_repository(name, url)
+            end
+            dsl.repositories.each do |repo|
+              container.add_repository( repo[ :name ] || repo[ 'name' ],
+                                        repo[ :url ] || repo[ 'url' ] )
+            end
+            dsl.snapshot_repositories.each do |repo|
+              container.add_snapshot_repository( repo[ :name ] || repo[ 'name' ],
+                                                 repo[ :url ] || repo[ 'url' ] )
             end
           end
         end

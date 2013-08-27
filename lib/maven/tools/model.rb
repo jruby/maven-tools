@@ -175,6 +175,15 @@ class Dependency
   attribute :system_path, String
   attribute :exclusions, Array[ Exclusion ]
   attribute :optional, Boolean
+
+  # silent default
+  def type=( t )
+    if t.to_sym == :jar
+      @type = nil
+    else
+      @type = t
+    end
+  end
 end
 class DependencyManagement
   include Virtus
@@ -202,7 +211,7 @@ class Execution
   attribute :phase, String
   attribute :goals, Array[ String ]
   attribute :inherited, Boolean
-  attribute :configuration, String
+  attribute :configuration, Hash
 end
 class Plugin
   include Virtus
@@ -213,7 +222,16 @@ class Plugin
   attribute :dependencies, Array[ Dependency ]
   attribute :goals, Array[ String ]
   attribute :inherited, Boolean
-  attribute :configuration, String
+  attribute :configuration, Hash
+
+  # silent default
+  def group_id=( v )
+    if v.to_s == 'org.apache.maven.plugins'
+      @group_id = nil
+    else
+      @group_id = v
+    end
+  end
 end
 class PluginManagement
   include Virtus
@@ -227,7 +245,7 @@ class ReportSet
   attribute :id, String
   attribute :reports, Array[ String ]
   attribute :inherited, Boolean
-  attribute :configuration, String
+  attribute :configuration, Hash
 end
 class ReportPlugin
   include Virtus

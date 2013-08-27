@@ -1,4 +1,3 @@
-require 'maven/tools/model'
 module Maven
   module Tools
     class Visitor
@@ -19,19 +18,38 @@ module Maven
         @indent = @indent[ 0..-3 ]
       end
 
-      def start_tag( name )
-        @io.puts "#{indent}<#{camel_case_lower( name )}>"
+      def start_raw_tag( name, attr = {} )
+        @io.print "#{indent}<#{name}"
+        attr.each do |k,v|
+          @io.puts
+          @io.print "#{indent}  #{k.to_s[1..-1]}='#{v}'"
+        end
+        @io.puts ">"
         inc
       end
 
-      def end_tag( name )
+      def end_raw_tag( name )
         dec
-        @io.puts "#{indent}</#{camel_case_lower( name )}>"
+        @io.puts "#{indent}</#{name}>"
+      end
+
+      def start_tag( name, attr = {} )
+        start_raw_tag( camel_case_lower( name ), attr )
+      end
+
+      def end_tag( name )
+        end_raw_tag( camel_case_lower( name ) )
       end
 
       def tag( name, value )
         unless value.nil?
           name = camel_case_lower( name )
+          @io.puts "#{indent}<#{name}>#{value}</#{name}>"
+        end
+      end
+
+      def raw_tag( name, value )
+        unless value.nil?
           @io.puts "#{indent}<#{name}>#{value}</#{name}>"
         end
       end
@@ -46,6 +64,7 @@ module Maven
       def accept_project( project )
         accept( 'project', project )
         @io.close if @io.respond_to? :close
+        nil
       end
 
       def accept( name, model )
@@ -67,6 +86,10 @@ module Maven
               visit( i )
               end_tag( n )
             end
+          when Hash
+            array.each do |i|
+              accept_hash( n, i )
+            end
           else
             array.each do |i|
               tag( n, i )
@@ -76,11 +99,39 @@ module Maven
         end
       end
 
+      def accept_raw_hash( name, hash )
+        unless hash.empty?
+          attr = hash.select do |k, v|
+            [ k, v ] if k.to_s.match( /^@/ )
+          end
+          start_tag( name, attr )
+          hash.each do |k, v|
+            case v
+            when Array
+              accept_array( k, v )
+            else
+              raw_tag( k, v ) unless k.to_s.match( /^@/ )
+            end
+          end
+          end_tag( name )
+        end
+      end
+
       def accept_hash( name, hash )
         unless hash.empty?
-          start_tag( name )
+          # TODO attributes
+          attr = hash.select do |k, v|
+            [ k, v ] if k.to_s.match( /^@/ )
+          end
+          start_tag( name, attr )
           hash.each do |k, v|
-            tag( k, v )
+            case v
+            when Array
+              accept_array( k, v )
+            else
+              # TODO xml content
+              tag( k, v ) unless k.to_s.match( /^@/ )
+            end
           end
           end_tag( name )
         end
@@ -88,15 +139,19 @@ module Maven
 
       def visit( model )
         model.attributes.each do |k, v|
-          case v
-          when Virtus
-            accept( k, v )
-          when Array
-            accept_array( k, v )
-          when Hash
-            accept_hash( k, v )
+          if k == :properties
+            accept_raw_hash( k, v )
           else
-            tag( k, v )
+            case v
+            when Virtus
+              accept( k, v )
+            when Array
+              accept_array( k, v )
+            when Hash
+              accept_hash( k, v )
+            else
+              tag( k, v )
+            end
           end
         end
       end

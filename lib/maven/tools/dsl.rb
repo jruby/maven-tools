@@ -1,6 +1,8 @@
 require 'fileutils'
 require 'maven/tools/gemspec_dependencies'
 require 'maven/tools/artifact'
+require 'maven/tools/jarfile'
+require 'maven/tools/versions'
 
 module Maven
   module Tools
@@ -20,20 +22,180 @@ module Maven
         @model = nil
         result
       end
+      alias :maven :tesla
       
       def model
         @model
       end
 
-      def eval_pom( src, reference_file )
+      def eval_pom( src, reference_file = '.' )
         @source = reference_file
         eval( src )
       ensure
         @source = nil
+        @basedir = nil
       end
 
-      def gemspec( name = nil, options = {} )
-        basedir = File.dirname( @source )
+      def basedir( basedir = nil )
+        @basedir ||= basedir if basedir
+        @basedir ||= File.directory?( @source ) ? @source : 
+          File.dirname( @source ) if @source
+        @basedir ||= File.expand_path( '.' )
+      end
+
+      def artifact( a )
+        if a.is_a?( String )
+          a = Maven::Tools::Artifact.new( *a.split( /:/ ) )
+        end
+        self.send a[:type].to_sym, a
+      end
+
+      def source(*args)
+        warn "ignore source #{args}" if !(args[0].to_s =~ /^https?:\/\/rubygems.org/) && args[0] != :rubygems
+      end
+
+      def ruby( *args )
+        # ignore
+      end
+
+      def path( *args )
+        warn 'path block not implemented'
+      end
+
+      def git( *args )
+        warn 'git block not implemented'
+      end
+
+      def is_jruby_platform( *args )
+        args.detect { |a| :jruby == a.to_sym }
+      end
+      private :is_jruby_platform
+
+      def platforms( *args )
+        if is_jruby_platform( *args )
+          yield
+        end
+      end
+
+      def group( *args )
+        yield
+      end
+
+      def gemfile( name = 'Gemfile', options = {} )
+        if name.is_a? Hash
+          options = name
+          name = 'Gemfile'
+        end
+        name = File.join( basedir, name )
+
+        @gemfile_options = options
+        FileUtils.cd( basedir ) do
+          eval( File.read( File.expand_path( name ) ) )
+        end
+
+        if @gemfile_options
+          @gemfile_options = nil
+          setup_gem_support( options )
+        end
+      end
+
+      def setup_gem_support( options, spec = nil, config = {} )
+        if spec.nil?
+          require_path = '.'
+          name = File.basename( File.expand_path( '.' ) )
+        else
+          require_path = spec.require_path
+          name = spec.name
+        end
+        
+        unless model.repositories.detect { |r| r.id == 'rubygems-releases' }
+          repository( 'http://rubygems-proxy.torquebox.org/releases',
+                      :id => 'rubygems-releases' )
+        end
+
+        properties( 'jruby.plugins.version' => '1.0.0-beta-1-SNAPSHOT' )
+
+        if options.key?( :jar ) || options.key?( 'jar' )
+          jarpath = options[ :jar ] || options[ 'jar' ]
+          if jarpath
+            jar = File.basename( jarpath ).sub( /.jar$/, '' )
+            output = "#{require_path}/#{jarpath.sub( /#{jar}/, '' )}".sub( /\/$/, '' )
+          end
+        else
+          jar = "#{name}"
+          output = "#{require_path}"
+        end
+        if options.key?( :source ) || options.key?( 'source' )
+          source = options[ :source ] || options[ 'source' ]
+          build do
+            source_directory source
+          end
+        end
+        if jar && ( source || 
+                    File.exists?( File.join( basedir, 'src', 'main', 'java' ) ) )
+          plugin( :jar, VERSIONS[ :jar_plugin ],
+                  :outputDirectory => output,
+                  :finalName => jar ) do
+            execute_goals :jar, :phase => 'prepare-package'
+          end
+          plugin( :clean, VERSIONS[ :clean_plugin ],
+                  :filesets => [ { :directory => output,
+                                   :includes => [ "#{jar}.jar" ] } ] )
+        end
+      end
+      private :setup_gem_support
+
+      def setup_jruby( jruby, jruby_scope = :provided )
+        jruby ||= VERSIONS[ :jruby_version ]
+        scope( jruby_scope ) do
+          if ( jruby < '1.7' )
+            warn 'jruby version below 1.7 uses jruby-complete'
+            jar 'org.jruby:jruby-core', jruby
+          elsif ( jruby < '1.7.5' )
+            jar 'org.jruby:jruby-core', jruby
+          else
+            jar 'org.jruby:jruby', jruby
+          end
+        end
+      end
+      private :setup_jruby
+      
+      def jarfile( file = 'Jarfile', options = {} )
+        if file.is_a? Hash 
+          options = file
+          file = 'Jarfile'
+        end
+        unless file.is_a?( Maven::Tools::Jarfile )
+          file = Maven::Tools::Jarfile.new( File.expand_path( file ) )
+        end
+
+        if options[ :skip_locked ] or not file.exists_lock?
+          file.populate_unlocked do |dsl|
+            setup_jruby( dsl.jruby )
+            dsl.artifacts.each do |a|
+              dependency a
+            end
+          end
+        else
+          file.locked.each do |dep|
+            artifact( dep )
+          end
+          file.populate_unlocked do |dsl|
+            setup_jruby( dsl.jruby )
+            dsl.artifacts.each do |a|
+              if a[ :system_path ]
+                dependeny a
+              end
+            end
+          end
+        end
+      end
+
+      def gemspec( name = nil, options = @gemfile_options || {} )
+        properties( 'project.build.sourceEncoding' => 'utf-8' )
+        build.directory = '${basedir}/pkg'
+
+        @gemfile_options = nil
         if name.is_a? Hash
           options = name
           name = nil
@@ -57,20 +219,17 @@ module Maven
         packaging 'gem'
         url spec.homepage
 
-        repository( 'http://rubygems-proxy.torquebox.org/releases',
-                    :id => 'rubygems-releases' )
-
-        properties( 'jruby.plugins.version' => '1.0.0-beta-1-SNAPSHOT' )
-
         extension 'de.saumya.mojo:gem-extension:${jruby.plugins.version}'
 
+        setup_gem_support( options, spec )
+        
         config = { :gemspec => name.sub( /^#{basedir}\/?/, '' ) }
         if options[ :include_jars ] || options[ 'include_jars' ] 
           config[ :includeDependencies ] = true
         end
         plugin( 'de.saumya.mojo:gem-maven-plugin:${jruby.plugins.version}',
                 config )
-
+      
         deps = Maven::Tools::GemspecDependencies.new( spec )
         deps.runtime.each do |d|
           gem d
@@ -84,45 +243,19 @@ module Maven
         end
         unless deps.java_runtime.empty?
           deps.java_runtime.each do |d|
-            a = Maven::Tools::Artifact.new( *d )
-            self.send a[:type].to_sym, a
+            dependency Maven::Tools::Artifact.new( *d )
           end
         end
-
-        if options.key?( :jar ) || options.key?( 'jar' )
-          jarpath = options[ :jar ] || options[ 'jar' ]
-          if jarpath
-            jar = File.basename( jarpath ).sub( /.jar$/, '' )
-            output = "#{spec.require_path}/#{jarpath.sub( /#{jar}/, '' )}".sub( /\/$/, '' )
-          end
-        else
-          jar = "#{spec.name}"
-          output = "#{spec.require_path}"
-        end
-        if options.key?( :source ) || options.key?( 'source' )
-          source = options[ :source ] || options[ 'source' ]
-          build do
-            source_directory source
-          end
-        end
-        if jar && ( source || 
-                    File.exists?( File.join( basedir, 'src', 'main', 'java' ) ) )
-          plugin( :jar,
-                  :outputDirectory => output,
-                  :finalName => jar ) do
-            execute_goals :jar, :phase => 'prepare-package'
-          end
-        end
-
       end
 
       def build( &block )
         build = @current.build ||= Build.new
         nested_block( :build, build, block ) if block
+        build
       end
 
       def project( name, url = nil, &block )
-        raise 'mixe' unless @current == model
+        raise 'mixed up hierachy' unless @current == model
         @current.name = name
         @current.url = url
 
@@ -139,17 +272,18 @@ module Maven
         end
       end
 
-      def site( url, options = {} )
+      def site( url = nil, options = {} )
         site = Site.new
         fill_options( site, url, options )
         @current.site = site
       end
 
-      def source_code( url, options = {} )
+      def source_control( url = nil, options = {} )
         scm = Scm.new
         fill_options( scm, url, options )
         @current.scm = scm
       end
+      alias :scm :source_control
 
       def issue_management( url, system = nil )
         issues = IssueManagement.new
@@ -216,6 +350,8 @@ module Maven
       end
 
       def test_resource( &block )
+        # strange behaviour when calling specs from Rakefile
+        return if @current.nil?
         resource = Resource.new
         nested_block( :resource, resource, block )
         if @context == :project
@@ -276,6 +412,7 @@ module Maven
         @current.parent = fill_gav( Parent, value.join( ':' ) )
         reduce_id
       end
+      alias :parent :inherit
 
       def properties(props)
         props.each do |k,v|
@@ -324,6 +461,10 @@ module Maven
         nested_block(:overrides, @current, block)
       end
 
+      def execute_goal( goal )
+        execute_goals( goal )
+      end
+
       def execute_goals( *goals )
         if goals.last.is_a? Hash
           options = goals.last
@@ -331,7 +472,7 @@ module Maven
         else
           options = {}
         end
-        exec = PluginExecution.new
+        exec = Execution.new
         # keep the original default of id
         id = options.delete( :id ) || options.delete( 'id' )
         exec.id = id if id
@@ -351,18 +492,24 @@ module Maven
       end
 
       def dependency( type, *args )
-        if args.size > 0 and args.last.is_a?( Hash )
-          options = args.last
-          args = args[ 0..-2 ]
+        if args.empty?
+          a = type
+          type = a[ :type ]
+          options = a
+        else
+          a = ::Maven::Tools::Artifact.from( type, *args )
         end
-        gav = args.join( ':' )
-        d = fill_gav(Dependency, gav)
+        d = fill_gav( Dependency, 
+                      a ? a.gav : args.join( ':' ) )
         d.type = type.to_s
         if @context == :overrides
           @current.dependency_management ||= DependencyManagement.new
           @current.dependency_management.dependencies << d
         else
           @current.dependencies << d
+        end
+        if args.last.is_a?( Hash )
+          options = args.last
         end
         if options || @scope
           options ||= {}
@@ -432,7 +579,31 @@ module Maven
       end
 
       def gem( *args )
-        dependency( :gem, *args, :group_id => 'rubygems', :version => "[0,)" )
+        # in some setup that gem could overload the Kernel gem
+        return if @current.nil?
+        unless args[ 0 ].match( /:/ )
+          args[ 0 ] = "rubygems:#{args[ 0 ] }"
+        end
+        if args.last.is_a?(Hash)
+          options = args.last
+          unless options.key?(:git) || options.key?(:path)
+            platform = options.delete( :platforms ) || options.delete( 'platforms' )
+            #if platform.nil? || is_jruby_platform( platform )
+            #  options[ :group_id ] = 'rubygems'
+            #  options[ :version ] = '[0,)'
+            #end
+            dependency( :gem, *args )
+          end
+        else
+          #args = args + [ { :group_id => 'rubygems', :version => '[0,)' } ]
+          dependency( :gem, *args )
+        end
+      end
+
+      def local( path, options = {} )
+        path = File.expand_path( path )
+        dependency( :jar,
+                    Maven::Tools::Artifact.new_local( path, :jar, options ) )
       end
 
       def method_missing( method, *args, &block )
@@ -471,20 +642,16 @@ module Maven
       end
 
       def xml( xml )
-        Xpp3DomBuilder.build( java.io.StringReader.new( xml ) )
+        raise  'Xpp3DomBuilder.build( java.io.StringReader.new( xml ) )'
+      end
+
+      def set_config(  receiver, options )
+        receiver.configuration = options
       end
 
       private
 
-      def set_config( receiver, options )
-        if options && options.size > 0
-          config = Xpp3Dom.new("configuration")
-          fill_dom( config, options )
-          receiver.configuration = config
-        end
-      end
-
-      def do_repository( method, url, options = {}, block )
+      def do_repository( method, url = nil, options = {}, block = nil )
         if @current.respond_to?( method )
           r = DeploymentRepository.new
         else
@@ -513,6 +680,7 @@ module Maven
       end
 
       def fill_options( receiver, url, options )
+        url ||= options.delete( :url ) || options.delete( 'url' )
         options.each do |k,v|
           receiver.send "#{k}=".to_sym, v
         end
@@ -561,48 +729,6 @@ module Maven
           end
         end
         receiver
-      end
-
-      def fill_dom(parent, map = {})
-        map.each do |k, v|
-          case v
-          when Hash
-            child = Xpp3Dom.new(k.to_s)
-            fill_dom(child, v)
-          when Array
-            if k.to_s.match( /s$/ )
-              node = Xpp3Dom.new( k.to_s )
-              name = k.to_s.sub( /s$/, '' )
-            else
-              node = parent
-              name = k.to_s
-            end
-            v.each do |val|
-              child = Xpp3Dom.new( name )
-              case val
-              when Hash
-                fill_dom( child, val )
-                node.addChild( child )
-              when Xpp3Dom
-                node.addChild( val )
-              else
-                child.setValue( val )
-                node.addChild( child )
-              end
-            end
-            parent.addChild( node ) if node != parent
-            child = nil
-          else
-            case k.to_s
-            when /^@/
-              parent.setAttribute( k.to_s[ 1..-1 ], v.to_s )
-            else
-              child = Xpp3Dom.new(k.to_s)
-              child.setValue(v.to_s) unless v.nil?
-            end
-          end
-          parent.addChild(child) if child
-        end
       end
     end
   end

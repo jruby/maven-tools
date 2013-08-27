@@ -18,9 +18,69 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
+require 'maven/tools/coordinate'
 module Maven
   module Tools
     class Artifact < Hash
+
+      class Helper
+        include Coordinate
+      end
+
+      def self.new_local( path, type, options = {} )
+        name = File.basename( path ).sub( /.#{type}$/, '' )
+        if ind = name.rindex( '-' )
+          version = name[ind + 1..-1]
+          name = name[0..ind - 1]
+        else
+          version = '0'
+        end
+        self.new( "ruby.maven-tools.#{type}", name, type,
+                  nil, version, nil,
+                  options.merge( { :system_path => path,
+                                   :scope => :system } ) )
+      end
+
+      def self.from( type, *args )
+        if args.last.is_a? Hash
+          options = args.last.dup
+          args = args[0..-2]
+        end
+        helper = Helper.new
+        case args.size
+        when 1
+          # jar "asd:Asd:123
+          # jar "asd:Asd:123:test"
+          # jar "asd:Asd:123:[dsa:rew,fe:fer]"
+          # jar "asd:Asd:123:test:[dsa:rew,fe:fer]"
+          group_id, artifact_id, version, classifier, exclusions = args[0].split( /:/ )
+          self.new( group_id, artifact_id, type,
+                    version, classifier, exclusions,
+                    options )
+        when 2
+          # jar "asd:Asd", 123
+          # jar "asd:Asd:test", 123
+          # jar "asd:Asd:[dsa:rew,fe:fer]", 123
+          # jar "asd:Asd:test:[dsa:rew,fe:fer]", 123
+          group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
+          self.new( group_id, artifact_id, type,
+                    helper.to_version( args[ 1 ] ),
+                    classifier, exclusions,
+                    options )
+        when 3
+          # jar "asd:Asd",'>123', '<345'
+          # jar "asd:Asd:test",'>123', '<345'
+          # jar "asd:Asd:[dsa:rew,fe:fer]",'>123', '<345'
+          # jar "asd:Asd:test:[dsa:rew,fe:fer]",'>123', '<345'
+          group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
+          self.new( group_id, artifact_id, type,
+                    to_version( args[1..-1] ),
+                    classifier, exclusions,
+                    options )
+        else
+          nil
+        end
+      end
 
       def initialize( group_id, artifact_id, type,  
                       classifier = nil, version = nil, exclusions = nil,
@@ -41,11 +101,23 @@ module Maven
         self[ :version ] = version || "[0,)"
         self[ :classifier ] = classifier if classifier
         self[ :exclusions ] = exclusions if exclusions
-        self.merge!( options ) if options
+        if options
+          self[ :group_id ] ||= options[ :group_id ]
+          self[ :artifact_id ] ||= options[ :artifact_id ]
+          self[ :version ] = version || "[0,)"
+          self[ :classifier ] ||= options[ :classifier ] if options[ :classifier ] 
+          self[ :exclusions ] ||= options[ :exclusions ] if options[ :exclusions ]
+          options.delete( :group_id )
+          options.delete( :artifact_id )
+          options.delete( :version )
+          options.delete( :classifier )
+          options.delete( :exclusions )
+          self.merge!( options )
+        end
       end
 
-      def gav_coordinate
-        "#{self[:group_id]}:#{self[:artifact_id]}:#{self[:version]}"
+      def gav
+        [ self[:group_id], self[:artifact_id], self[:version], self[:classifier] ].select { |o| o }.join( ':' )
       end
 
       def to_s
