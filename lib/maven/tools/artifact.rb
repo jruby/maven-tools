@@ -72,39 +72,48 @@ module Maven
           # jar "asd:Asd:test",'>123', '<345'
           # jar "asd:Asd:[dsa:rew,fe:fer]",'>123', '<345'
           # jar "asd:Asd:test:[dsa:rew,fe:fer]",'>123', '<345'
-          group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
-          self.new( group_id, artifact_id, type,
-                    to_version( args[1..-1] ),
-                    classifier, exclusions,
-                    options )
+          # jar "asd:Asd:test:[dsa:rew,fe:fer]", '123', 'source'
+          v = helper.to_version( args[1..-1] )
+          case v
+          when String
+            group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
+            self.new( group_id, artifact_id, type,
+                      v, classifier, exclusions,
+                      options )
+          else
+            group_id, artifact_id = args[0].split( /:/ )
+            self.new( group_id, artifact_id, type,
+                      args[1], args[2], nil,
+                      options )
+          end
         else
           nil
         end
       end
 
       def initialize( group_id, artifact_id, type,  
-                      classifier = nil, version = nil, exclusions = nil,
+                      version = nil, classifier = nil, exclusions = nil,
                       options = {} )
         if exclusions.nil?
           if version.nil?
             version = classifier
             classifier = nil
-          elsif version.is_a?( Array )
-            exclusions = version
-            version = classifier
+          elsif classifier.is_a?( Array )
+            exclusions = classifier#version
+            #version = classifier
             classifier = nil
           end
         end
         self[ :type ] = type
         self[ :group_id ] = group_id
         self[ :artifact_id ] = artifact_id
-        self[ :version ] = version || "[0,)"
+        self[ :version ] = version
         self[ :classifier ] = classifier if classifier
         self[ :exclusions ] = exclusions if exclusions
         if options
           self[ :group_id ] ||= options[ :group_id ]
           self[ :artifact_id ] ||= options[ :artifact_id ]
-          self[ :version ] = version || "[0,)"
+          self[ :version ] ||= options[ :version ]
           self[ :classifier ] ||= options[ :classifier ] if options[ :classifier ] 
           self[ :exclusions ] ||= options[ :exclusions ] if options[ :exclusions ]
           options.delete( :group_id )

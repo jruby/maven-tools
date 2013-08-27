@@ -102,10 +102,12 @@ module Maven
         end
 
         def jar( *args )
+          args << '[0,)' if args.size == 1
           artifacts << Artifact.from( :jar, *args )
         end
 
         def pom( *args )
+          args << '[0,)' if args.size == 1
           artifacts << Artifact.from( :pom, *args )
         end
 
