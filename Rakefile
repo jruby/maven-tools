@@ -14,9 +14,11 @@ end
 task :default => [ :minispec, :rspec ]
 
 task :minispec do
+  require 'minitest'
   require 'minitest/autorun'
 
   $LOAD_PATH << "spec"
+  $LOAD_PATH << "lib"
 
   Dir['spec/*_spec.rb'].each { |f| require File.basename(f.sub(/.rb$/, '')) }
 end
