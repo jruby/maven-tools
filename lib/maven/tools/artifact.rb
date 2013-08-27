@@ -91,11 +91,16 @@ module Maven
         end
       end
 
+      def self.from_coordinate( coord )
+        args = coord.split( /:/ )
+        new( *args )
+      end
+
       def initialize( group_id, artifact_id, type,  
                       version = nil, classifier = nil, exclusions = nil,
                       options = {} )
         if exclusions.nil?
-          if version.nil?
+          if version.nil? and !classifier.nil?
             version = classifier
             classifier = nil
           elsif classifier.is_a?( Array )

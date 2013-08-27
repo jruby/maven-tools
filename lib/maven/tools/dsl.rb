@@ -45,7 +45,7 @@ module Maven
 
       def artifact( a )
         if a.is_a?( String )
-          a = Maven::Tools::Artifact.new( *a.split( /:/ ) )
+          a = Maven::Tools::Artifact.from_coordinate( a )
         end
         self.send a[:type].to_sym, a
       end
@@ -86,7 +86,7 @@ module Maven
           options = name
           name = 'Gemfile'
         end
-        name = File.join( basedir, name )
+        name = File.join( basedir, name ) unless File.exists?( name )
 
         @gemfile_options = options
         FileUtils.cd( basedir ) do
@@ -494,6 +494,10 @@ module Maven
       def dependency( type, *args )
         if args.empty?
           a = type
+          type = a[ :type ]
+          options = a
+        elsif args[ 0 ].is_a?( ::Maven::Tools::Artifact )
+          a = args[ 0 ]
           type = a[ :type ]
           options = a
         else
