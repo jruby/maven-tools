@@ -25,8 +25,6 @@ plugin( 'de.saumya.mojo:minitest-maven-plugin', '${jruby.plugins.version}',
   execute_goals(:spec)
 end
 
-# rspec 2.14.x it no working
-gem 'rspec', '2.13.0'
 plugin( 'de.saumya.mojo:rspec-maven-plugin', '${jruby.plugins.version}',
         :specSourceDirectory=>"rspec" ) do
   execute_goals(:test)

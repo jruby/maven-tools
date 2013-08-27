@@ -14,7 +14,10 @@ end
 task :default => [ :minispec, :rspec ]
 
 task :minispec do
-  require 'minitest'
+  begin
+    require 'minitest'
+  rescue LoadError
+  end
   require 'minitest/autorun'
 
   $LOAD_PATH << "spec"
