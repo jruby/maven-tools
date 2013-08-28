@@ -20,10 +20,12 @@ Gem::Specification.new do |s|
   s.files += Dir['MIT-LICENSE'] + Dir['*.md']
   s.test_files += Dir['spec/**/*_spec.rb']
   s.test_files += Dir['rspec/**/*'].select { |f| f =~ /[a-z]$/ }
+
+  s.add_runtime_dependency 'virtus', '~> 0.5'
+
   s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'minitest', '~> 4.4'
   s.add_development_dependency 'rspec', '= 2.13.0'
-  s.add_development_dependency 'virtus', '~> 0.5'
   #s.add_development_dependency 'copyright-header', '~> 1.0'
 end
 
