@@ -87,6 +87,7 @@ module Maven
           name = 'Gemfile'
         end
         name = File.join( basedir, name ) unless File.exists?( name )
+        basedir = File.dirname( name ) unless basedir
 
         @gemfile_options = options
         FileUtils.cd( basedir ) do
