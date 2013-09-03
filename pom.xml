@@ -31,6 +31,19 @@
     <developerConnection>scm:git:ssh://git@github.com/torquebox/maven-tools.git</developerConnection>
     <url>github.com/torquebox/maven-tools</url>
   </scm>
+  <repositories>
+    <repository>
+      <id>sonatype</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
