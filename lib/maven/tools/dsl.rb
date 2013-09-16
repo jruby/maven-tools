@@ -11,7 +11,7 @@ module Maven
       def tesla( &block )
         @model = Model.new
         @model.model_version = '4.0.0'
-        @model.name = File.basename( File.expand_path( '.' ) )
+        @model.name = File.basename( basedir )
         @model.group_id = 'dummy'
         @model.artifact_id = model.name
         @model.version = '0.0.0'
@@ -38,8 +38,10 @@ module Maven
 
       def basedir( basedir = nil )
         @basedir ||= basedir if basedir
-        @basedir ||= File.directory?( @source ) ? @source : 
-          File.dirname( @source ) if @source
+        if @source
+          @basedir ||= File.directory?( @source ) ? @source : 
+            File.dirname( File.expand_path( @source ) )
+        end
         @basedir ||= File.expand_path( '.' )
       end
 
@@ -114,7 +116,7 @@ module Maven
                       :id => 'rubygems-releases' )
         end
 
-        properties( 'jruby.plugins.version' => '1.0.0-beta-1-SNAPSHOT' )
+        properties( 'jruby.plugins.version' => VERSIONS[ :jruby_plugins ] )
 
         if options.key?( :jar ) || options.key?( 'jar' )
           jarpath = options[ :jar ] || options[ 'jar' ]
@@ -193,8 +195,7 @@ module Maven
       end
 
       def gemspec( name = nil, options = @gemfile_options || {} )
-        properties( 'project.build.sourceEncoding' => 'utf-8' )
-        build.directory = '${basedir}/pkg'
+        properties( 'project.build.sourceEncoding' => 'utf-8' ) unless model.properties.member?( 'project.build.sourceEncoding' )
 
         @gemfile_options = nil
         if name.is_a? Hash
@@ -214,13 +215,15 @@ module Maven
           spec = eval( File.read( File.expand_path( name ) ) )
         end
 
-        id "rubygems:#{spec.name}:#{spec.version}"
-        name( spec.summary || spec.name )
-        description spec.description
-        packaging 'gem'
-        url spec.homepage
-
-        extension 'de.saumya.mojo:gem-extension:${jruby.plugins.version}'
+        if @context == :project
+          build.directory = '${basedir}/pkg'
+          id "rubygems:#{spec.name}:#{spec.version}"
+          name( spec.summary || spec.name )
+          description spec.description
+          packaging 'gem'
+          url spec.homepage
+          extension 'de.saumya.mojo:gem-extension:${jruby.plugins.version}'
+        end
 
         setup_gem_support( options, spec )
         
@@ -461,9 +464,11 @@ module Maven
       def overrides(&block)
         nested_block(:overrides, @current, block)
       end
+      alias :plugin_management :overrides
+      alias :dependency_management :overrides
 
-      def execute_goal( goal )
-        execute_goals( goal )
+      def execute_goal( goal, options = {} )
+        execute_goals( goal, options )
       end
 
       def execute_goals( *goals )

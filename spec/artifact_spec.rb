@@ -11,8 +11,29 @@ describe Maven::Tools::Artifact do
     Maven::Tools::Artifact.new( "sdas.asd", "das", "jar", "123", "blub", ["fds:fre", "ferf:de"] ).to_s.must_equal 'sdas.asd:das:jar:blub:123:[fds:fre,ferf:de]'
   end
 
-  it 'should convert ruby version contraints' do
+  it 'should convert ruby version contraints - gems' do
     Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '=1' ).to_s.must_equal 'rubygems:asd:gem:[1,1.0.0.0.0.1)'
+    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '>=1' ).to_s.must_equal 'rubygems:asd:gem:[1,)'
+    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<=1' ).to_s.must_equal 'rubygems:asd:gem:[0,1]'
+    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '>1' ).to_s.must_equal 'rubygems:asd:gem:(1,)'
+    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<1' ).to_s.must_equal 'rubygems:asd:gem:[0,1)'
+    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '!1' ).to_s.must_equal 'rubygems:asd:gem:(1,)'
+    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<2', '>1' ).to_s.must_equal 'rubygems:asd:gem:(1,2)'
+    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<=2', '>1' ).to_s.must_equal 'rubygems:asd:gem:(1,2]'
+    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<2', '>=1' ).to_s.must_equal 'rubygems:asd:gem:[1,2)'
+    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<=2', '>=1' ).to_s.must_equal 'rubygems:asd:gem:[1,2]'
+  end
 
+  it 'should convert ruby version contraints - jars' do
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '=1' ).to_s.must_equal 'rubygems:asd:jar:[1,1.0.0.0.0.1)'
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '>=1' ).to_s.must_equal 'rubygems:asd:jar:[1,)'
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<=1' ).to_s.must_equal 'rubygems:asd:jar:[0,1]'
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '>1' ).to_s.must_equal 'rubygems:asd:jar:(1,)'
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<1' ).to_s.must_equal 'rubygems:asd:jar:[0,1)'
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '!1' ).to_s.must_equal 'rubygems:asd:jar:(1,)'
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<2', '>1' ).to_s.must_equal 'rubygems:asd:jar:(1,2)'
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<=2', '>1' ).to_s.must_equal 'rubygems:asd:jar:(1,2]'
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<2', '>=1' ).to_s.must_equal 'rubygems:asd:jar:[1,2)'
+    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<=2', '>=1' ).to_s.must_equal 'rubygems:asd:jar:[1,2]'
   end
 end

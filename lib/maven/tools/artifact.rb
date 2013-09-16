@@ -73,7 +73,7 @@ module Maven
           # jar "asd:Asd:[dsa:rew,fe:fer]",'>123', '<345'
           # jar "asd:Asd:test:[dsa:rew,fe:fer]",'>123', '<345'
           # jar "asd:Asd:test:[dsa:rew,fe:fer]", '123', 'source'
-          v = helper.to_version( args[1..-1] )
+          v = helper.to_version( *args[1..-1] )
           case v
           when String
             group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
