@@ -21,7 +21,7 @@ end
 
 describe Maven::Tools::Jarfile do
 
-  let(:workdir) { 'target' }
+  let(:workdir) { 'pkg' }
   let(:jfile) { File.join(workdir, 'tmp-jarfile') }
   let(:jfile_lock) { jfile + ".lock"}
   let(:container) { Container.new }
