@@ -1,7 +1,5 @@
 #-*- mode: ruby -*-
-#require 'rubygems'
-#require 'bundler/setup'
-#require 'rspec/core/rake_task'
+require 'rubygems/package_task'
 
 #RSpec::Core::RakeTask.new(:rspec) do |t|
 #  t.pattern = Dir["rspec/maven/**/*_spec.rb"]
@@ -11,7 +9,10 @@ task :rspec do
   raise 'failed' unless system "rspec #{Dir['rspec/**/*_spec.rb'].join(' ')}"
 end
 
-task :default => [ :minispec, :rspec ]
+task :default => [ :minispec, :rspec, :package ]
+
+Gem::PackageTask.new( Gem::Specification.load( 'maven-tools.gemspec' ) ) do
+end
 
 task :minispec do
   begin
