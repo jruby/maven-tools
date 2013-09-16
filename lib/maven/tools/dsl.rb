@@ -467,8 +467,16 @@ module Maven
       alias :plugin_management :overrides
       alias :dependency_management :overrides
 
+      def execute( options )
+        execute_goals( options )
+      end
+
       def execute_goal( goal, options = {} )
-        execute_goals( goal, options )
+        if goal.is_a? Hash
+          execute_goals( goal )
+        else
+          execute_goals( goal, options )
+        end
       end
 
       def execute_goals( *goals )
