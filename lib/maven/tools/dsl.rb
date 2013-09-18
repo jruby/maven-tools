@@ -606,11 +606,15 @@ module Maven
           options = args.last
           unless options.key?(:git) || options.key?(:path)
             platform = options.delete( :platforms ) || options.delete( 'platforms' )
-            #if platform.nil? || is_jruby_platform( platform )
-            #  options[ :group_id ] = 'rubygems'
-            #  options[ :version ] = '[0,)'
-            #end
-            dependency( :gem, *args )
+            group = options.delete( :group ) || options.delete( 'group' )
+            if group.to_sym == :test
+              options[ :scope ] = :test 
+            else
+              warn "TODO implement groups"
+            end
+            if platform.nil? || is_jruby_platform( platform )
+              dependency( :gem, *args )
+            end
           end
         else
           #args = args + [ { :group_id => 'rubygems', :version => '[0,)' } ]
