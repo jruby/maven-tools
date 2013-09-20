@@ -44,30 +44,38 @@ profile( :test ) do
   
 end
 
+profile :push do
+
+  build do
+    default_goal 'gem:push'
+
+    plugin 'de.saumya.mojo:gem-maven-plugin', '${jruby.plugins.version}' do
+    
+      # push gem to rubygems on deploy
+      execute_goals( :push, :id => 'gem push',
+                     :gem => "${project.build.directory}/maven-tools-#{spec_version}.gem" )
+    
+    end
+  end
+end
+
 plugin 'de.saumya.mojo:gem-maven-plugin', '${jruby.plugins.version}' do
-    
-  # push gem to rubygems on deploy
-  execute_goals( :push, :id => 'gem push',
-                 :gem => "${project.build.directory}/maven-tools-#{spec_version}.gem" )
-    
+
   # build the gem along with the jar
   execute_goals( :package, :id => 'gem build',
                  :phase => :package,
                  :gemspec => 'maven-tools.gemspec' )
 end
 
-plugin :release, :goals => [ 'deploy', 'gem:push' ].join( ' ' )
-
 # just lock down the versions
-properties( 'jruby.plugins.version' => '1.0.0-rc',
+properties( #'jruby.plugins.version' => '1.0.0-rc2',
             'jruby.version' => '1.7.4',
             # overwrite via cli -Djruby.versions=1.6.7
             'jruby.versions' => ['1.5.6','1.6.8','1.7.4'].join(','),
             # overwrite via cli -Djruby.use18and19=false
             'jruby.18and19' => true )
 
-properties( 'tesla.dump.pom' => 'pom.xml',
-            'tesla.dump.readonly' => true )
+properties 'tesla.dump.pom' => 'pom.xml'
 
 # add the ruby files to jar
 resource do

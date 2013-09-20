@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.sonatype.oss</groupId>
@@ -19,7 +20,6 @@
   </scm>
   <properties>
     <jruby.version>1.7.4</jruby.version>
-    <tesla.dump.readonly>true</tesla.dump.readonly>
     <jruby.plugins.version>1.0.0-rc</jruby.plugins.version>
     <jruby.versions>1.5.6,1.6.8,1.7.4</jruby.versions>
     <tesla.dump.pom>pom.xml</tesla.dump.pom>
@@ -40,15 +40,6 @@
         <version>${jruby.plugins.version}</version>
         <executions>
           <execution>
-            <id>gem push</id>
-            <goals>
-              <goal>push</goal>
-            </goals>
-            <configuration>
-              <gem>${project.build.directory}/maven-tools-0.33.2.gem</gem>
-            </configuration>
-          </execution>
-          <execution>
             <id>gem build</id>
             <phase>package</phase>
             <goals>
@@ -59,12 +50,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <goals>deploy gem:push</goals>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -165,6 +150,30 @@
           <url>http://rubygems-proxy.torquebox.org/releases</url>
         </repository>
       </repositories>
+    </profile>
+    <profile>
+      <id>push</id>
+      <build>
+        <defaultGoal>gem:push</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>gem-maven-plugin</artifactId>
+            <version>${jruby.plugins.version}</version>
+            <executions>
+              <execution>
+                <id>gem push</id>
+                <goals>
+                  <goal>push</goal>
+                </goals>
+                <configuration>
+                  <gem>${project.build.directory}/maven-tools-0.33.3.gem</gem>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
