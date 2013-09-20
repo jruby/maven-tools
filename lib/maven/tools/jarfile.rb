@@ -54,14 +54,6 @@ module Maven
           File.read(@lockfile).each_line do |line|
             line.strip!
             if line.size > 0 && !(line =~ /^\s*#/)
-              # fix the classifier and version position
-              if line.count( ':' ) == 4
-                parts = line.split( ':' )
-                p = parts.last
-                parts[ 4 ] = parts[ 3 ]
-                parts[ 3 ] = p
-                line = parts.join( ':' )
-              end
               _locked << line
             end
           end
