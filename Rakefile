@@ -8,13 +8,14 @@ end
 
 task :maven do
   if !defined?( JRUBY_VERSION ) && RUBY_VERSION == "2.0.0"
+    # TODO use ruby-maven tasks
     raise 'failed' unless system "mvn -P test"
   else
     puts 'skip maven'
   end
 end
 
-task :default => [ :maven, :minispec, :rspec ]
+task :default => [ :minispec, :rspec ]
 
 Gem::PackageTask.new( Gem::Specification.load( 'maven-tools.gemspec' ) ) do
 end
