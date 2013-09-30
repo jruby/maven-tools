@@ -78,8 +78,8 @@ properties( #'jruby.plugins.version' => '1.0.0-rc2',
             'jruby.version' => '1.7.4',
             # overwrite via cli -Djruby.versions=1.6.7
             'jruby.versions' => ['1.5.6','1.6.8','1.7.4'].join(','),
-            # overwrite via cli -Djruby.18and19=false
             #'jruby.modes' => '1.8,1.9,2.0'
+            # overwrite via cli -Djruby.18and19=false
             'jruby.18and19' => true
            )
 
