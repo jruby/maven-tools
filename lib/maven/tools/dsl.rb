@@ -80,7 +80,10 @@ module Maven
       end
 
       def group( *args )
+        @group = args[ 0 ]
         yield
+      ensure
+        @group = nil
       end
 
       def gemfile( name = 'Gemfile', options = {} )
@@ -100,6 +103,16 @@ module Maven
           @gemfile_options = nil
           setup_gem_support( options )
         end
+
+        if @has_path or @has_git
+          gem 'bundler', :scope => :provided unless gem? 'bundler'
+          jruby_plugin :gem do
+            execute_goal :exec, :filename => 'bundle', :args => 'install'
+          end
+        end
+      ensure
+        @has_path = nil
+        @has_git = nil
       end
 
       def setup_gem_support( options, spec = nil, config = {} )
@@ -116,7 +129,7 @@ module Maven
                       :id => 'rubygems-releases' )
         end
 
-        properties( 'jruby.plugins.version' => VERSIONS[ :jruby_plugins ] )
+        setup_jruby_plugins_version
 
         if options.key?( :jar ) || options.key?( 'jar' )
           jarpath = options[ :jar ] || options[ 'jar' ]
@@ -432,6 +445,21 @@ module Maven
         @current.build.extensions << ext
       end
 
+      def setup_jruby_plugins_version
+        unless @current.properties.key?( 'jruby.plugins.version' )
+          properties( 'jruby.plugins.version' => VERSIONS[ :jruby_plugins ] )
+        end
+      end
+
+      def jruby_plugin( *gav, &block )
+        gav[ 0 ] = "de.saumya.mojo:#{gav[ 0 ]}-maven-plugin"
+        if gav.size == 1 || gav[ 1 ].is_a?( Hash )
+          setup_jruby_plugins_version
+          gav.insert( 1, '${jruby.plugins.version}' )
+        end
+        plugin( *gav, &block )
+      end
+
       def plugin( *gav, &block )
         if gav.last.is_a? Hash
           options = gav.last
@@ -506,6 +534,29 @@ module Maven
       end
 
       def dependency( type, *args )
+        do_dependency( false, type, *args )
+      end
+
+      def dependency?( container, dep )
+        container.detect do |d|
+          dep.group_id == d.group_id && dep.artifact_id == d.artifact_id && dep.classifier == d.classifier
+        end
+      end
+         
+      def dependency_set( bang, container, dep )
+        if bang
+          dd = dependency?( container, dep )
+          if index = container.index( dd )
+            container[ index ] = dep
+          else
+            container << dep
+          end
+        else
+          container << dep
+        end
+      end
+
+      def do_dependency( bang, type, *args )
         if args.empty?
           a = type
           type = a[ :type ]
@@ -522,9 +573,13 @@ module Maven
         d.type = type.to_s
         if @context == :overrides
           @current.dependency_management ||= DependencyManagement.new
-          @current.dependency_management.dependencies << d
+          dependency_set( bang,
+                          @current.dependency_management.dependencies,
+                          d )
         else
-          @current.dependencies << d
+          dependency_set( bang,
+                          @current.dependencies,
+                          d )
         end
         if args.last.is_a?( Hash )
           options = args.last
@@ -595,8 +650,23 @@ module Maven
         @current.reporting = reporting
         nested_block( :reporting, reporting, block )
       end
+      
+      def gem?( name )
+        @current.dependencies.detect do |d|
+          d.artifact_id == name && d.type == :gem
+        end
+      end
 
       def gem( *args )
+        do_gem( false, *args )
+      end
+      
+      # TODO useful ?
+      def gem!( *args )
+        do_gem( true, *args )
+      end
+
+      def do_gem( bang, *args )
         # in some setup that gem could overload the Kernel gem
         return if @current.nil?
         unless args[ 0 ].match( /:/ )
@@ -604,21 +674,29 @@ module Maven
         end
         if args.last.is_a?(Hash)
           options = args.last
-          unless options.key?(:git) || options.key?(:path)
-            platform = options.delete( :platforms ) || options.delete( 'platforms' )
-            group = options.delete( :group ) || options.delete( 'group' )
-            if group.to_sym == :test
-              options[ :scope ] = :test 
-            else
-              warn "TODO implement groups"
-            end
+          if options.key?( :git )
+            @has_git = true
+          elsif options.key?( :path )
+            @has_path = true
+          else
+            platform = options.delete( :platform ) || options.delete( 'platform' )
+            group = options.delete( :group ) || options.delete( 'group' ) || @group || nil
+             if group
+               case group.to_sym
+               when :test
+                 options[ :scope ] = :test 
+               when :development
+                 options[ :scope ] = :provided
+               end
+             end
             if platform.nil? || is_jruby_platform( platform )
-              dependency( :gem, *args )
+              options[ :version ] = '[0,)' if args.size == 2 && options[ :version ].nil? && options[ 'version' ].nil?
+              do_dependency( bang, :gem, *args )
             end
           end
         else
-          #args = args + [ { :group_id => 'rubygems', :version => '[0,)' } ]
-          dependency( :gem, *args )
+          args << { :version => '[0,)' } if args.size == 1
+          do_dependency( bang, :gem, *args )
         end
       end
 
