@@ -1,15 +1,20 @@
 #-*- mode: ruby -*-
 require 'rubygems/package_task'
+require 'rspec/core/rake_task'
 
-#RSpec::Core::RakeTask.new(:rspec) do |t|
-#  t.pattern = Dir["rspec/maven/**/*_spec.rb"]
-#end
-
-task :rspec do
-  raise 'failed' unless system "rspec #{Dir['rspec/**/*_spec.rb'].join(' ')}"
+RSpec::Core::RakeTask.new(:rspec) do |t|
+  t.pattern = Dir["rspec/maven/**/*_spec.rb"]
 end
 
-task :default => [ :minispec, :rspec, :package ]
+task :maven do
+  if !defined?( JRUBY_VERSION ) && RUBY_VERSION == "2.0.0"
+    raise 'failed' unless system "mvn -P test"
+  else
+    puts 'skip maven'
+  end
+end
+
+task :default => [ :maven, :minispec, :rspec ]
 
 Gem::PackageTask.new( Gem::Specification.load( 'maven-tools.gemspec' ) ) do
 end

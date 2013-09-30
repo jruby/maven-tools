@@ -26,29 +26,35 @@ profile( :test ) do
 
   gemspec
 
-  plugin( 'de.saumya.mojo:minitest-maven-plugin', '${jruby.plugins.version}', 
-          :minispecDirectory =>"spec/*spec.rb" ) do
-    execute_goals(:spec)
-  end
+  build do
+    default_goal :test
 
-  plugin( 'de.saumya.mojo:rspec-maven-plugin', '${jruby.plugins.version}',
-          :specSourceDirectory=>"rspec" ) do
-    execute_goals(:test)
-  end
+    plugin( 'de.saumya.mojo:minitest-maven-plugin', '${jruby.plugins.version}', 
+            :minispecDirectory =>"spec/*spec.rb" ) do
+      execute_goals(:spec)
+    end
 
-  # Gemfile.lock is just a convenience but a library should work with
-  # any allowed version. clean will force a bundle install
-  plugin(:clean, '2.5', 
-         :filesets => [ { :directory => './',
-                          :includes => ['Gemfile.lock'] } ] )
-  
+    plugin( 'de.saumya.mojo:rspec-maven-plugin', '${jruby.plugins.version}',
+            :specSourceDirectory=>"rspec" ) do
+      execute_goals(:test)
+    end
+
+    # Gemfile.lock is just a convenience but a library should work with
+    # any allowed version. clean will force a bundle install
+    plugin(:clean, '2.5', 
+           :filesets => [ { :directory => './',
+                            :includes => ['Gemfile.lock'] } ] )
+    
+  end
 end
 
 profile :push do
 
   build do
-    default_goal 'gem:push'
+    default_goal :deploy
 
+    plugin :deploy, :skip => true
+    
     plugin 'de.saumya.mojo:gem-maven-plugin', '${jruby.plugins.version}' do
     
       # push gem to rubygems on deploy
@@ -72,8 +78,10 @@ properties( #'jruby.plugins.version' => '1.0.0-rc2',
             'jruby.version' => '1.7.4',
             # overwrite via cli -Djruby.versions=1.6.7
             'jruby.versions' => ['1.5.6','1.6.8','1.7.4'].join(','),
-            # overwrite via cli -Djruby.use18and19=false
-            'jruby.18and19' => true )
+            # overwrite via cli -Djruby.18and19=false
+            #'jruby.modes' => '1.8,1.9,2.0'
+            'jruby.18and19' => true
+           )
 
 properties 'tesla.dump.pom' => 'pom.xml'
 
