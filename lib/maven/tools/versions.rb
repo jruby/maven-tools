@@ -27,9 +27,10 @@ module Maven
         :war_plugin => "2.2",
         :jar_plugin => "2.4",
         :clean_plugin => "2.4",
-        :jruby_plugins => "1.0.0-rc3",
+        :jruby_plugins => "1.0.0-rc4",
         :bundler_version => "1.3.5",
-        :jruby_version => "1.7.4"
+        :jruby_version => "1.7.6",
+        :tesla_version => "0.0.1-SNAPSHOT"
       }.freeze
     end
   end

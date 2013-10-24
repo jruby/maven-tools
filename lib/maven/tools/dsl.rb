@@ -22,7 +22,14 @@ module Maven
         @model = nil
         result
       end
-      alias :maven :tesla
+
+      def maven( val = nil, &block )
+        if @context = nil
+          tesla( &block )
+        else
+          @current.maven = val
+        end
+      end
       
       def model
         @model
@@ -208,7 +215,9 @@ module Maven
       end
 
       def gemspec( name = nil, options = @gemfile_options || {} )
-        properties( 'project.build.sourceEncoding' => 'utf-8' ) unless model.properties.member?( 'project.build.sourceEncoding' )
+        unless model.properties.member?( 'project.build.sourceEncoding' )
+          properties( 'project.build.sourceEncoding' => 'utf-8' ) 
+        end
 
         @gemfile_options = nil
         if name.is_a? Hash
@@ -271,33 +280,62 @@ module Maven
         build
       end
 
-      def project( name, url = nil, &block )
-        raise 'mixed up hierachy' unless @current == model
-        @current.name = name
-        @current.url = url
-
-        nested_block(:project, @current, block)
+      def organization( *args, &block )
+        if @context == :project
+          args, options = args_and_options( *args )
+          org = ( @current.organization ||= Organization.new )
+          org.name = args[ 0 ]
+          org.url = args[ 1 ]
+          fill_options( org, options )
+          nested_block( :organization, org, block ) if block
+          org
+        else
+          @current.organization = args[ 0 ]
+        end
       end
 
-      def id(*value)
-        value = value.join( ':' )
+      def license( *args, &block )
+        args, options = args_and_options( *args )
+        license = License.new
+        license.name = args[ 0 ]
+        license.url = args[ 1 ]
+        fill_options( license, options )
+        nested_block( :license, license, block ) if block
+        @current.licenses << license
+        license
+      end
+
+      def project( *args, &block )
+        raise 'mixed up hierachy' unless @current == model
+        args, options = args_and_options( *args )
+        @current.name = args[ 0 ]
+        @current.url = args[ 1 ]
+        fill_options( @current, options )
+        nested_block(:project, @current, block) if block
+      end
+
+      def id( *args )
+        args, options = args_and_options( *args )
         if @context == :project
-          fill_gav(@current, value)
+          fill_gav( @current, *args )
+          fill_options( @current, options )
           reduce_id
         else
-          @current.id = value
+          @current.id = args[ 0 ]
         end
       end
 
       def site( url = nil, options = {} )
         site = Site.new
-        fill_options( site, url, options )
+        options.merge!( :url => url )
+        fill_options( site, options )
         @current.site = site
       end
 
       def source_control( url = nil, options = {} )
         scm = Scm.new
-        fill_options( scm, url, options )
+        options.merge!( :url => url )
+        fill_options( scm, options )
         @current.scm = scm
       end
       alias :scm :source_control
@@ -307,13 +345,26 @@ module Maven
         issues.url = url
         issues.system = system
         @current.issue_management = issues
+        issues
       end
 
-      def mailing_list( name = nil, &block )
+      def mailing_list( *args, &block )
         list = MailingList.new
-        list.name = name
-        nested_block( :mailing_list, list, block )
+        args, options = args_and_options( *args )
+        list.name = args[ 0 ]
+        fill_options( list, options )
+        nested_block( :mailing_list, list, block ) if block
         @current.mailing_lists <<  list
+        list
+      end
+
+      def prerequisites( *args, &block )
+        pre = Prerequisites.new
+        args, options = args_and_options( *args )
+        fill_options( pre, options )
+        nested_block( :prerequisites, pre, block ) if block
+        @current.prerequisites = pre
+        pre
       end
 
       def archives( *archives )
@@ -321,13 +372,35 @@ module Maven
         @current.other_archives = archives
       end
 
-      def developer( id = nil, &block )
-        dev = Developer.new
-        dev.id = id
-        nested_block( :developer, dev, block )
-        @current.developers <<  dev
+      def other_archives( *archives )
+        @current.other_archives = archives
       end
 
+      def developer( *args, &block )
+        dev = Developer.new
+        args, options = args_and_options( *args )
+        dev.id = args[ 0 ]
+        dev.name = args[ 1 ]
+        dev.url = args[ 2 ]
+        dev.email = args[ 3 ]
+        fill_options( dev, options )
+        nested_block( :developer, dev, block ) if block
+        @current.developers << dev
+        dev
+      end
+
+      def contributor( *args, &block )
+        con = Contributor.new
+        args, options = args_and_options( *args )
+        con.name = args[ 0 ]
+        con.url = args[ 1 ]
+        con.email = args[ 2 ]
+        fill_options( con, options )
+        nested_block( :contributor, con, block ) if block
+        @current.contributors << con
+        con
+      end
+      
       def roles( *roles )
         @current.roles = roles
       end
@@ -348,15 +421,20 @@ module Maven
 
       def activation( &block )
         activation = Activation.new
-        nested_block( :activation, activation, block )
+        nested_block( :activation, activation, block ) if block
         @current.activation = activation
       end
 
-      def distribution( &block )
-        dist = DistributionManagement.new
-        nested_block( :distribution, dist, block )
-        @current.distribution_management = dist
+      def distribution( val = nil, &block )
+        if @context == :license
+          @current.distribution = val
+        else
+          dist = DistributionManagement.new
+          nested_block( :distribution, dist, block ) if block
+          @current.distribution_management = dist
+        end
       end
+      alias :distribution_management :distribution
 
       def includes( *items )
         @current.includes = items.flatten
@@ -370,7 +448,7 @@ module Maven
         # strange behaviour when calling specs from Rakefile
         return if @current.nil?
         resource = Resource.new
-        nested_block( :resource, resource, block )
+        nested_block( :resource, resource, block ) if block
         if @context == :project
           ( @current.build ||= Build.new ).test_resources << resource
         else
@@ -380,7 +458,7 @@ module Maven
 
       def resource( &block )
         resource = Resource.new
-        nested_block( :resource, resource, block )
+        nested_block( :resource, resource, block ) if block
         if @context == :project
           ( @current.build ||= Build.new ).resources << resource
         else
@@ -425,13 +503,31 @@ module Maven
         @current.send( method, rp )
       end
 
-      def inherit( *value )
-        @current.parent = fill_gav( Parent, value.join( ':' ) )
+      def args_and_options( *args )
+        if args.last.is_a? Hash
+          [ args[0..-2], args.last ]
+        else
+          [ args, {} ]
+        end
+      end
+
+      def fill_options( receiver, options )
+        options.each do |k,v|
+          receiver.send( "#{k}=".to_sym, v )
+        end
+      end
+
+      def inherit( *args, &block )
+        args, options = args_and_options( *args )
+        parent = ( @current.parent = fill_gav( Parent, *args ) )
+        fill_options( parent, options )
+        nested_block( :parent, parent, block ) if block
         reduce_id
+        parent
       end
       alias :parent :inherit
 
-      def properties(props)
+      def properties(props = {})
         props.each do |k,v|
           @current.properties[k.to_s] = v.to_s
         end
@@ -443,6 +539,7 @@ module Maven
         gav = gav.join( ':' )
         ext = fill_gav( Extension, gav)
         @current.build.extensions << ext
+        ext
       end
 
       def setup_jruby_plugins_version
@@ -460,7 +557,22 @@ module Maven
         plugin( *gav, &block )
       end
 
-      def plugin( *gav, &block )
+      def plugin!( *gav, &block )
+        gav, options = plugin_gav( *gav )
+        pl = plugins.detect do |p|
+          "#{p.group_id}:#{p.artifact_id}:#{p.version}" == gav
+        end
+        if pl
+          do_plugin( false, pl, options, &block )
+        else
+          plugin = fill_gav( @context == :reporting ? ReportPlugin : Plugin,
+                             gav)
+
+          do_plugin( true, plugin, options, &block )
+        end
+      end
+
+      def plugin_gav( *gav )
         if gav.last.is_a? Hash
           options = gav.last
           gav = gav[ 0..-2 ]
@@ -470,44 +582,97 @@ module Maven
         unless gav.first.match( /:/ )
           gav[ 0 ] = "org.apache.maven.plugins:maven-#{gav.first}-plugin"
         end
-        gav = gav.join( ':' )
-        plugin = fill_gav( @context == :reporting ? ReportPlugin : Plugin,
-                           gav)
-        set_config( plugin, options )
+        [ gav.join( ':' ), options ]
+      end
+      private :plugin_gav
+
+      def plugins
         if @current.respond_to? :build
           @current.build ||= Build.new
           if @context == :overrides
             @current.build.plugin_management ||= PluginManagement.new
-            @current.build.plugin_management.plugins << plugin
+            @current.build.plugin_management.plugins
           else
-            @current.build.plugins << plugin
+            @current.build.plugins
           end
         else
-          @current.plugins << plugin
+          @current.plugins
         end
+      end
+      private :plugins
+
+      def plugin( *gav, &block )
+        gav, options = plugin_gav( *gav )
+        plugin = fill_gav( @context == :reporting ? ReportPlugin : Plugin,
+                           gav)
+
+        do_plugin( true, plugin, options, &block )
+      end
+
+      def do_plugin( add_plugin, plugin, options, &block )
+        set_config( plugin, options )
+        plugins << plugin if add_plugin
         nested_block(:plugin, plugin, block) if block
         plugin
       end
+      private :do_plugin
 
       def overrides(&block)
-        nested_block(:overrides, @current, block)
+        nested_block(:overrides, @current, block) if block
       end
       alias :plugin_management :overrides
       alias :dependency_management :overrides
 
-      def execute( options )
-        execute_goals( options )
-      end
-
-      def execute_goal( goal, options = {} )
-        if goal.is_a? Hash
-          execute_goals( goal )
+      def execute( id = :default, phase = nil, options = {}, &block )
+        if block
+          raise 'can not be inside a plugin' if @current == :plugin
+          if phase.is_a? Hash
+            options = phase 
+          else
+            options[ :phase ] = phase
+          end
+          if id.is_a? Hash
+            options = id 
+          else
+            options[ :id ] = id
+          end
+          options[ :taskId ] = options[ :id ] || options[ 'id' ]
+          options[ :nativePom ] = @source
+            
+          plugin!( 'io.tesla.polyglot:tesla-polyglot-maven-plugin',
+                   VERSIONS[ :tesla_version ] ) do
+            execute_goal( :execute, options )
+            
+            jar!( 'io.tesla.polyglot:tesla-polyglot-ruby',
+                  VERSIONS[ :tesla_version ] )
+          end
         else
-          execute_goals( goal, options )
+          # just act like execute_goals
+          execute_goals( id )
         end
       end
 
-      def execute_goals( *goals )
+      def retrieve_phase( options )
+        if @phase
+          if options[ :phase ] || options[ 'phase' ]
+            raise 'inside phase block and phase option given'
+          end
+          @phase
+        else
+          options.delete( :phase ) || options.delete( 'phase' )
+        end
+      end
+      private :retrieve_phase
+
+      def execute_goal( goal, options = {}, &block )
+        if goal.is_a? Hash
+          execute_goals( goal, &block )
+        else
+          execute_goals( goal, options, &block )
+        end
+      end
+
+      def execute_goals( *goals, &block )
         if goals.last.is_a? Hash
           options = goals.last
           goals = goals[ 0..-2 ]
@@ -518,18 +683,11 @@ module Maven
         # keep the original default of id
         id = options.delete( :id ) || options.delete( 'id' )
         exec.id = id if id
-        if @phase
-          if options[ :phase ] || options[ 'phase' ]
-            raise 'inside phase block and phase option given'
-          end
-          exec.phase = @phase
-        else
-          exec.phase = options.delete( :phase ) || options.delete( 'phase' )
-        end
+        exec.phase = retrieve_phase( options )
         exec.goals = goals.collect { |g| g.to_s }
         set_config( exec, options )
         @current.executions << exec
-        # nested_block(:execution, exec, block) if block
+        nested_block(:execution, exec, block) if block
         exec
       end
 
@@ -537,7 +695,16 @@ module Maven
         do_dependency( false, type, *args )
       end
 
-      def dependency?( container, dep )
+      def dependency!( type, *args )
+        do_dependency( true, type, *args )
+      end
+
+      def dependency?( type, *args )
+        find_dependency( dependency_container,
+                         retrieve_dependency( type, *args ) ) != nil
+      end
+
+      def find_dependency( container, dep )
         container.detect do |d|
           dep.group_id == d.group_id && dep.artifact_id == d.artifact_id && dep.classifier == d.classifier
         end
@@ -545,7 +712,7 @@ module Maven
          
       def dependency_set( bang, container, dep )
         if bang
-          dd = dependency?( container, dep )
+          dd = do_dependency?( container, dep )
           if index = container.index( dd )
             container[ index ] = dep
           else
@@ -556,7 +723,7 @@ module Maven
         end
       end
 
-      def do_dependency( bang, type, *args )
+      def retrieve_dependency( type, *args )
         if args.empty?
           a = type
           type = a[ :type ]
@@ -571,16 +738,33 @@ module Maven
         d = fill_gav( Dependency, 
                       a ? a.gav : args.join( ':' ) )
         d.type = type.to_s
+        d
+      end
+
+      def dependency_container
         if @context == :overrides
           @current.dependency_management ||= DependencyManagement.new
-          dependency_set( bang,
-                          @current.dependency_management.dependencies,
-                          d )
+          @current.dependency_management.dependencies
         else
-          dependency_set( bang,
-                          @current.dependencies,
-                          d )
+          @current.dependencies
         end
+      end
+
+      def do_dependency( bang, type, *args )
+        d = retrieve_dependency( type, *args )
+        container = dependency_container
+
+        if bang
+          dd = find_dependency( container, d )
+          if index = container.index( dd )
+            container[ index ] = d
+          else
+            container << d
+          end
+        else
+          container << d
+        end
+
         if args.last.is_a?( Hash )
           options = args.last
         end
@@ -625,7 +809,7 @@ module Maven
         profile = Profile.new
         profile.id = id if id
         @current.profiles << profile
-        nested_block( :profile, profile, block )
+        nested_block( :profile, profile, block ) if block
       end
 
       def report_set( *reports, &block )
@@ -648,13 +832,17 @@ module Maven
       def reporting( &block )
         reporting = Reporting.new
         @current.reporting = reporting
-        nested_block( :reporting, reporting, block )
+        nested_block( :reporting, reporting, block ) if block
       end
       
       def gem?( name )
         @current.dependencies.detect do |d|
-          d.artifact_id == name && d.type == :gem
+          d.group_id == 'rubygems' && d.artifact_id == name && d.type == :gem
         end
+      end
+
+      def jar!( *args )
+        dependency!( :jar, *args )
       end
 
       def gem( *args )
@@ -714,10 +902,14 @@ module Maven
             #p m
             #p args
             begin
-              @current.send( m, *args ) 
-            rescue ArgumentError
-              if @current.respond_to? method
-                @current.send( method, *args )
+              @current.send( m, *args )
+            rescue ArgumentError => e
+              begin
+                @current.send( m, args )
+              rescue ArgumentError => e
+                if @current.respond_to? method
+                  @current.send( method, *args )
+                end
               end
             end
             @current
@@ -726,7 +918,14 @@ module Maven
                  args[0].is_a?( String ) &&
                  args[0] =~ /^[${}0-9a-zA-Z._-]+(:[${}0-9a-zA-Z._-]+)+$/ ) ||
                 ( args.size == 1 && args[0].is_a?( Hash ) )
-              dependency( method, *args )
+              case method.to_s.chars.last
+              when '?'
+                dependency?( method.to_s[0..-2].to_sym, *args )
+              when '!'
+                dependency!( method.to_s[0..-2].to_sym, *args )
+              else
+                dependency( method, *args )
+              end
               # elsif @current.respond_to? method
               #   @current.send( method, *args )
               #   @current
@@ -766,7 +965,8 @@ module Maven
         #   r.snapshot( repository_policy( config ) )
         # end
         nested_block( :repository, r, block ) if block
-        fill_options( r, url, options )
+        options.merge!( :url => url )
+        fill_options( r, options )
         case method
         when :plugin
           @current.plugin_repositories << r
@@ -777,14 +977,6 @@ module Maven
             @current.repositories << r
           end
         end
-      end
-
-      def fill_options( receiver, url, options )
-        url ||= options.delete( :url ) || options.delete( 'url' )
-        options.each do |k,v|
-          receiver.send "#{k}=".to_sym, v
-        end
-        receiver.url = url
       end
 
       def reduce_id
@@ -807,12 +999,12 @@ module Maven
         @context = old_ctx
       end
 
-      def fill_gav(receiver, gav)
-        if gav
-          if receiver.is_a? Class
-            receiver = receiver.new
-          end
-          gav = gav.split(':')
+      def fill_gav(receiver, *gav)
+        if receiver.is_a? Class
+          receiver = receiver.new
+        end
+        if gav.size > 0
+          gav = gav[0].split(':') if gav.size == 1
           case gav.size
           when 0
             # do nothing - will be filled later
