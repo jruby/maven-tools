@@ -24,7 +24,7 @@ module Maven
       end
 
       def maven( val = nil, &block )
-        if @context = nil
+        if @context == nil
           tesla( &block )
         else
           @current.maven = val
@@ -902,8 +902,18 @@ module Maven
             #p m
             #p args
             begin
-              @current.send( m, *args )
-            rescue ArgumentError => e
+
+              if defined?(JRUBY_VERSION) and
+                  not RUBY_VERSION =~ /1.8/ and
+                  args.size > 1
+
+                @current.send( m, args, &block )
+
+              else
+                @current.send( m, *args, &block )
+              end
+
+            rescue ArgumentError
               begin
                 @current.send( m, args )
               rescue ArgumentError => e
