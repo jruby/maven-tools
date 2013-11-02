@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.sonatype.oss</groupId>
@@ -19,7 +20,7 @@
   </scm>
   <properties>
     <jruby.version>1.7.4</jruby.version>
-    <jruby.plugins.version>1.0.0-rc3</jruby.plugins.version>
+    <jruby.plugins.version>1.0.0-rc4</jruby.plugins.version>
     <jruby.versions>1.5.6,1.6.8,1.7.4</jruby.versions>
     <tesla.dump.pom>pom.xml</tesla.dump.pom>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
@@ -113,7 +114,7 @@
         </plugins>
       </build>
       <properties>
-        <jruby.plugins.version>1.0.0-rc3</jruby.plugins.version>
+        <jruby.plugins.version>1.0.0-rc4</jruby.plugins.version>
       </properties>
       <dependencies>
         <dependency>
@@ -173,7 +174,7 @@
                   <goal>push</goal>
                 </goals>
                 <configuration>
-                  <gem>${project.build.directory}/maven-tools-0.33.3.gem</gem>
+                  <gem>${project.build.directory}/maven-tools-0.33.5.gem</gem>
                 </configuration>
               </execution>
             </executions>
