@@ -30,7 +30,7 @@ module Maven
         :jruby_plugins => "1.0.0-rc4",
         :bundler_version => "1.3.5",
         :jruby_version => "1.7.6",
-        :tesla_version => "0.0.1-SNAPSHOT"
+        :tesla_version => "0.0.8"
       }.freeze
     end
   end

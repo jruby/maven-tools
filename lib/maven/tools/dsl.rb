@@ -317,6 +317,8 @@ module Maven
       def id( *args )
         args, options = args_and_options( *args )
         if @context == :project
+          # reset version
+          @current.version = nil
           fill_gav( @current, *args )
           fill_options( @current, options )
           reduce_id
@@ -517,6 +519,19 @@ module Maven
         end
       end
 
+      def fill( receiver, method, args )
+        receiver.send( "#{method}=".to_sym, args )
+      rescue
+        begin
+          old = @current
+          @current = receiver
+          # assume v is an array
+          send( method, *args )
+        ensure
+          @current = old
+        end
+      end
+
       def inherit( *args, &block )
         args, options = args_and_options( *args )
         parent = ( @current.parent = fill_gav( Parent, *args ) )
@@ -623,32 +638,39 @@ module Maven
       alias :plugin_management :overrides
       alias :dependency_management :overrides
 
-      def execute( id = :default, phase = nil, options = {}, &block )
+      def execute( id = nil, phase = nil, options = {}, &block )
         if block
           raise 'can not be inside a plugin' if @current == :plugin
           if phase.is_a? Hash
-            options = phase 
+            options = phase
           else
             options[ :phase ] = phase
           end
           if id.is_a? Hash
-            options = id 
+            options = id
           else
             options[ :id ] = id
           end
           options[ :taskId ] = options[ :id ] || options[ 'id' ]
-          options[ :nativePom ] = @source
-            
-          plugin!( 'io.tesla.polyglot:tesla-polyglot-maven-plugin',
-                   VERSIONS[ :tesla_version ] ) do
-            execute_goal( :execute, options )
-            
-            jar!( 'io.tesla.polyglot:tesla-polyglot-ruby',
-                  VERSIONS[ :tesla_version ] )
+          if @source
+            options[ :nativePom ] = File.expand_path( @source ).sub( /#{basedir}./, '' )
           end
+	  
+          add_execute_task( options, &block )
         else
           # just act like execute_goals
           execute_goals( id )
+        end
+      end
+
+      # hook for polyglot maven to register those tasks
+      def add_execute_task( options, &block )
+        plugin!( 'io.tesla.polyglot:tesla-polyglot-maven-plugin',
+                 VERSIONS[ :tesla_version ] ) do
+          execute_goal( :execute, options )
+          
+          jar!( 'io.tesla.polyglot:tesla-polyglot-ruby',
+                VERSIONS[ :tesla_version ] )
         end
       end
 
@@ -912,7 +934,9 @@ module Maven
               else
                 @current.send( m, *args, &block )
               end
-
+            rescue TypeError
+              # assume single argument
+              @current.send( m, args[0].to_s, &block )              
             rescue ArgumentError
               begin
                 @current.send( m, args )
@@ -928,7 +952,8 @@ module Maven
                  args[0].is_a?( String ) &&
                  args[0] =~ /^[${}0-9a-zA-Z._-]+(:[${}0-9a-zA-Z._-]+)+$/ ) ||
                 ( args.size == 1 && args[0].is_a?( Hash ) )
-              case method.to_s.chars.last
+              mm = method.to_s
+              case mm[ (mm.size - 1)..-1 ]
               when '?'
                 dependency?( method.to_s[0..-2].to_sym, *args )
               when '!'
@@ -1021,7 +1046,12 @@ module Maven
           when 1
             receiver.artifact_id = gav[0]
           when 2
-            receiver.group_id, receiver.artifact_id = gav
+            if gav[ 0 ] =~ /:/
+              receiver.group_id, receiver.artifact_id = gav[ 0 ].split /:/
+              receiver.version = gav[ 1 ]
+            else
+              receiver.group_id, receiver.artifact_id = gav
+            end
           when 3
             receiver.group_id, receiver.artifact_id, receiver.version = gav
           when 4
