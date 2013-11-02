@@ -317,8 +317,9 @@ module Maven
       def id( *args )
         args, options = args_and_options( *args )
         if @context == :project
-          # reset version
+          # reset version + groupId
           @current.version = nil
+          @current.group_id = nil
           fill_gav( @current, *args )
           fill_options( @current, options )
           reduce_id
