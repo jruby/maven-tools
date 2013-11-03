@@ -15,7 +15,7 @@ group_id 'de.saumya.mojo'
 
 # let ruby-maven build snapshots only
 spec_version = model.version.to_s
-version spec_version + '-SNAPSHOT'
+version spec_version + ( ENV['RELEASE'] ?  '' : '-SNAPSHOT')
 
 u = model.url.sub!( /^https?:\/\//, '' ) if model.url
 source_control( model.url,
@@ -62,6 +62,15 @@ profile :push do
                      :gem => "${project.build.directory}/maven-tools-#{spec_version}.gem" )
     
     end
+  end
+end
+
+profile 'sonatype-oss-release' do
+
+  build do
+    default_goal :deploy
+
+    plugin :deploy, :skip => false
   end
 end
 

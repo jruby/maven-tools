@@ -9,7 +9,7 @@
   </parent>
   <groupId>de.saumya.mojo</groupId>
   <artifactId>maven-tools</artifactId>
-  <version>0.33.5-SNAPSHOT</version>
+  <version>0.34-SNAPSHOT</version>
   <name>helpers for maven related tasks</name>
   <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
   <url>http://github.com/torquebox/maven-tools</url>
@@ -174,10 +174,24 @@
                   <goal>push</goal>
                 </goals>
                 <configuration>
-                  <gem>${project.build.directory}/maven-tools-0.33.5.gem</gem>
+                  <gem>${project.build.directory}/maven-tools-0.34.gem</gem>
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>sonatype-oss-release</id>
+      <build>
+        <defaultGoal>deploy</defaultGoal>
+        <plugins>
+          <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
           </plugin>
         </plugins>
       </build>
