@@ -30,7 +30,8 @@ profile( :install ) do
     default_goal :install
   end
 
-  jruby_plugin( :gem ) do
+  plugin 'de.saumya.mojo:gem-maven-plugin', '${jruby.plugins.version}' do
+ #jruby_plugin( :gem ) do
     execute_goal :initialize
   end
 end
