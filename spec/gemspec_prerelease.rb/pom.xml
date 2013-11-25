@@ -13,7 +13,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>rubygems</groupId>
   <artifactId>bouncy-castle-java</artifactId>
-  <version>1.5.0</version>
+  <version>1.5.beta.1-SNAPSHOT</version>
   <packaging>gem</packaging>
   <name>Gem redistribution of Bouncy Castle jars</name>
   <url>http://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java/</url>
@@ -25,14 +25,8 @@
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>thor</artifactId>
-      <version>[0.14.6,2.0)</version>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rake</artifactId>
-      <version>[10.0,10.99999]</version>
+      <artifactId>minitest</artifactId>
+      <version>[4.4.alhpa-SNAPSHOT,4.99999]</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
@@ -63,36 +57,6 @@
     </extensions>
     <directory>${basedir}/pkg</directory>
     <plugins>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <executions>
-          <execution>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <outputDirectory>mylib</outputDirectory>
-          <finalName>green</finalName>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>mylib</directory>
-              <includes>
-                <include>green.jar</include>
-              </includes>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>

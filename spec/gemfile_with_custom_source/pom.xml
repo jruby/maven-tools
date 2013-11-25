@@ -42,6 +42,16 @@
       <id>rubygems-releases</id>
       <url>http://rubygems-proxy.torquebox.org/releases</url>
     </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshot>
+        <enabled>true</enabled>
+      </snapshot>
+      <id>rubygems-prereleases</id>
+      <url>http://rubygems-proxy.torquebox.org/prereleases</url>
+    </repository>
   </repositories>
   <build>
     <sourceDirectory>src/java</sourceDirectory>

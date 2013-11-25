@@ -140,12 +140,18 @@ module Maven
           if block
             block.call( dsl )
           end
+          # TODO all that container stuff needs to go into jbundler !!!
           if container
             dsl.artifacts.each do |a|
               if path = a[ :system_path ]
                 container.add_local_jar( path )
-              elsif not locked?( a.to_s )
-                container.add_artifact( a.to_s )
+              elsif not locked?( coord = a.to_coordinate )
+                if exclusions = a.exclusions
+                  container.add_artifact_with_exclusions( coord,
+                                                          exclusions )
+                else
+                  container.add_artifact( coord )
+                end
               end
             end
             dsl.repositories.each do |repo|

@@ -120,29 +120,38 @@ module Maven
           end
         end
       end
-      
+
+      def snapshot_version( val )
+        if val.match /[a-z]|[A-Z]/ and not val.match /-SNAPSHOT|[${}]/
+          val + '-SNAPSHOT'
+        else
+          val
+        end
+      end
+
       def convert(arg, low = nil, high = nil)
         if arg =~ /~>/
           val = arg.sub(/~>\s*/, '')
           last = val.sub(/\.[0-9]*[a-z]+.*$/, '').sub(/\.[^.]+$/, '.99999')
-          ["[#{val}", "#{last}]"]
+          ["[#{snapshot_version(val)}", "#{snapshot_version(last)}]"]
         elsif arg =~ />=/
           val = arg.sub(/>=\s*/, '')
-          ["[#{val}", (nil || high)]
+          ["[#{snapshot_version(val)}", (nil || high)]
         elsif arg =~ /<=/
           val = arg.sub(/<=\s*/, '')
-          [(nil || low), "#{val}]"]
+          [(nil || low), "#{snapshot_version(val)}]"]
           # treat '!' the same way as '>' since maven can not describe such range
         elsif arg =~ /[!>]/  
           val = arg.sub(/[!>]\s*/, '')
-          ["(#{val}", (nil || high)]
+          ["(#{snapshot_version(val)}", (nil || high)]
         elsif arg =~ /</
           val = arg.sub(/<\s*/, '')
-          [(nil || low), "#{val})"]
+          [(nil || low), "#{snapshot_version(val)})"]
         elsif arg =~ /\=/
           val = arg.sub(/=\s*/, '')
-          ["[" + val, val + '.0.0.0.0.1)']
-        else
+          ["[#{snapshot_version(val)}", val + '.0.0.0.0.1)']
+       else
+          # no conversion here, i.e. assume maven version
           [arg, arg]
         end
       end

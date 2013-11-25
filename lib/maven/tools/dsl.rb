@@ -135,6 +135,10 @@ module Maven
           repository( 'http://rubygems-proxy.torquebox.org/releases',
                       :id => 'rubygems-releases' )
         end
+        unless model.repositories.detect { |r| r.id == 'rubygems-prereleases' }
+          snapshot_repository( 'http://rubygems-proxy.torquebox.org/prereleases',
+                               :id => 'rubygems-prereleases' )
+        end
 
         setup_jruby_plugins_version
 
@@ -215,11 +219,6 @@ module Maven
       end
 
       def gemspec( name = nil, options = @gemfile_options || {} )
-        unless model.properties.member?( 'project.build.sourceEncoding' )
-          properties( 'project.build.sourceEncoding' => 'utf-8' ) 
-        end
-
-        @gemfile_options = nil
         if name.is_a? Hash
           options = name
           name = nil
@@ -233,13 +232,32 @@ module Maven
           name = gemspecs.first
         end
         spec = nil
-        FileUtils.cd( basedir ) do
-          spec = eval( File.read( File.expand_path( name ) ) )
+        spec_file = File.read( File.expand_path( name ) )
+        begin
+          FileUtils.cd( basedir ) do
+            # TODO jruby java user.dir
+            spec = eval( spec_file )
+          end
+        rescue
+          spec = Gem::Specification.from_yaml( spec_file )
         end
+        
+        self.spec( spec, name, options )
+      end
+
+      def spec( spec, name = nil, options = {} )
+        name ||= "#{spec.name}-#{spec.version}.gemspec"
+        unless model.properties.member?( 'project.build.sourceEncoding' )
+          properties( 'project.build.sourceEncoding' => 'utf-8' ) 
+        end
+
+        @gemfile_options = nil
 
         if @context == :project
           build.directory = '${basedir}/pkg'
-          id "rubygems:#{spec.name}:#{spec.version}"
+          version = spec.version.to_s
+          version += '-SNAPSHOT' if spec.version.prerelease?
+          id "rubygems:#{spec.name}:#{version}"
           name( spec.summary || spec.name )
           description spec.description
           packaging 'gem'
@@ -478,24 +496,26 @@ module Maven
       end
 
       def snapshot_repository( url, options = {}, &block )
+        options[ :releases ] = false unless options.key?( :releases ) || options.key?( 'releases' )
+        options[ :snapshots ] = true unless options.key?( :snapshots ) || options.key?( 'snapshots' )
         do_repository( :snapshot_repository=, url, options, block )
       end
 
       def releases( config )
-        respository_policy( :releases=, config )
+        @current.releases = respository_policy( config )
       end
 
       def snapshots( config )
-        respository_policy( :snapshots=, config )
+        @current.snapshots = respository_policy( config )
       end
 
-      def respository_policy( method, config )
+      def repository_policy( config )
         rp = RepositoryPolicy.new
         case config
         when Hash
-          rp.enabled = snapshot[ :enabled ]
-          rp.update_policy = snapshot[ :update ]
-          rp.checksum_policy = snapshot[ :checksum ]
+          rp.enabled = config[ :enabled ]
+          rp.update_policy = config[ :update ]
+          rp.checksum_policy = config[ :checksum ]
         when TrueClass
           rp.enabled = true
         when FalseClass
@@ -503,7 +523,7 @@ module Maven
         else
           rp.enabled = 'true' == config
         end
-        @current.send( method, rp )
+        rp
       end
 
       def args_and_options( *args )
@@ -564,13 +584,21 @@ module Maven
         end
       end
 
-      def jruby_plugin( *gav, &block )
+      def do_jruby_plugin( method, *gav, &block )
         gav[ 0 ] = "de.saumya.mojo:#{gav[ 0 ]}-maven-plugin"
         if gav.size == 1 || gav[ 1 ].is_a?( Hash )
           setup_jruby_plugins_version
           gav.insert( 1, '${jruby.plugins.version}' )
         end
-        plugin( *gav, &block )
+        send( method, *gav, &block )
+      end
+
+      def jruby_plugin( *gav, &block )
+        do_jruby_plugin( :plugin, *gav, &block )
+      end
+
+      def jruby_plugin!( *gav, &block )
+        do_jruby_plugin( :plugin!, *gav, &block )
       end
 
       def plugin!( *gav, &block )
@@ -991,15 +1019,17 @@ module Maven
           r = DeploymentRepository.new
         else
           r = Repository.new
+          c = options.delete( :snapshots )
+          c = options.delete( 'snapshots' ) if c.nil?
+          unless c.nil?
+            r.snapshot = repository_policy( c )
+          end
+          c = options.delete( :releases )
+          c = options.delete( 'releases' ) if c.nil?
+          unless c.nil?
+            r.releases = repository_policy( c )
+          end
         end
-        # if config = ( options.delete( :snapshot ) ||
-        #               options.delete( 'snapshot' ) )
-        #   r.snapshot( repository_policy( config ) )
-        # end
-        # if config = ( options.delete( :release ) ||
-        #               options.delete( 'release' ) )
-        #   r.snapshot( repository_policy( config ) )
-        # end
         nested_block( :repository, r, block ) if block
         options.merge!( :url => url )
         fill_options( r, options )

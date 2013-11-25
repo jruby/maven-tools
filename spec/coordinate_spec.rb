@@ -11,16 +11,22 @@ describe Maven::Tools::Coordinate do
   it 'should convert ruby version to maven version ranges' do
     subject.to_version.must_equal "[0,)"
     subject.to_version('!2.3.4').must_equal "(2.3.4,)"
+    subject.to_version('!2.3.4.rc').must_equal "(2.3.4.rc-SNAPSHOT,)"
     subject.to_version('=2.3.4').must_equal "[2.3.4,2.3.4.0.0.0.0.1)"
+    subject.to_version('=2.3.4.alpha').must_equal "[2.3.4.alpha-SNAPSHOT,2.3.4.alpha.0.0.0.0.1)"
     subject.to_version('~>1.8.2').must_equal "[1.8.2,1.8.99999]"
-    subject.to_version('~>1.8.2.beta').must_equal "[1.8.2.beta,1.8.99999]"
-    subject.to_version('~>1.8.2.beta123.12').must_equal "[1.8.2.beta123.12,1.8.99999]"
-    subject.to_version('~>1.8.2.1beta').must_equal "[1.8.2.1beta,1.8.99999]"
+    subject.to_version('~>1.8.2.beta').must_equal "[1.8.2.beta-SNAPSHOT,1.8.99999]"
+    subject.to_version('~>1.8.2.beta123.12').must_equal "[1.8.2.beta123.12-SNAPSHOT,1.8.99999]"
+    subject.to_version('~>1.8.2.1beta').must_equal "[1.8.2.1beta-SNAPSHOT,1.8.99999]"
     subject.to_version('~>1.8').must_equal "[1.8,1.99999]"
     subject.to_version('>1.2').must_equal "(1.2,)"
+    subject.to_version('>1.2.GA').must_equal "(1.2.GA-SNAPSHOT,)"
     subject.to_version('<1.2').must_equal "[0,1.2)"
+    subject.to_version('<1.2.dev').must_equal "[0,1.2.dev-SNAPSHOT)"
     subject.to_version('>=1.2').must_equal "[1.2,)"
+    subject.to_version('>=1.2.gamma').must_equal "[1.2.gamma-SNAPSHOT,)"
     subject.to_version('<=1.2').must_equal "[0,1.2]"
+    subject.to_version('<=1.2.pre').must_equal "[0,1.2.pre-SNAPSHOT]"
     subject.to_version('>=1.2', '<2.0').must_equal "[1.2,2.0)"
     subject.to_version('>=1.2', '<=2.0').must_equal "[1.2,2.0]"
     subject.to_version('>1.2', '<2.0').must_equal "(1.2,2.0)"
@@ -33,6 +39,14 @@ describe Maven::Tools::Coordinate do
     subject.to_version('[1,2)').must_equal "[1,2)"
     subject.to_version('(1,2]').must_equal "(1,2]"
     subject.to_version('[1,2]').must_equal "[1,2]"
+  end
+
+  it 'should keep maven snapshot version and ranges as they are' do
+    subject.to_version('1.2.3-SNAPSHOT').must_equal "1.2.3-SNAPSHOT"
+    subject.to_version('(1,2-SNAPSHOT)').must_equal "(1,2-SNAPSHOT)"
+    subject.to_version('[1-SNAPSHOT,2)').must_equal "[1-SNAPSHOT,2)"
+    subject.to_version('(1,2-SNAPSHOT]').must_equal "(1,2-SNAPSHOT]"
+    subject.to_version('[1-SNAPSHOT,2]').must_equal "[1-SNAPSHOT,2]"
   end
 
   it 'should convert pom of jar deps to maven coordinate' do

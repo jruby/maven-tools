@@ -134,6 +134,16 @@ module Maven
         [ self[:group_id], self[:artifact_id], self[:version], self[:classifier] ].select { |o| o }.join( ':' )
       end
 
+      def exclusions
+        if key?( :exclusions )
+          self[:exclusions].inspect.gsub( /[\[\]" ]/, '' ).split /,/
+        end
+      end
+
+      def to_coordinate
+        [ self[:group_id], self[:artifact_id], self[:type], self[:classifier], self[:version] ].select { |o| o }.join( ':' )
+      end
+
       def to_s
         [ self[:group_id], self[:artifact_id], self[:type], self[:classifier], self[:version], key?( :exclusions )? self[:exclusions].inspect.gsub( /[" ]/, '' ) : nil ].select { |o| o }.join( ':' )
       end

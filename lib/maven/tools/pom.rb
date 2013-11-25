@@ -24,13 +24,20 @@ require 'stringio'
 require 'maven/tools/model'
 require 'maven/tools/dsl'
 require 'maven/tools/visitor'
+require 'rubygems/specification'
 
 module Maven
   module Tools
     class POM
       include Maven::Tools::DSL
 
-      def initialize( file = nil )
+      def eval_spec( s )
+        @model = tesla do
+          spec s
+        end
+      end
+
+      def eval_file( file )
         if file && File.directory?( file )
           dir = file
           file = nil
@@ -46,9 +53,19 @@ module Maven
           file ||= pom_file( '*.gemspec', dir )
         end
 
-        FileUtils.cd( dir ) do
-          @model = to_model( File.basename( file ) )
-        end if file
+        if file
+          FileUtils.cd( dir ) do
+            @model = to_model( File.basename( file ) )
+          end
+        end
+      end
+
+      def initialize( file = nil )
+        if file.is_a? Gem::Specification
+          eval_spec( file )
+        else
+          eval_file( file )
+        end
       end
 
       def pom_file( pom, dir = '.' )
