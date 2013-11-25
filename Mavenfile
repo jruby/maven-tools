@@ -22,6 +22,19 @@ source_control( model.url,
                 :connection => "scm:git:git://#{u}.git",
                 :developer_connection => "scm:git:ssh://git@#{u}.git" )
 
+profile( :install ) do
+
+  gemspec
+
+  build do
+    default_goal :install
+  end
+
+  jruby_plugin( :gem ) do
+    execute_goal :initialize
+  end
+end
+
 profile( :test ) do
 
   gemspec
@@ -83,13 +96,13 @@ plugin 'de.saumya.mojo:gem-maven-plugin', '${jruby.plugins.version}' do
 end
 
 # just lock down the versions
-properties( #'jruby.plugins.version' => '1.0.0-rc2',
+properties( 'jruby.plugins.version' => '1.0.0-rc4',
             'jruby.version' => '1.7.4',
             # overwrite via cli -Djruby.versions=1.6.7
-            'jruby.versions' => ['1.5.6','1.6.8','1.7.4'].join(','),
-            #'jruby.modes' => '1.8,1.9,2.0'
-            # overwrite via cli -Djruby.18and19=false
-            'jruby.18and19' => true
+            # no more 1.5.6 since it gives problem with backports gem
+            'jruby.versions' => ['1.6.8','1.7.4'].join(','),
+            # overwrite via cli -Djruby.modes=2.0
+            'jruby.modes' => '1.8,1.9,2.0'
            )
 
 properties 'tesla.dump.pom' => 'pom.xml'
@@ -97,4 +110,20 @@ properties 'tesla.dump.pom' => 'pom.xml'
 # add the ruby files to jar
 resource do
   directory '${project.basedir}/lib'
+end
+
+# TODO find a better way
+# include dependent gems as well
+# manually add transitive dependencies of virtus as well
+resource do
+  directory '${project.build.directory}/rubygems/gems/virtus-0.5.5/lib'
+  includes [ '**/*' ]
+end
+resource do
+  directory '${project.build.directory}/rubygems/gems/backports-3.3.5/lib'
+  includes [ '**/*' ]
+end
+resource do
+  directory '${project.build.directory}/rubygems/gems/descendants_tracker-0.0.3/lib'
+  includes [ '**/*' ]
 end
