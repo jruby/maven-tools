@@ -1,7 +1,12 @@
 #-*- mode: ruby -*-
 require 'rubygems/package_task'
 require 'rspec/core/rake_task'
-require 'maven/ruby/tasks'
+
+begin
+  require 'maven/ruby/tasks'
+rescue LoadError
+  # ignore - can not add as development dependency to avoid circular dependencies
+end
 
 desc 'run rspec (specs for old API)'
 RSpec::Core::RakeTask.new(:rspec) do |t|
