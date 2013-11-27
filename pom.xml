@@ -9,7 +9,7 @@
   </parent>
   <groupId>de.saumya.mojo</groupId>
   <artifactId>maven-tools</artifactId>
-  <version>0.34.0</version>
+  <version>0.34.1-SNAPSHOT</version>
   <name>helpers for maven related tasks</name>
   <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
   <url>http://github.com/torquebox/maven-tools</url>
@@ -100,7 +100,7 @@
         </plugins>
       </build>
       <properties>
-        <jruby.plugins.version>1.0.0-rc</jruby.plugins.version>
+        <jruby.plugins.version>1.0.0-rc4</jruby.plugins.version>
       </properties>
       <dependencies>
         <dependency>
@@ -198,7 +198,7 @@
         </plugins>
       </build>
       <properties>
-        <jruby.plugins.version>1.0.0-rc</jruby.plugins.version>
+        <jruby.plugins.version>1.0.0-rc4</jruby.plugins.version>
       </properties>
       <dependencies>
         <dependency>
@@ -258,7 +258,7 @@
                   <goal>push</goal>
                 </goals>
                 <configuration>
-                  <gem>${project.build.directory}/maven-tools-0.34.0.gem</gem>
+                  <gem>${project.build.directory}/maven-tools-0.34.1.gem</gem>
                 </configuration>
               </execution>
             </executions>
