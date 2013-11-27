@@ -131,22 +131,27 @@ module Maven
           name = spec.name
         end
         
-        unless model.repositories.detect { |r| r.id == 'rubygems-releases' }
-          repository( 'http://rubygems-proxy.torquebox.org/releases',
-                      :id => 'rubygems-releases' )
-        end
-        unless model.repositories.detect { |r| r.id == 'rubygems-prereleases' }
-          snapshot_repository( 'http://rubygems-proxy.torquebox.org/prereleases',
-                               :id => 'rubygems-prereleases' )
-        end
+        unless options[ :only_metadata ]
+        
+          unless model.repositories.detect { |r| r.id == 'rubygems-releases' }
+            repository( 'http://rubygems-proxy.torquebox.org/releases',
+                        :id => 'rubygems-releases' )
+          end
+          if ! model.repositories.detect { |r| r.id == 'rubygems-prereleases' }  && model.dependencies.detect { |d| d.group_id == 'rubygems' && d.version.match( /[a-zA-Z]/ ) }
+            
+            snapshot_repository( 'http://rubygems-proxy.torquebox.org/prereleases',
+                                 :id => 'rubygems-prereleases' )
+          end
 
-        setup_jruby_plugins_version
+          setup_jruby_plugins_version
+        end
 
         if options.key?( :jar ) || options.key?( 'jar' )
           jarpath = options[ :jar ] || options[ 'jar' ]
           if jarpath
             jar = File.basename( jarpath ).sub( /.jar$/, '' )
-            output = "#{require_path}/#{jarpath.sub( /#{jar}/, '' )}".sub( /\/$/, '' )
+            output = File.dirname( "#{require_path}/#{jarpath}" )
+            output.sub!( /\/$/, '' )
           end
         else
           jar = "#{name}"
@@ -260,20 +265,24 @@ module Maven
           id "rubygems:#{spec.name}:#{version}"
           name( spec.summary || spec.name )
           description spec.description
-          packaging 'gem'
           url spec.homepage
-          extension 'de.saumya.mojo:gem-extension:${jruby.plugins.version}'
+          unless options[ :only_metadata ]
+            packaging 'gem'
+            extension 'de.saumya.mojo:gem-extension:${jruby.plugins.version}'
+          end
         end
 
         setup_gem_support( options, spec )
         
+        return if options[ :only_metadata ]
+
         config = { :gemspec => name.sub( /^#{basedir}\/?/, '' ) }
         if options[ :include_jars ] || options[ 'include_jars' ] 
           config[ :includeDependencies ] = true
         end
         plugin( 'de.saumya.mojo:gem-maven-plugin:${jruby.plugins.version}',
                 config )
-      
+        
         deps = Maven::Tools::GemspecDependencies.new( spec )
         deps.runtime.each do |d|
           gem d
@@ -1022,7 +1031,7 @@ module Maven
           c = options.delete( :snapshots )
           c = options.delete( 'snapshots' ) if c.nil?
           unless c.nil?
-            r.snapshot = repository_policy( c )
+            r.snapshots = repository_policy( c )
           end
           c = options.delete( :releases )
           c = options.delete( 'releases' ) if c.nil?

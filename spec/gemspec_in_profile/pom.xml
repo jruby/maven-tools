@@ -55,9 +55,9 @@
           <releases>
             <enabled>false</enabled>
           </releases>
-          <snapshot>
+          <snapshots>
             <enabled>true</enabled>
-          </snapshot>
+          </snapshots>
           <id>rubygems-prereleases</id>
           <url>http://rubygems-proxy.torquebox.org/prereleases</url>
         </repository>

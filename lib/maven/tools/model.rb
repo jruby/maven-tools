@@ -143,7 +143,7 @@ class Repository
 
   attribute :unique_version, String
   attribute :releases, RepositoryPolicy
-  attribute :snapshot, RepositoryPolicy
+  attribute :snapshots, RepositoryPolicy
 
   include INU
 
