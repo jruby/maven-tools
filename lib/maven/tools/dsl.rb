@@ -505,17 +505,19 @@ module Maven
       end
 
       def snapshot_repository( url, options = {}, &block )
-        options[ :releases ] = false unless options.key?( :releases ) || options.key?( 'releases' )
-        options[ :snapshots ] = true unless options.key?( :snapshots ) || options.key?( 'snapshots' )
+        unless @current.respond_to? :snapshot_repository=
+            options[ :releases ] = false unless options.key?( :releases ) || options.key?( 'releases' )
+          options[ :snapshots ] = true unless options.key?( :snapshots ) || options.key?( 'snapshots' )
+        end
         do_repository( :snapshot_repository=, url, options, block )
       end
 
       def releases( config )
-        @current.releases = respository_policy( config )
+        @current.releases = repository_policy( config )
       end
 
       def snapshots( config )
-        @current.snapshots = respository_policy( config )
+        @current.snapshots = repository_policy( config )
       end
 
       def repository_policy( config )
