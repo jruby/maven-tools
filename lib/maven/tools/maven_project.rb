@@ -21,6 +21,7 @@
 # TODO make nice require after ruby-maven uses the same ruby files
 require File.join(File.dirname(File.dirname(__FILE__)), 'model', 'model.rb')
 require File.join(File.dirname(__FILE__), 'jarfile.rb')
+require File.join(File.dirname(__FILE__), 'coordinate.rb')
 
 module Maven
   module Tools

@@ -17,6 +17,16 @@ module Maven
         @model.version = '0.0.0'
         @context = :project
         nested_block( :project, @model, block ) if block
+        if @needs_torquebox
+          if ! @model.repositories.detect { |r| r.id == 'rubygems-prereleases' }  && @model.dependencies.detect { |d| d.group_id == 'rubygems' && d.version.match( /[a-zA-Z]/ ) }
+            
+            @current = @model
+            snapshot_repository( 'http://rubygems-proxy.torquebox.org/prereleases',
+                                 :id => 'rubygems-prereleases' )
+            @current = nil
+          end
+          @needs_torquebox = nil
+        end
         result = @model
         @context = nil
         @model = nil
@@ -137,11 +147,7 @@ module Maven
             repository( 'http://rubygems-proxy.torquebox.org/releases',
                         :id => 'rubygems-releases' )
           end
-          if ! model.repositories.detect { |r| r.id == 'rubygems-prereleases' }  && model.dependencies.detect { |d| d.group_id == 'rubygems' && d.version.match( /[a-zA-Z]/ ) }
-            
-            snapshot_repository( 'http://rubygems-proxy.torquebox.org/prereleases',
-                                 :id => 'rubygems-prereleases' )
-          end
+          @needs_torquebox = true
 
           setup_jruby_plugins_version
         end

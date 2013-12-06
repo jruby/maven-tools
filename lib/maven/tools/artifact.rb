@@ -18,7 +18,11 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-require 'maven/tools/coordinate'
+begin
+  require 'maven/tools/coordinate'
+rescue LoadError
+  # that gives an load error on jruby-maven-plugin/gem-maven-plugin ITs
+end
 module Maven
   module Tools
     class Artifact < Hash
