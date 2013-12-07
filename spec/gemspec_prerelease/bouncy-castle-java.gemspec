@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = 'Gem redistribution of "Legion of the Bouncy Castle Java cryptography APIs" jars at http://www.bouncycastle.org/java.html'
   s.files = ['README', 'LICENSE.html', 'lib/bouncy-castle-java.rb' ] + Dir['lib/bc*.jar' ]  
 
-  s.add_development_dependency 'minitest', '~> 4.4.alhpa'
+  s.add_development_dependency 'minitest', '~> 4.4'
 end
 
 # vim: syntax=Ruby
