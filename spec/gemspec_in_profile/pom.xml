@@ -51,16 +51,6 @@
           <id>rubygems-releases</id>
           <url>http://rubygems-proxy.torquebox.org/releases</url>
         </repository>
-        <repository>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <id>rubygems-prereleases</id>
-          <url>http://rubygems-proxy.torquebox.org/prereleases</url>
-        </repository>
       </repositories>
     </profile>
   </profiles>
