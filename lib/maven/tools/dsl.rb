@@ -803,9 +803,13 @@ module Maven
         else
           a = ::Maven::Tools::Artifact.from( type, *args )
         end
+        options ||= {}
         d = fill_gav( Dependency, 
                       a ? a.gav : args.join( ':' ) )
         d.type = type.to_s
+        # TODO maybe copy everything from options ?
+        d.scope = options[ :scope ] if options[ :scope ]
+        d.system_path = options[ :system_path ].sub( /#{@basedir}\//, '' ) if options[ :system_path ]
         d
       end
 
@@ -854,6 +858,7 @@ module Maven
           when String
             d.exclusions << fill_gav( Exclusion, exclusions )
           end
+
           options.each do |k,v|
             d.send( "#{k}=".to_sym, v ) unless d.send( k.to_sym )
           end
