@@ -97,6 +97,12 @@ module Maven
 
       def self.from_coordinate( coord )
         args = coord.split( /:/ )
+        # maven coordinates differ :(
+        if args.size == 5
+          classifier = args[ 4 ]
+          args[ 4 ] = args[ 3 ]
+          args[ 3 ] = classifier
+        end
         new( *args )
       end
 

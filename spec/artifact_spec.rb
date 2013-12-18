@@ -3,6 +3,11 @@ require 'maven/tools/artifact'
 
 describe Maven::Tools::Artifact do
 
+  it 'should convert from coordinate' do
+    Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:tes:123' ).to_s.must_equal 'sdas:das:jar:tes:123'
+    Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:123' ).to_s.must_equal 'sdas:das:jar:123'
+  end
+
   it 'should setup artifact' do
     Maven::Tools::Artifact.new( "sdas", "das", "jar", "123", "tes" ).to_s.must_equal 'sdas:das:jar:tes:123'
     Maven::Tools::Artifact.new( "sdas", "das", "jar", "123" ).to_s.must_equal 'sdas:das:jar:123'

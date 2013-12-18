@@ -192,7 +192,7 @@ module Maven
           elsif ( jruby < '1.7.5' )
             jar 'org.jruby:jruby-core', jruby
           else
-            jar 'org.jruby:jruby', jruby
+            jar 'org.jruby:jruby-noasm', jruby
           end
         end
       end
@@ -809,7 +809,7 @@ module Maven
         d.type = type.to_s
         # TODO maybe copy everything from options ?
         d.scope = options[ :scope ] if options[ :scope ]
-        d.system_path = options[ :system_path ].sub( /#{@basedir}\//, '' ) if options[ :system_path ]
+        d.system_path = options[ :system_path ] if options[ :system_path ]
         d
       end
 
