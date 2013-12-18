@@ -38,7 +38,8 @@ task :install do
 end
 
 desc 'release current version'
-task :release do
+task :release => [ :minispec, :rspec ] do
+  maven.install
   # tell Mavenfile not to use SNAPSHOT version
   ENV['RELEASE'] = 'true'
   maven.exec( :deploy, '-Ppush,sonatype-oss-release' )
