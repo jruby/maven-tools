@@ -146,7 +146,7 @@ module Maven
 
       def exclusions
         if key?( :exclusions )
-          self[:exclusions].inspect.gsub( /[\[\]" ]/, '' ).split /,/
+          self[:exclusions].inspect.gsub( /[\[\]" ]/, '' ).split( /,/ )
         end
       end
 
