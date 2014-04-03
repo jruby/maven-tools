@@ -126,8 +126,10 @@ module Maven
         end
         alias :source :repository
 
+        # TODO add flag to use repacked asm
         def jruby( version = nil )
           @jruby = version if version
+          @jruby
         end
           
       end

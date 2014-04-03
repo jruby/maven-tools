@@ -54,7 +54,7 @@ module Maven
       end
 
       def basedir( basedir = nil )
-        @basedir ||= basedir if basedir
+        @basedir = basedir if basedir
         if @source
           @basedir ||= File.directory?( @source ) ? @source : 
             File.dirname( File.expand_path( @source ) )
@@ -187,10 +187,12 @@ module Maven
       def setup_jruby( jruby, jruby_scope = :provided )
         jruby ||= VERSIONS[ :jruby_version ]
         scope( jruby_scope ) do
-          if ( jruby < '1.7' )
+          if ( jruby < '1.6' )
+            raise 'jruby before 1.6 are not supported'
+          elsif ( jruby < '1.7' )
             warn 'jruby version below 1.7 uses jruby-complete'
             jar 'org.jruby:jruby-core', jruby
-          elsif ( jruby < '1.7.5' )
+          elsif ( jruby.sub( /1\.7\./, '').to_i < 5 )
             jar 'org.jruby:jruby-core', jruby
           else
             jar 'org.jruby:jruby-noasm', jruby
