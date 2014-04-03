@@ -21,8 +21,8 @@ module Maven
           if ! @model.repositories.detect { |r| r.id == 'rubygems-prereleases' }  && @model.dependencies.detect { |d| d.group_id == 'rubygems' && d.version.match( /[a-zA-Z]/ ) }
             
             @current = @model
-            snapshot_repository( 'http://rubygems-proxy.torquebox.org/prereleases',
-                                 :id => 'rubygems-prereleases' )
+            snapshot_repository(  'rubygems-prereleases',
+                                  'http://rubygems-proxy.torquebox.org/prereleases' )
             @current = nil
           end
           @needs_torquebox = nil
@@ -112,6 +112,7 @@ module Maven
         basedir = File.dirname( name ) unless basedir
 
         @gemfile_options = options
+        # the eval might need those options for gemspec declaration
         FileUtils.cd( basedir ) do
           eval( File.read( File.expand_path( name ) ) )
         end
@@ -144,8 +145,8 @@ module Maven
         unless options[ :only_metadata ]
         
           unless model.repositories.detect { |r| r.id == 'rubygems-releases' }
-            repository( 'http://rubygems-proxy.torquebox.org/releases',
-                        :id => 'rubygems-releases' )
+            repository( 'rubygems-releases',
+                        'http://rubygems-proxy.torquebox.org/releases' )
           end
           @needs_torquebox = true
 
@@ -249,7 +250,8 @@ module Maven
             # TODO jruby java user.dir
             spec = eval( spec_file )
           end
-        rescue
+        rescue => e
+          # TODO that exception is sometime due to error in the spec and not because it is a yaml file
           spec = Gem::Specification.from_yaml( spec_file )
         end
         
@@ -361,29 +363,81 @@ module Maven
         end
       end
 
-      def site( url = nil, options = {} )
+      def site( *args, &block )
         site = Site.new
-        options.merge!( :url => url )
+        args, options = args_and_options( *args )
+        site.id = args[ 0 ]
+        site.url = args[ 1 ]
+        site.name = args[ 2 ]
         fill_options( site, options )
+        nested_block( :site, site, block) if block
         @current.site = site
       end
 
-      def source_control( url = nil, options = {} )
+      def source_control( *args, &block )
         scm = Scm.new
-        options.merge!( :url => url )
+        args, options = args_and_options( *args )
+        scm.connection = args[ 0 ]
+        scm.developer_connection = args[ 1 ]
+        scm.url = args[ 2 ]
         fill_options( scm, options )
+        nested_block( :scm, scm, block ) if block
         @current.scm = scm
       end
       alias :scm :source_control
 
-      def issue_management( url, system = nil )
+      def issue_management( *args, &block )
         issues = IssueManagement.new
-        issues.url = url
-        issues.system = system
+        args, options = args_and_options( *args )
+        issues.url = args[ 0 ]
+        fill_options( issues, options )
+        nested_block( :issue_management, issues, block ) if block
         @current.issue_management = issues
-        issues
+      end
+      alias :issues :issue_management
+
+      def ci_management( *args, &block )
+        ci = CiManagement.new
+        args, options = args_and_options( *args )
+        ci.url = args[ 0 ]
+        fill_options( ci, options )
+        nested_block( :ci_management, ci, block ) if block
+        @current.ci_management = ci
+      end
+      alias :ci :ci_management
+
+      def distribution_management( *args, &block )
+        di = DistributionManagement.new
+        args, options = args_and_options( *args )
+        di.status = args[ 0 ]
+        di.download_url = args[ 1 ]
+        fill_options( di, options )
+        nested_block( :distribution_management, di, block ) if block
+        @current.distribution_management = di
       end
 
+      def relocation( *args, &block )
+        args, options = args_and_options( *args )
+        relocation = fill_gav( Relocation, args.join( ':' ) )
+        fill_options( relocation, options )
+        nested_block( :relocation, relocation, block ) if block
+        @current.relocation = relocation
+      end
+
+      def system( arg )
+        @current.system = arg
+      end
+
+      def notifier( *args, &block )
+        n = Notifier.new
+        args, options = args_and_options( *args )
+        n.type = args[ 0 ]
+        n.address = args[ 1 ]
+        fill_options( n, options )
+        nested_block( :notifier, n, block ) if block
+        @current.notifiers <<  n
+        n
+      end
       def mailing_list( *args, &block )
         list = MailingList.new
         args, options = args_and_options( *args )
@@ -461,16 +515,15 @@ module Maven
         @current.activation = activation
       end
 
-      def distribution( val = nil, &block )
+      def distribution( *args, &block )
         if @context == :license
-          @current.distribution = val
+          args, options = args_and_options( *args )
+          @current.distribution = args[ 0 ]
+          fill_options( @current, options )
         else
-          dist = DistributionManagement.new
-          nested_block( :distribution, dist, block ) if block
-          @current.distribution_management = dist
+          distribution_management( *args, &block )
         end
       end
-      alias :distribution_management :distribution
 
       def includes( *items )
         @current.includes = items.flatten
@@ -480,11 +533,12 @@ module Maven
         @current.excludes = items.flatten
       end
 
-      def test_resource( &block )
+      def test_resource( options = {}, &block )
         # strange behaviour when calling specs from Rakefile
         return if @current.nil?
-        resource = Resource.new
-        nested_block( :resource, resource, block ) if block
+        resource = TestResource.new
+        fill_options( resource, options )
+        nested_block( :test_resource, resource, block ) if block
         if @context == :project
           ( @current.build ||= Build.new ).test_resources << resource
         else
@@ -492,8 +546,9 @@ module Maven
         end
       end
 
-      def resource( &block )
+      def resource( options = {}, &block )
         resource = Resource.new
+        fill_options( resource, options )
         nested_block( :resource, resource, block ) if block
         if @context == :project
           ( @current.build ||= Build.new ).resources << resource
@@ -502,44 +557,59 @@ module Maven
         end
       end
 
-      def repository( url, options = {}, &block )
-        do_repository( :repository=, url, options, block )
+      def repository( *args, &block )
+        do_repository( :repository=, *args, &block )
       end
 
-      def plugin_repository( url, options = {}, &block )
-        do_repository( :plugin, url, options, block )
+      def plugin_repository( *args, &block )
+        do_repository( :plugin, *args, &block )
       end
 
-      def snapshot_repository( url, options = {}, &block )
-        unless @current.respond_to? :snapshot_repository=
-            options[ :releases ] = false unless options.key?( :releases ) || options.key?( 'releases' )
-          options[ :snapshots ] = true unless options.key?( :snapshots ) || options.key?( 'snapshots' )
+      def set_policy( key, enable, options )
+        return unless options
+        if map = options[ key ] || options[ key.to_s ]
+          map[ :enabled ] = enable
+        else
+          options[ key ] = enable
         end
-        do_repository( :snapshot_repository=, url, options, block )
+      end
+      private :set_policy
+
+      def snapshot_repository( *args, &block )
+        unless @current.respond_to?( :snapshot_repository= )
+          args, options = args_and_options( *args )
+          set_policy( :releases, false, options )
+          set_policy( :snapshots, true, options )
+          args << options
+        end
+        do_repository( :snapshot_repository=, *args, &block )
       end
 
-      def releases( config )
-        @current.releases = repository_policy( config )
+      def releases( config = nil, &block )
+        @current.releases = repository_policy( @current.releases,
+                                               config, &block )
       end
 
-      def snapshots( config )
-        @current.snapshots = repository_policy( config )
+      def snapshots( config = nil, &block)
+        @current.snapshots = repository_policy( @current.snapshots,
+                                                config, &block )
       end
 
-      def repository_policy( config )
-        rp = RepositoryPolicy.new
+      def repository_policy( rp, config, &block )
+        rp ||= RepositoryPolicy.new
         case config
         when Hash
-          rp.enabled = config[ :enabled ]
-          rp.update_policy = config[ :update ]
-          rp.checksum_policy = config[ :checksum ]
+          rp.enabled = config[ :enabled ] unless config[ :enabled ].nil?
+          rp.update_policy = config[ :update ] || config[ :update_policy ] 
+          rp.checksum_policy = config[ :checksum ] || config[ :checksum_policy ]
         when TrueClass
           rp.enabled = true
         when FalseClass
           rp.enabled = false
         else
-          rp.enabled = 'true' == config
+          rp.enabled = 'true' == config unless config.nil?
         end
+        nested_block( :repository_policy, rp, block ) if block
         rp
       end
 
@@ -587,12 +657,24 @@ module Maven
         @current.properties
       end
 
-      def extension( *gav )
-        @current.build ||= Build.new
-        gav = gav.join( ':' )
-        ext = fill_gav( Extension, gav)
-        @current.build.extensions << ext
+      def extension( *args )
+        build = if @context == :build
+                  @current
+                else
+                  @current.build ||= Build.new
+                end
+        args, options = args_and_options( *args )
+        ext = fill_gav( Extension, args.join( ':' ) )
+        fill_options( ext, options )
+        build.extensions << ext
         ext
+      end
+
+      def exclusion( *gav )
+        gav = gav.join( ':' )
+        ex = fill_gav( Extension, gav)
+        @current.exclusions << ex
+        ex
       end
 
       def setup_jruby_plugins_version
@@ -759,12 +841,12 @@ module Maven
         exec
       end
 
-      def dependency( type, *args )
-        do_dependency( false, type, *args )
+      def dependency( type, *args, &block )
+        do_dependency( false, type, *args, &block )
       end
 
-      def dependency!( type, *args )
-        do_dependency( true, type, *args )
+      def dependency!( type, *args, &block )
+        do_dependency( true, type, *args, &block )
       end
 
       def dependency?( type, *args )
@@ -801,6 +883,7 @@ module Maven
           type = a[ :type ]
           options = a
         else
+          args, options = args_and_options( *args )
           a = ::Maven::Tools::Artifact.from( type, *args )
         end
         options ||= {}
@@ -810,6 +893,7 @@ module Maven
         # TODO maybe copy everything from options ?
         d.scope = options[ :scope ] if options[ :scope ]
         d.system_path = options[ :system_path ] if options[ :system_path ]
+        
         d
       end
 
@@ -817,12 +901,14 @@ module Maven
         if @context == :overrides
           @current.dependency_management ||= DependencyManagement.new
           @current.dependency_management.dependencies
+        #elsif @context == :build
+        #  @current.
         else
           @current.dependencies
         end
       end
 
-      def do_dependency( bang, type, *args )
+      def do_dependency( bang, type, *args, &block )
         d = retrieve_dependency( type, *args )
         container = dependency_container
 
@@ -836,10 +922,9 @@ module Maven
         else
           container << d
         end
+        
+        args, options = args_and_options( *args )
 
-        if args.last.is_a?( Hash )
-          options = args.last
-        end
         if options || @scope
           options ||= {}
           if @scope
@@ -853,7 +938,10 @@ module Maven
           case exclusions
           when Array
             exclusions.each do |v|
-              d.exclusions << fill_gav( Exclusion, v )
+              v, opts = args_and_options( v )
+              ex = fill_gav( Exclusion, *v )
+              fill_options( ex, opts )
+              d.exclusions << ex
             end
           when String
             d.exclusions << fill_gav( Exclusion, exclusions )
@@ -863,13 +951,18 @@ module Maven
             d.send( "#{k}=".to_sym, v ) unless d.send( k.to_sym )
           end
         end
+        nested_block( :dependency, d, block ) if block
         d
       end
 
       def scope( name )
-        @scope = name
-        yield
-        @scope = nil
+        if @context == :dependency
+          @current.scope = name
+        else
+          @scope = name
+          yield
+          @scope = nil
+        end
       end
 
       def phase( name )
@@ -999,26 +1092,28 @@ module Maven
             end
             @current
           else
-            if ( args.size > 0 &&
-                 args[0].is_a?( String ) &&
-                 args[0] =~ /^[${}0-9a-zA-Z._-]+(:[${}0-9a-zA-Z._-]+)+$/ ) ||
-                ( args.size == 1 && args[0].is_a?( Hash ) )
-              mm = method.to_s
-              case mm[ (mm.size - 1)..-1 ]
+            begin
+            # if ( args.size > 0 &&
+            #      args[0].is_a?( String ) &&
+            #      args[0] =~ /^[${}0-9a-zA-Z._-]+(:[${}0-9a-zA-Z._-]+)+$/ ) ||
+            #     ( args.size == 1 && args[0].is_a?( Hash ) )
+              case method.to_s[ -1 ]
               when '?'
-                dependency?( method.to_s[0..-2].to_sym, *args )
+                dependency?( method.to_s[0..-2].to_sym, *args, &block )
               when '!'
-                dependency!( method.to_s[0..-2].to_sym, *args )
+                dependency!( method.to_s[0..-2].to_sym, *args, &block  )
               else
-                dependency( method, *args )
+                dependency( method, *args, &block )
               end
               # elsif @current.respond_to? method
               #   @current.send( method, *args )
               #   @current
-            else
+#            else
+            rescue => e
               p @context
               p m
               p args
+              raise e
             end
           end
         else
@@ -1036,7 +1131,8 @@ module Maven
 
       private
 
-      def do_repository( method, url = nil, options = {}, block = nil )
+      def do_repository( method, *args, &block )
+        args, options = args_and_options( *args )
         if @current.respond_to?( method )
           r = DeploymentRepository.new
         else
@@ -1044,17 +1140,19 @@ module Maven
           c = options.delete( :snapshots )
           c = options.delete( 'snapshots' ) if c.nil?
           unless c.nil?
-            r.snapshots = repository_policy( c )
+            r.snapshots = repository_policy( r.snapshots, c )
           end
           c = options.delete( :releases )
           c = options.delete( 'releases' ) if c.nil?
           unless c.nil?
-            r.releases = repository_policy( c )
+            r.releases = repository_policy( r.releases, c )
           end
         end
-        nested_block( :repository, r, block ) if block
-        options.merge!( :url => url )
+        r.id = args[ 0 ]
+        r.url = args[ 1 ]
+        r.name = args[ 2 ]
         fill_options( r, options )
+        nested_block( :repository, r, block ) if block
         case method
         when :plugin
           @current.plugin_repositories << r

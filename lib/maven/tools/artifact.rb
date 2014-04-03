@@ -77,18 +77,24 @@ module Maven
           # jar "asd:Asd:[dsa:rew,fe:fer]",'>123', '<345'
           # jar "asd:Asd:test:[dsa:rew,fe:fer]",'>123', '<345'
           # jar "asd:Asd:test:[dsa:rew,fe:fer]", '123', 'source'
-          v = helper.to_version( *args[1..-1] )
-          case v
-          when String
-            group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
-            self.new( group_id, artifact_id, type,
-                      v, classifier, exclusions,
-                      options )
+          if args[ 0 ].match /:/
+            v = helper.to_version( *args[1..-1] )         
+            case v
+            when String
+              group_id, artifact_id, classifier, exclusions = args[0].split( /:/ )
+              self.new( group_id, artifact_id, type,
+                        v, classifier, exclusions,
+                        options )
+            else
+              group_id, artifact_id = args[0].split( /:/ )
+              self.new( group_id, artifact_id, type,
+                        args[1], args[2], nil,
+                        options )
+            end
           else
-            group_id, artifact_id = args[0].split( /:/ )
-            self.new( group_id, artifact_id, type,
-                      args[1], args[2], nil,
-                      options )
+            self.new( args[ 0 ], args[ 1 ], type,
+                      args[ 2 ], nil, nil,
+                      options )            
           end
         else
           nil

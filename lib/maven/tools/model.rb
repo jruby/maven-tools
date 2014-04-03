@@ -150,6 +150,7 @@ class Repository
   attribute :layout, String
 end
 class PluginRepository < Repository; end
+class DeploymentRepository < Repository; end
 class DistributionManagement
   include Virtus
 
@@ -157,6 +158,7 @@ class DistributionManagement
   attribute :snapshot_repository, Repository
   attribute :site, Site
   attribute :download_url, String
+  attribute :status, String
   attribute :relocation, Relocation
 end
 class Exclusion
