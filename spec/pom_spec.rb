@@ -7,7 +7,9 @@ describe Maven::Tools::POM do
     if File.directory?( dir )
       it "should convert #{dir}" do
         pom = Maven::Tools::POM.new( dir )
-        pom_xml = File.read( File.join( dir, 'pom.xml' ) )
+        file = File.join( dir, 'pom.xml' )
+        file = File.join( File.dirname( dir ), 'pom.xml' ) unless File.exists? file
+        pom_xml = File.read( file )
         pom_xml.sub!( /<!--(.|\n)*-->\n/, '' )
         pom_xml.sub!( /<?.*?>\n/, '' )
         pom_xml.sub!( /<project([^>]|\n)*>/, '<project>' )
