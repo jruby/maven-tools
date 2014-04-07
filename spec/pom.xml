@@ -163,13 +163,13 @@
       <url>http://dev.example.com</url>
     </site>
     <downloadUrl>http://dev.example.com/downloads</downloadUrl>
-    <status>active</status>
     <relocation>
       <groupId>org.group</groupId>
       <artifactId>artifact</artifactId>
       <version>1.2.3</version>
       <message>follow the maven convention</message>
     </relocation>
+    <status>active</status>
   </distributionManagement>
   <properties>
     <key1>value1</key1>

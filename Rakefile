@@ -1,6 +1,5 @@
 #-*- mode: ruby -*-
 require 'rubygems/package_task'
-require 'rspec/core/rake_task'
 
 begin
   require 'maven/ruby/tasks'
@@ -8,18 +7,13 @@ rescue LoadError
   # ignore - can not add as development dependency to avoid circular dependencies
 end
 
-desc 'run rspec (specs for old API)'
-RSpec::Core::RakeTask.new(:rspec) do |t|
-  t.pattern = Dir["rspec/maven/**/*_spec.rb"]
-end
-
-task :default => [ :minispec, :rspec ]
+task :default => [ :specs ]
 
 Gem::PackageTask.new( Gem::Specification.load( 'maven-tools.gemspec' ) ) do
 end
 
 desc 'run minispecs'
-task :minispec do
+task :specs do
   begin
     require 'minitest'
   rescue LoadError
@@ -38,7 +32,7 @@ task :install do
 end
 
 desc 'release current version'
-task :release => [ :minispec, :rspec ] do
+task :release => [ :specs ] do
   maven.install
   # tell Mavenfile not to use SNAPSHOT version
   ENV['RELEASE'] = 'true'
