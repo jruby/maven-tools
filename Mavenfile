@@ -15,7 +15,10 @@ group_id 'de.saumya.mojo'
 
 # let ruby-maven build snapshots only
 spec_version = model.version.to_s
-version spec_version + ( ENV['RELEASE'] ?  '' : '-SNAPSHOT')
+if ! spec_version.match( /-SNAPSHOT$/ ) && ENV['RELEASE']
+  spec_version += '-SNAPSHOT'
+end
+version spec_version
 
 u = model.url.sub!( /^https?:\/\//, '' ) if model.url
 source_control( model.url,
@@ -30,9 +33,8 @@ profile( :install ) do
     default_goal :install
   end
 
-  plugin 'de.saumya.mojo:gem-maven-plugin', '${jruby.plugins.version}' do
- #jruby_plugin( :gem ) do
-    execute_goal :initialize
+  jruby_plugin( :gem ) do
+    execute_goal :initialize, :includeRubygemsInResources => true
   end
 end
 
@@ -88,20 +90,20 @@ profile 'sonatype-oss-release' do
   end
 end
 
-plugin 'de.saumya.mojo:gem-maven-plugin', '${jruby.plugins.version}' do
+jruby_plugin :gem do
 
   # build the gem along with the jar
-  execute_goals( :package, :id => 'gem build',
-                 :phase => :package,
-                 :gemspec => 'maven-tools.gemspec' )
+  execute_goal( :package, :id => 'gem build',
+                :phase => :package,
+                :gemspec => 'maven-tools.gemspec' )
 end
 
 # just lock down the versions
 properties( 'jruby.plugins.version' => '1.0.0-rc4',
-            'jruby.version' => '1.7.4',
+            'jruby.version' => '1.7.11',
             # overwrite via cli -Djruby.versions=1.6.7
             # no more 1.5.6 since it gives problem with backports gem
-            'jruby.versions' => ['1.6.8','1.7.4'].join(','),
+            'jruby.versions' => ['1.6.8','1.7.4', '1.7.11'].join(','),
             # overwrite via cli -Djruby.modes=2.0
             'jruby.modes' => '1.8,1.9,2.0'
            )
@@ -111,20 +113,4 @@ properties 'tesla.dump.pom' => 'pom.xml'
 # add the ruby files to jar
 resource do
   directory '${project.basedir}/lib'
-end
-
-# TODO find a better way
-# include dependent gems as well
-# manually add transitive dependencies of virtus as well
-resource do
-  directory '${project.build.directory}/rubygems/gems/virtus-0.5.5/lib'
-  includes [ '**/*' ]
-end
-resource do
-  directory '${project.build.directory}/rubygems/gems/backports-3.3.5/lib'
-  includes [ '**/*' ]
-end
-resource do
-  directory '${project.build.directory}/rubygems/gems/descendants_tracker-0.0.3/lib'
-  includes [ '**/*' ]
 end

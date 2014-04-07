@@ -9,7 +9,7 @@
   </parent>
   <groupId>de.saumya.mojo</groupId>
   <artifactId>maven-tools</artifactId>
-  <version>0.34.2-SNAPSHOT</version>
+  <version>1.0.0.rc1-SNAPSHOT</version>
   <name>helpers for maven related tasks</name>
   <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
   <url>http://github.com/torquebox/maven-tools</url>
@@ -19,10 +19,10 @@
     <url>http://github.com/torquebox/maven-tools</url>
   </scm>
   <properties>
-    <jruby.version>1.7.4</jruby.version>
+    <jruby.version>1.7.11</jruby.version>
     <jruby.modes>1.8,1.9,2.0</jruby.modes>
     <jruby.plugins.version>1.0.0-rc4</jruby.plugins.version>
-    <jruby.versions>1.6.8,1.7.4</jruby.versions>
+    <jruby.versions>1.6.8,1.7.4,1.7.11</jruby.versions>
     <tesla.dump.pom>pom.xml</tesla.dump.pom>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
   </properties>
@@ -30,24 +30,6 @@
     <resources>
       <resource>
         <directory>${project.basedir}/lib</directory>
-      </resource>
-      <resource>
-        <directory>${project.build.directory}/rubygems/gems/virtus-0.5.5/lib</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>${project.build.directory}/rubygems/gems/backports-3.3.5/lib</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>${project.build.directory}/rubygems/gems/descendants_tracker-0.0.3/lib</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
       </resource>
     </resources>
     <directory>${basedir}/pkg</directory>
@@ -94,6 +76,9 @@
                 <goals>
                   <goal>initialize</goal>
                 </goals>
+                <configuration>
+                  <includeRubygemsInResources>true</includeRubygemsInResources>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -106,29 +91,8 @@
         <dependency>
           <groupId>rubygems</groupId>
           <artifactId>virtus</artifactId>
-          <version>[0.5,0.99999]</version>
+          <version>[1.0,1.99999]</version>
           <type>gem</type>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>rake</artifactId>
-          <version>[10.0,10.99999]</version>
-          <type>gem</type>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>minitest</artifactId>
-          <version>[4.4,4.99999]</version>
-          <type>gem</type>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>rspec</artifactId>
-          <version>[2.13.0,2.13.0.0.0.0.0.1)</version>
-          <type>gem</type>
-          <scope>test</scope>
         </dependency>
       </dependencies>
       <repositories>
@@ -204,29 +168,8 @@
         <dependency>
           <groupId>rubygems</groupId>
           <artifactId>virtus</artifactId>
-          <version>[0.5,0.99999]</version>
+          <version>[1.0,1.99999]</version>
           <type>gem</type>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>rake</artifactId>
-          <version>[10.0,10.99999]</version>
-          <type>gem</type>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>minitest</artifactId>
-          <version>[4.4,4.99999]</version>
-          <type>gem</type>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>rspec</artifactId>
-          <version>[2.13.0,2.13.0.0.0.0.0.1)</version>
-          <type>gem</type>
-          <scope>test</scope>
         </dependency>
       </dependencies>
       <repositories>
@@ -258,7 +201,7 @@
                   <goal>push</goal>
                 </goals>
                 <configuration>
-                  <gem>${project.build.directory}/maven-tools-0.34.2.gem</gem>
+                  <gem>${project.build.directory}/maven-tools-1.0.0.rc1-SNAPSHOT.gem</gem>
                 </configuration>
               </execution>
             </executions>

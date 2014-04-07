@@ -16,17 +16,15 @@ Gem::Specification.new do |s|
 
   s.files += Dir['lib/**/*rb']
   s.files += Dir['spec/**/*rb']
-  s.files += Dir['rspec/**/*'].select { |f| f =~ /[a-z]$/ }
   s.files += Dir['MIT-LICENSE'] + Dir['*.md']
   s.test_files += Dir['spec/**/*_spec.rb']
-  s.test_files += Dir['rspec/**/*'].select { |f| f =~ /[a-z]$/ }
 
-  s.add_runtime_dependency 'virtus', '~> 0.5'
+  s.add_runtime_dependency 'virtus', '~> 1.0'
 
-  s.add_development_dependency 'rake', '~> 10.0'
-  s.add_development_dependency 'minitest', '~> 4.4'
-  s.add_development_dependency 'rspec', '= 2.13.0'
-  #s.add_development_dependency 'copyright-header', '~> 1.0'
+# get them out from here until jruby-maven-plugin installs test gems somewhere else then runtime gems
+
+#  s.add_development_dependency 'rake', '~> 10.0'
+#  s.add_development_dependency 'minitest', '~> 5.3'
 end
 
 # vim: syntax=Ruby
