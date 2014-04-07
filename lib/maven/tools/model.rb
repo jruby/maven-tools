@@ -1,5 +1,10 @@
 require 'virtus'
 
+module Maven
+  module Tools
+    class Base
+    end
+
 module GAV
   def self.included( base )
     base.attribute :group_id, String
@@ -33,27 +38,27 @@ module INU
   end
 end
 
-class Parent
-  include Virtus
+class Parent < Base
+  include Virtus.model
 
   include GAV
 
   attribute :relative_path, String
 end
-class Organization
-  include Virtus
+class Organization < Base
+  include Virtus.model
 
   include NU
 end
-class License
-  include Virtus
+class License < Base
+  include Virtus.model
 
   include NU
   attribute :distribution, String
   attribute :comments, String
 end
-class Developer
-  include Virtus
+class Developer < Base
+  include Virtus.model
 
   include INU
   attribute :email, String
@@ -63,8 +68,8 @@ class Developer
   attribute :timezone, String
   attribute :properties, Hash
 end
-class Contributor
-  include Virtus
+class Contributor < Base
+  include Virtus.model
 
   include NU
   attribute :email, String
@@ -74,8 +79,8 @@ class Contributor
   attribute :timezone, String
   attribute :properties, Hash
 end
-class MailingList
-  include Virtus
+class MailingList < Base
+  include Virtus.model
 
   attribute :name, String
   attribute :subscribe, String
@@ -84,26 +89,26 @@ class MailingList
   attribute :archive, String
   attribute :other_archives, Array[ String ]
 end
-class Prerequisites
-  include Virtus
+class Prerequisites < Base
+  include Virtus.model
 
   attribute :maven, String
 end
-class Scm
-  include Virtus
+class Scm < Base
+  include Virtus.model
 
   attribute :connection, String
   attribute :developer_connection, String
   attribute :tag, String
   attribute :url, String
 end
-class IssueManagement
-  include Virtus
+class IssueManagement < Base
+  include Virtus.model
 
   include SU
 end
-class Notifier
-  include Virtus
+class Notifier < Base
+  include Virtus.model
   
   attribute :type, String
   attribute :send_on_error, Boolean
@@ -113,33 +118,33 @@ class Notifier
   attribute :address, String
   attribute :configuration, Hash
 end
-class CiManagement
-  include Virtus
+class CiManagement < Base
+  include Virtus.model
 
   include SU
   
   attribute :notifiers, Array[ Notifier ]
 end
-class Site
-  include Virtus
+class Site < Base
+  include Virtus.model
 
   include INU
 end
-class Relocation
-  include Virtus
+class Relocation < Base
+  include Virtus.model
 
   include GAV
   attribute :message, String
 end
-class RepositoryPolicy
-  include Virtus
+class RepositoryPolicy < Base
+  include Virtus.model
 
   attribute :enabled, Boolean
   attribute :update_policy, String
   attribute :checksum_policy, String
 end
-class Repository
-  include Virtus
+class Repository < Base
+  include Virtus.model
 
   attribute :unique_version, String
   attribute :releases, RepositoryPolicy
@@ -151,8 +156,8 @@ class Repository
 end
 class PluginRepository < Repository; end
 class DeploymentRepository < Repository; end
-class DistributionManagement
-  include Virtus
+class DistributionManagement < Base
+  include Virtus.model
 
   attribute :repository, Repository
   attribute :snapshot_repository, Repository
@@ -161,13 +166,13 @@ class DistributionManagement
   attribute :status, String
   attribute :relocation, Relocation
 end
-class Exclusion
-  include Virtus
+class Exclusion < Base
+  include Virtus.model
 
   include GA
 end
-class Dependency
-  include Virtus
+class Dependency < Base
+  include Virtus.model
 
   include GAV
 
@@ -187,18 +192,18 @@ class Dependency
     end
   end
 end
-class DependencyManagement
-  include Virtus
+class DependencyManagement < Base
+  include Virtus.model
 
   attribute :dependencies, Array[ Dependency ]
 end
-class Extension
-  include Virtus
+class Extension < Base
+  include Virtus.model
 
   include GAV
 end
-class Resource
-  include Virtus
+class Resource < Base
+  include Virtus.model
 
   attribute :target_path, String
   attribute :filtering, String
@@ -206,8 +211,8 @@ class Resource
   attribute :includes, Array[ String ]
   attribute :excludes, Array[ String ]
 end
-class Execution
-  include Virtus
+class Execution < Base
+  include Virtus.model
 
   attribute :id, String
   attribute :phase, String
@@ -215,8 +220,8 @@ class Execution
   attribute :inherited, Boolean
   attribute :configuration, Hash
 end
-class Plugin
-  include Virtus
+class Plugin < Base
+  include Virtus.model
 
   include GAV
   attribute :extensions, Boolean
@@ -235,36 +240,36 @@ class Plugin
     end
   end
 end
-class PluginManagement
-  include Virtus
+class PluginManagement < Base
+  include Virtus.model
 
   attribute :plugins, Array[ Plugin ]
 end
 class TestResource < Resource; end
-class ReportSet
-  include Virtus
+class ReportSet < Base
+  include Virtus.model
 
   attribute :id, String
   attribute :reports, Array[ String ]
   attribute :inherited, Boolean
   attribute :configuration, Hash
 end
-class ReportPlugin
-  include Virtus
+class ReportPlugin < Base
+  include Virtus.model
 
   include GAV
 
   attribute :report_sets, Array[ ReportSet ]
 end
-class Reporting
-  include Virtus
+class Reporting < Base
+  include Virtus.model
 
   attribute :exclude_defaults, Boolean
   attribute :output_directory, String
   attribute :plugins, Array[ ReportPlugin ]
 end
-class Build
-  include Virtus
+class Build < Base
+  include Virtus.model
 
   attribute :source_directory, String
   attribute :script_source_directory, String
@@ -281,28 +286,28 @@ class Build
   attribute :plugin_management, PluginManagement
   attribute :plugins, Array[ Plugin ]
 end
-class Os
-  include Virtus
+class Os < Base
+  include Virtus.model
 
   attribute :name, String
   attribute :family, String
   attribute :arch, String
   attribute :version, String
 end
-class Property
-  include Virtus
+class Property < Base
+  include Virtus.model
 
   attribute :name, String
   attribute :value, String
 end
-class File
-  include Virtus
+class File < Base
+  include Virtus.model
 
   attribute :missing, String
   attribute :exists, String
 end
-class Activation
-  include Virtus
+class Activation < Base
+  include Virtus.model
 
   attribute :active_by_default, Boolean
   attribute :jdk, String
@@ -310,8 +315,8 @@ class Activation
   attribute :property, Property
   attribute :file, File
 end
-class Profile
-  include Virtus
+class Profile < Base
+  include Virtus.model
 
   attribute :id, String
   attribute :activation, Activation
@@ -325,8 +330,8 @@ class Profile
   attribute :plugin_repositories, Array[ PluginRepository ]
   attribute :reporting, Reporting
 end
-class Model
-  include Virtus
+class Model < Base
+  include Virtus.model
 
   attribute :model_version, String
   attribute :parent, Parent
@@ -358,4 +363,6 @@ class Model
   attribute :build, Build
   attribute :reporting, Reporting
   attribute :profiles, Array[ Profile ]
+end
+end
 end

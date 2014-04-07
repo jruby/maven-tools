@@ -11,7 +11,7 @@ module Maven
       def tesla( &block )
         @model = Model.new
         @model.model_version = '4.0.0'
-        @model.name = File.basename( basedir )
+        @model.name = ::File.basename( basedir )
         @model.group_id = 'dummy'
         @model.artifact_id = model.name
         @model.version = '0.0.0'
@@ -56,10 +56,10 @@ module Maven
       def basedir( basedir = nil )
         @basedir = basedir if basedir
         if @source
-          @basedir ||= File.directory?( @source ) ? @source : 
-            File.dirname( File.expand_path( @source ) )
+          @basedir ||= ::File.directory?( @source ) ? @source : 
+            ::File.dirname( ::File.expand_path( @source ) )
         end
-        @basedir ||= File.expand_path( '.' )
+        @basedir ||= ::File.expand_path( '.' )
       end
 
       def artifact( a )
@@ -108,13 +108,13 @@ module Maven
           options = name
           name = 'Gemfile'
         end
-        name = File.join( basedir, name ) unless File.exists?( name )
-        basedir = File.dirname( name ) unless basedir
+        name = ::File.join( basedir, name ) unless ::File.exists?( name )
+        basedir = ::File.dirname( name ) unless basedir
 
         @gemfile_options = options
         # the eval might need those options for gemspec declaration
         FileUtils.cd( basedir ) do
-          eval( File.read( File.expand_path( name ) ) )
+          eval( ::File.read( ::File.expand_path( name ) ) )
         end
 
         if @gemfile_options
@@ -136,7 +136,7 @@ module Maven
       def setup_gem_support( options, spec = nil, config = {} )
         if spec.nil?
           require_path = '.'
-          name = File.basename( File.expand_path( '.' ) )
+          name = ::File.basename( ::File.expand_path( '.' ) )
         else
           require_path = spec.require_path
           name = spec.name
@@ -156,8 +156,8 @@ module Maven
         if options.key?( :jar ) || options.key?( 'jar' )
           jarpath = options[ :jar ] || options[ 'jar' ]
           if jarpath
-            jar = File.basename( jarpath ).sub( /.jar$/, '' )
-            output = File.dirname( "#{require_path}/#{jarpath}" )
+            jar = ::File.basename( jarpath ).sub( /.jar$/, '' )
+            output = ::File.dirname( "#{require_path}/#{jarpath}" )
             output.sub!( /\/$/, '' )
           end
         else
@@ -171,7 +171,7 @@ module Maven
           end
         end
         if jar && ( source || 
-                    File.exists?( File.join( basedir, 'src', 'main', 'java' ) ) )
+                    ::File.exists?( ::File.join( basedir, 'src', 'main', 'java' ) ) )
           plugin( :jar, VERSIONS[ :jar_plugin ],
                   :outputDirectory => output,
                   :finalName => jar ) do
@@ -207,7 +207,7 @@ module Maven
           file = 'Jarfile'
         end
         unless file.is_a?( Maven::Tools::Jarfile )
-          file = Maven::Tools::Jarfile.new( File.expand_path( file ) )
+          file = Maven::Tools::Jarfile.new( ::File.expand_path( file ) )
         end
 
         if options[ :skip_locked ] or not file.exists_lock?
@@ -238,15 +238,15 @@ module Maven
           name = nil
         end
         if name
-          name = File.join( basedir, name )
+          name = ::File.join( basedir, name )
         else name
-          gemspecs = Dir[ File.join( basedir, "*.gemspec" ) ]
+          gemspecs = Dir[ ::File.join( basedir, "*.gemspec" ) ]
           raise "more then one gemspec file found" if gemspecs.size > 1
           raise "no gemspec file found" if gemspecs.size == 0
           name = gemspecs.first
         end
         spec = nil
-        spec_file = File.read( File.expand_path( name ) )
+        spec_file = ::File.read( ::File.expand_path( name ) )
         begin
           FileUtils.cd( basedir ) do
             # TODO jruby java user.dir
@@ -783,7 +783,7 @@ module Maven
           end
           options[ :taskId ] = options[ :id ] || options[ 'id' ]
           if @source
-            options[ :nativePom ] = File.expand_path( @source ).sub( /#{basedir}./, '' )
+            options[ :nativePom ] = ::File.expand_path( @source ).sub( /#{basedir}./, '' )
           end
 	  
           add_execute_task( options, &block )
@@ -1057,7 +1057,7 @@ module Maven
       end
 
       def local( path, options = {} )
-        path = File.expand_path( path )
+        path = ::File.expand_path( path )
         dependency( :jar,
                     Maven::Tools::Artifact.new_local( path, :jar, options ) )
       end

@@ -38,7 +38,7 @@ module Maven
       end
 
       def eval_file( file )
-        if file && File.directory?( file )
+        if file && ::File.directory?( file )
           dir = file
           file = nil
         else
@@ -55,7 +55,7 @@ module Maven
 
         if file
           FileUtils.cd( dir ) do
-            @model = to_model( File.basename( file ) )
+            @model = to_model( ::File.basename( file ) )
           end
         end
       end
@@ -69,7 +69,7 @@ module Maven
       end
 
       def pom_file( pom, dir = '.' )
-        files = Dir[ File.join( dir, pom ) ]
+        files = Dir[ ::File.join( dir, pom ) ]
         case files.size
         when 0
         when 1
@@ -90,21 +90,21 @@ module Maven
 
       def to_file( file )
         if @model
-          v = ::Maven::Tools::Visitor.new( File.open( file, 'w' ) )
+          v = ::Maven::Tools::Visitor.new( ::File.open( file, 'w' ) )
           v.accept_project( @model )
           true
         end
       end
 
       def to_model( file )
-        if File.exists?( file )
+        if ::File.exists?( file )
           case file
           when /pom.rb/
-            eval_pom( "tesla do\n#{ File.read( file ) }\nend", file )
+            eval_pom( "tesla do\n#{ ::File.read( file ) }\nend", file )
           when /(Maven|Gem|Jar)file/
-            eval_pom( "tesla do\n#{ File.read( file ) }\nend", file )
+            eval_pom( "tesla do\n#{ ::File.read( file ) }\nend", file )
           when /.+\.gemspec/
-            eval_pom( "tesla do\ngemspec( '#{ File.basename( file ) }' )\nend", file )
+            eval_pom( "tesla do\ngemspec( '#{ ::File.basename( file ) }' )\nend", file )
           end
         else
           eval_pom( "tesla do\n#{file}\nend", nil )

@@ -80,7 +80,7 @@ module Maven
           start_tag( name )
           n = name.to_s.sub( /ies$/, 'y' ).sub( /s$/, '' )
           case array.first
-          when Virtus
+          when Maven::Tools::Base
             array.each do |i|
               start_tag( n )
               visit( i )
@@ -143,7 +143,7 @@ module Maven
             accept_raw_hash( k, v )
           else
             case v
-            when Virtus
+            when Base
               accept( k, v )
             when Array
               accept_array( k, v )

@@ -32,7 +32,7 @@ module Maven
       end
 
       def self.new_local( path, type, options = {} )
-        name = File.basename( path ).sub( /.#{type}$/, '' )
+        name = ::File.basename( path ).sub( /.#{type}$/, '' )
         if ind = name.rindex( '-' )
           version = name[ind + 1..-1]
           name = name[0..ind - 1]
