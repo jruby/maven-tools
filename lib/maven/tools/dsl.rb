@@ -935,6 +935,11 @@ module Maven
         end
         if args.last.is_a?(Hash)
           options = args.last
+
+          # on ruby-maven side we ignore the require option
+          options.delete( :require )
+          options.delete( 'require' )
+
           if options.key?( :git )
             @has_git = true
           elsif options.key?( :path )
