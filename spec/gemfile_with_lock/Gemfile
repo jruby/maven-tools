@@ -2,6 +2,6 @@
 
 gemspec
 
-gem 'virtus', :require => false
+gem 'virtus'
 
 # vim: syntax=Ruby

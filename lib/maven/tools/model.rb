@@ -300,7 +300,7 @@ class Property < Base
   attribute :name, String
   attribute :value, String
 end
-class File < Base
+class ActivationFile < Base
   include Virtus.model
 
   attribute :missing, String
@@ -313,7 +313,7 @@ class Activation < Base
   attribute :jdk, String
   attribute :os, Os
   attribute :property, Property
-  attribute :file, File
+  attribute :file, ActivationFile
 end
 class Profile < Base
   include Virtus.model

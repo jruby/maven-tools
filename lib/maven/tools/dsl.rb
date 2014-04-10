@@ -3,6 +3,7 @@ require 'maven/tools/gemspec_dependencies'
 require 'maven/tools/artifact'
 require 'maven/tools/jarfile'
 require 'maven/tools/versions'
+require 'maven/tools/gemfile_lock'
 
 module Maven
   module Tools
@@ -47,7 +48,7 @@ module Maven
 
       def eval_pom( src, reference_file = '.' )
         @source = reference_file
-        eval( src )
+        eval( src, nil, ::File.expand_path( @source ) )
       ensure
         @source = nil
         @basedir = nil
@@ -111,15 +112,49 @@ module Maven
         name = ::File.join( basedir, name ) unless ::File.exists?( name )
         basedir = ::File.dirname( name ) unless basedir
 
-        @gemfile_options = options
+        @inside_gemfile = true
         # the eval might need those options for gemspec declaration
-        FileUtils.cd( basedir ) do
-          eval( ::File.read( ::File.expand_path( name ) ) )
+        pr = profile :gemfile do
+          activation do
+            file( :missing => name + '.lock' )
+          end
+
+          FileUtils.cd( basedir ) do
+            f = ::File.expand_path( name )
+            eval( ::File.read( f ), nil, f )
+          end
         end
 
-        if @gemfile_options
-          @gemfile_options = nil
+        if @gemspec_args
+          @inside_gemfile = :gemfile
+          case @gemspec_args[ 0 ]
+          when Hash
+            gemspec( @gemspec_args[ 0 ].merge( options ) )
+          when NilClass
+            gemspec( @gemspec_args[ 0 ], options )
+          else
+            @gemspec_args[ 1 ].merge!( options ) 
+            gemspec( *@gemspec_args )
+          end
+        else
           setup_gem_support( options )
+        end
+
+        if pr.dependencies.empty?
+          @current.profiles.delete( pr )
+        end
+
+        lockfile = ::File.expand_path( name + '.lock' )
+        if File.exists? lockfile
+          profile :gemfile_lock do
+            activation do
+              file( :exists => name + '.lock' )
+            end
+            locked = GemfileLock.new( lockfile )
+            locked.hull.each do |name, version|
+              gem name, version unless model.artifact_id == name && model.group_id == 'rubygems'
+            end
+          end
         end
 
         if @has_path or @has_git
@@ -129,6 +164,8 @@ module Maven
           end
         end
       ensure
+        @inside_gemfile = nil
+        @gemspec_args = nil
         @has_path = nil
         @has_git = nil
       end
@@ -194,8 +231,10 @@ module Maven
             jar 'org.jruby:jruby-core', jruby
           elsif ( jruby.sub( /1\.7\./, '').to_i < 5 )
             jar 'org.jruby:jruby-core', jruby
+          elsif jruby =~ /-no_asm$/
+            pom 'org.jruby:jruby-noasm', jruby.sub( /-no_asm$/, '' )
           else
-            jar 'org.jruby:jruby-noasm', jruby
+            pom 'org.jruby:jruby', jruby
           end
         end
       end
@@ -232,7 +271,11 @@ module Maven
         end
       end
 
-      def gemspec( name = nil, options = @gemfile_options || {} )
+      def gemspec( name = nil, options = {} )
+        if @inside_gemfile == true
+          @gemspec_args = [ name, options ]
+          return
+        end
         if name.is_a? Hash
           options = name
           name = nil
@@ -246,15 +289,15 @@ module Maven
           name = gemspecs.first
         end
         spec = nil
-        spec_file = ::File.read( ::File.expand_path( name ) )
+        f = ::File.expand_path( name )
+        spec_file = ::File.read( f )
         begin
+          spec = Gem::Specification.from_yaml( spec_file )
+        rescue Gem::Exception
           FileUtils.cd( basedir ) do
             # TODO jruby java user.dir
-            spec = eval( spec_file )
+            spec = eval( spec_file, nil, f )
           end
-        rescue => e
-          # TODO that exception is sometime due to error in the spec and not because it is a yaml file
-          spec = Gem::Specification.from_yaml( spec_file )
         end
         
         self.spec( spec, name, options )
@@ -292,7 +335,24 @@ module Maven
         end
         plugin( 'de.saumya.mojo:gem-maven-plugin:${jruby.plugins.version}',
                 config )
+
+        deps = nil
+        if @inside_gemfile
+          profile! @inside_gemfile do
+            deps = all_deps( spec )
+          end
+        else
+          deps = all_deps( spec )
+        end
         
+        unless deps.java_runtime.empty?
+          deps.java_runtime.each do |d|
+            dependency Maven::Tools::Artifact.new( *d )
+          end
+        end
+      end
+
+      def all_deps( spec )
         deps = Maven::Tools::GemspecDependencies.new( spec )
         deps.runtime.each do |d|
           gem d
@@ -304,12 +364,9 @@ module Maven
             end          
           end
         end
-        unless deps.java_runtime.empty?
-          deps.java_runtime.each do |d|
-            dependency Maven::Tools::Artifact.new( *d )
-          end
-        end
+        deps
       end
+      private :all_deps
 
       def build( &block )
         build = @current.build ||= Build.new
@@ -973,11 +1030,22 @@ module Maven
         @phase = nil
       end
 
+      def profile!( id, &block )
+        profile = @current.profiles.detect { |p| p.id.to_s == id.to_s }
+        if profile
+          nested_block( :profile, profile, block ) if block
+          profile
+        else
+          profile( id, &block )
+        end
+      end
+
       def profile( id, &block )
         profile = Profile.new
         profile.id = id if id
         @current.profiles << profile
         nested_block( :profile, profile, block ) if block
+        profile
       end
 
       def report_set( *reports, &block )

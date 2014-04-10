@@ -21,12 +21,6 @@
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>rake</artifactId>
-      <version>[0,)</version>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
       <artifactId>bundler</artifactId>
       <version>[0,)</version>
       <type>gem</type>
@@ -59,4 +53,22 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>gemfile</id>
+      <activation>
+        <file>
+          <missing>Gemfile.lock</missing>
+        </file>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>rake</artifactId>
+          <version>[0,)</version>
+          <type>gem</type>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

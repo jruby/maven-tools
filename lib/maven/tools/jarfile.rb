@@ -80,7 +80,7 @@ module Maven
 
         def eval_file( file )
           if ::File.exists?( file )
-            eval( ::File.read( file ) )
+            eval( ::File.read( file ), nil, file )
             self
           end
         end
@@ -103,12 +103,18 @@ module Maven
 
         def jar( *args )
           args << '[0,)' if args.size == 1
-          artifacts << Artifact.from( :jar, *args )
+          a = Artifact.from( :jar, *args )
+          a[ :scope ] = @scope if @scope
+          artifacts << a
+          a
         end
 
         def pom( *args )
           args << '[0,)' if args.size == 1
-          artifacts << Artifact.from( :pom, *args )
+          a = Artifact.from( :pom, *args )
+          a[ :scope ] = @scope if @scope
+          artifacts << a
+          a
         end
 
         def snapshot_repository( name, url = nil )
@@ -127,9 +133,23 @@ module Maven
         alias :source :repository
 
         # TODO add flag to use repacked asm
-        def jruby( version = nil )
-          @jruby = version if version
+        def jruby( version = nil, no_asm = false )
+          if version
+            @jruby = version 
+            @jruby += '-no_asm' if no_asm
+          end
+          @scope = :provided
+          yield if block_given?
           @jruby
+        ensure
+          @scope = nil
+        end
+          
+        def scope( scope )
+          @scope = scope
+          yield if block_given?
+        ensure
+          @scope = nil
         end
           
       end
