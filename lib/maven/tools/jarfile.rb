@@ -102,7 +102,6 @@ module Maven
         end
 
         def jar( *args )
-          args << '[0,)' if args.size == 1
           a = Artifact.from( :jar, *args )
           a[ :scope ] = @scope if @scope
           artifacts << a
@@ -110,7 +109,6 @@ module Maven
         end
 
         def pom( *args )
-          args << '[0,)' if args.size == 1
           a = Artifact.from( :pom, *args )
           a[ :scope ] = @scope if @scope
           artifacts << a
