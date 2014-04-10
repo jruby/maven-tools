@@ -186,6 +186,10 @@ module Maven
       def setup_jruby( jruby, jruby_scope = :provided )
         jruby ||= VERSIONS[ :jruby_version ]
 
+        if jruby.match( /-SNAPSHOT/ ) != nil
+          snapshot_repository( 'http://ci.jruby.org/snapshots/maven',
+                               :id => 'jruby-snapshots' )
+        end
         scope( jruby_scope ) do
           if jruby < '1.7'
             warn 'jruby version below 1.7 uses jruby-complete'
