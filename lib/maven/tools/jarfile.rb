@@ -18,8 +18,8 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-require File.join(File.dirname(__FILE__), 'coordinate.rb')
-require File.join(File.dirname(__FILE__), 'artifact.rb')
+require ::File.join(::File.dirname(__FILE__), 'coordinate.rb')
+require ::File.join(::File.dirname(__FILE__), 'artifact.rb')
 require 'fileutils'
 module Maven
   module Tools
@@ -33,25 +33,25 @@ module Maven
       end
 
       def mtime
-        File.mtime(@file)
+        ::File.mtime(@file)
       end
 
       def exists?
-        File.exists?(@file)
+        ::File.exists?(@file)
       end
 
       def mtime_lock
-        File.mtime(@lockfile)
+        ::File.mtime(@lockfile)
       end
 
       def exists_lock?
-        File.exists?(@lockfile)
+        ::File.exists?(@lockfile)
       end
 
       def load_lockfile
         _locked = []
         if exists_lock?
-          File.read(@lockfile).each_line do |line|
+          ::File.read(@lockfile).each_line do |line|
             line.strip!
             if line.size > 0 && !(line =~ /^\s*#/)
               _locked << line
@@ -79,8 +79,8 @@ module Maven
         end
 
         def eval_file( file )
-          if File.exists?( file )
-            eval( File.read( file ) )
+          if ::File.exists?( file )
+            eval( ::File.read( file ), nil, file )
             self
           end
         end
@@ -98,17 +98,23 @@ module Maven
         end
 
         def local( path )
-          artifacts << Artifact.new_local( File.expand_path( path ), :jar )
+          artifacts << Artifact.new_local( ::File.expand_path( path ), :jar )
         end
 
         def jar( *args )
           args << '[0,)' if args.size == 1
-          artifacts << Artifact.from( :jar, *args )
+          a = Artifact.from( :jar, *args )
+          a[ :scope ] = @scope if @scope
+          artifacts << a
+          a
         end
 
         def pom( *args )
           args << '[0,)' if args.size == 1
-          artifacts << Artifact.from( :pom, *args )
+          a = Artifact.from( :pom, *args )
+          a[ :scope ] = @scope if @scope
+          artifacts << a
+          a
         end
 
         def snapshot_repository( name, url = nil )
@@ -126,14 +132,30 @@ module Maven
         end
         alias :source :repository
 
-        def jruby( version = nil )
-          @jruby = version if version
+        # TODO add flag to use repacked asm
+        def jruby( version = nil, no_asm = false )
+          if version
+            @jruby = version 
+            @jruby += '-no_asm' if no_asm
+          end
+          @scope = :provided
+          yield if block_given?
+          @jruby
+        ensure
+          @scope = nil
+        end
+          
+        def scope( scope )
+          @scope = scope
+          yield if block_given?
+        ensure
+          @scope = nil
         end
           
       end
 
       def populate_unlocked( container = nil, &block )
-        if File.exists?(@file)
+        if ::File.exists?(@file)
           dsl = DSL.new
           dsl.eval_file( @file )
 
@@ -174,7 +196,7 @@ module Maven
         if dependency_coordinates.empty?
           FileUtils.rm_f(@lockfile) if exists_lock?
         else
-          File.open(@lockfile, 'w') do |f|
+          ::File.open(@lockfile, 'w') do |f|
             dependency_coordinates.each do |d|
               f.puts d.to_s unless d.to_s =~ /^ruby.bundler:/
             end
