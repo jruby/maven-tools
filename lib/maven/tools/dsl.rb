@@ -223,6 +223,11 @@ module Maven
 
       def setup_jruby( jruby, jruby_scope = :provided )
         jruby ||= VERSIONS[ :jruby_version ]
+
+        if jruby.match( /-SNAPSHOT/ ) != nil
+          snapshot_repository( 'http://ci.jruby.org/snapshots/maven',
+                               :id => 'jruby-snapshots' )
+        end
         scope( jruby_scope ) do
           if ( jruby < '1.6' )
             raise 'jruby before 1.6 are not supported'
