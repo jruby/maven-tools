@@ -1,5 +1,4 @@
 #-*- mode: ruby -*-
-require 'rubygems/package_task'
 
 begin
   require 'maven/ruby/tasks'
@@ -8,9 +7,6 @@ rescue LoadError
 end
 
 task :default => [ :specs ]
-
-Gem::PackageTask.new( Gem::Specification.load( 'maven-tools.gemspec' ) ) do
-end
 
 desc 'run minispecs'
 task :specs do
@@ -24,24 +20,6 @@ task :specs do
   $LOAD_PATH << "lib"
 
   Dir['spec/*_spec.rb'].each { |f| require File.basename(f.sub(/.rb$/, '')) }
-end
-
-desc 'maven install'
-task :install do
-  maven.exec( '-P install' )
-end
-
-desc 'release current version'
-task :release => [ :specs ] do
-  maven.install
-  # tell Mavenfile not to use SNAPSHOT version
-  ENV['RELEASE'] = 'true'
-  maven.exec( :deploy, '-Ppush,sonatype-oss-release' )
-  versionFile = File.join( 'lib', 'maven', 'tools', 'version.rb' )
-  require File.expand_path( versionFile )
-  puts "\n\n\n"
-  puts "git ci -m 'release #{Maven::Tools::VERSION}' ."
-  puts "git tag #{Maven::Tools::VERSION}"
 end
 
 task :headers do

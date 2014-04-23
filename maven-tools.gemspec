@@ -23,8 +23,8 @@ Gem::Specification.new do |s|
 
 # get them out from here until jruby-maven-plugin installs test gems somewhere else then runtime gems
 
-#  s.add_development_dependency 'rake', '~> 10.0'
-#  s.add_development_dependency 'minitest', '~> 5.3'
+  s.add_development_dependency 'rake', '~> 10.0'
+  s.add_development_dependency 'minitest', '~> 5.3'
 end
 
 # vim: syntax=Ruby
