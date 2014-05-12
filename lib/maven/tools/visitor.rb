@@ -44,13 +44,13 @@ module Maven
       def tag( name, value )
         unless value.nil?
           name = camel_case_lower( name )
-          @io.puts "#{indent}<#{name}>#{value}</#{name}>"
+          @io.puts "#{indent}<#{name}>#{escape_value( value )}</#{name}>"
         end
       end
 
       def raw_tag( name, value )
         unless value.nil?
-          @io.puts "#{indent}<#{name}>#{value}</#{name}>"
+          @io.puts "#{indent}<#{name}>#{escape_value( value )}</#{name}>"
         end
       end
 
@@ -135,6 +135,16 @@ module Maven
           end
           end_tag( name )
         end
+      end
+      
+      def escape_value( value )
+        value = value.to_s
+        value.gsub!( /&/, '&amp;' )
+        # undo double quote, somehow xyz.gemspec.rz have encoded values
+        value.gsub!( /&amp;(amp|lt|gt);/, '&\1;' )
+        value.gsub!( /</, '&lt;' )
+        value.gsub!( />/, '&gt;' )
+        value
       end
 
       def visit( model )
