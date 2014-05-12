@@ -12,9 +12,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>dummy</groupId>
-  <artifactId>gemfile_with_path</artifactId>
+  <artifactId>gemfile_with_groups</artifactId>
   <version>0.0.0</version>
-  <name>gemfile_with_path</name>
+  <name>gemfile_with_groups</name>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <jruby.plugins.version>1.0.0-rc4</jruby.plugins.version>
@@ -22,14 +22,15 @@
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>rake</artifactId>
-      <version>[0,)</version>
+      <artifactId>rspec</artifactId>
+      <version>2.13.0</version>
       <type>gem</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>bundler</artifactId>
-      <version>[0,)</version>
+      <artifactId>copyright-headers</artifactId>
+      <version>1.0.3</version>
       <type>gem</type>
       <scope>provided</scope>
     </dependency>
@@ -40,24 +41,4 @@
       <url>http://rubygems-proxy.torquebox.org/releases</url>
     </repository>
   </repositories>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-maven-plugin</artifactId>
-        <version>${jruby.plugins.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <filename>bundle</filename>
-              <args>install</args>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 </project>
