@@ -40,7 +40,6 @@ XML
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-default</artifactId>
-      <version>[0,)</version>
       <type>pom</type>
     </dependency>
   </dependencies>
