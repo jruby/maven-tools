@@ -19,7 +19,6 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 require 'fileutils'
-require 'java' if defined? JRUBY_VERSION
 require 'stringio'
 require 'maven/tools/model'
 require 'maven/tools/dsl'
@@ -31,9 +30,9 @@ module Maven
     class POM
       include Maven::Tools::DSL
 
-      def eval_spec( s )
+      def eval_spec( s, snapshot )
         @model = tesla do
-          spec s
+          spec s, nil, :snapshot => snapshot, :no_rubygems_repo => true
         end
       end
 
@@ -60,9 +59,9 @@ module Maven
         end
       end
 
-      def initialize( file = nil )
+      def initialize( file = nil, snapshot = false )
         if file.is_a? Gem::Specification
-          eval_spec( file )
+          eval_spec( file, snapshot )
         else
           eval_file( file )
         end

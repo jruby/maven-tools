@@ -19,7 +19,7 @@ module Maven
         @context = :project
         nested_block( :project, @model, block ) if block
         if @needs_torquebox
-          if ! @model.repositories.detect { |r| r.id == 'rubygems-prereleases' }  && @model.dependencies.detect { |d| d.group_id == 'rubygems' && d.version.match( /[a-zA-Z]/ ) }
+          if ! @model.repositories.detect { |r| r.id == 'rubygems-prereleases' }  && @model.dependencies.detect { |d| d.group_id == 'rubygems' && d.version.match( /-SNAPSHOT/ ) }
             
             @current = @model
             snapshot_repository(  'rubygems-prereleases',
@@ -181,7 +181,8 @@ module Maven
         
         unless options[ :only_metadata ]
         
-          unless model.repositories.detect { |r| r.id == 'rubygems-releases' }
+          if ( nil == model.repositories.detect { |r| r.id == 'rubygems-releases' } && options[ :no_rubygems_repo ] != true )
+            
             repository( 'rubygems-releases',
                         'http://rubygems-proxy.torquebox.org/releases' )
           end
@@ -208,7 +209,7 @@ module Maven
           end
         end
         if jar && ( source || 
-                    ::File.exists?( ::File.join( basedir, 'src', 'main', 'java' ) ) )
+                    ::File.exists?( ::File.join( basedir, 'src', 'main', 'java' ) ) ) && spec.platform.to_s.match( /java|jruby/ )
           plugin( :jar, VERSIONS[ :jar_plugin ],
                   :outputDirectory => output,
                   :finalName => jar ) do
@@ -319,11 +320,24 @@ module Maven
         if @context == :project
           build.directory = '${basedir}/pkg'
           version = spec.version.to_s
-          version += '-SNAPSHOT' if spec.version.prerelease?
+          if options[ :snapshot ] && spec.version.prerelease?
+            version += '-SNAPSHOT'
+          end
           id "rubygems:#{spec.name}:#{version}"
           name( spec.summary || spec.name )
           description spec.description
           url spec.homepage
+          if spec.homepage && spec.homepage.match( /github.com/ )
+            con = spec.homepage.sub( /http:/, 'https:' ).sub( /\/?$/, ".git" )
+            scm :url => spec.homepage, :connection => con
+          end
+
+          spec.licenses.each do |l|
+            license( l )
+          end
+          spec.authors.zip( spec.email || [] ).each do |d|
+            developer( :name => d[0], :email => d[1] )
+          end
           unless options[ :only_metadata ]
             packaging 'gem'
             extension 'de.saumya.mojo:gem-extension:${jruby.plugins.version}'

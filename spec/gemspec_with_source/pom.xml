@@ -18,6 +18,16 @@
   <name>Gem redistribution of Bouncy Castle jars</name>
   <url>http://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java/</url>
   <description>Gem redistribution of "Legion of the Bouncy Castle Java cryptography APIs" jars at http://www.bouncycastle.org/java.html</description>
+  <developers>
+    <developer>
+      <name>Hiroshi Nakamura</name>
+      <email>nahi@ruby-lang.org</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>https://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java.git</connection>
+    <url>http://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java/</url>
+  </scm>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <jruby.plugins.version>1.0.0-rc4</jruby.plugins.version>

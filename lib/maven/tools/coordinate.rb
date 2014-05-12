@@ -149,7 +149,12 @@ module Maven
           [(nil || low), "#{snapshot_version(val)})"]
         elsif arg =~ /\=/
           val = arg.sub(/=\s*/, '')
-          ["[#{snapshot_version(val)}", val + '.0.0.0.0.1)']
+          # for prereleased version pick the maven version (no version range)
+          if val.match /[a-z]|[A-Z]/
+            [ val, val ]
+          else
+            ["[#{val}", "#{val}.0.0.0.0.1)"]
+          end
        else
           # no conversion here, i.e. assume maven version
           [arg, arg]
