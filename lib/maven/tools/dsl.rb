@@ -171,6 +171,9 @@ module Maven
       end
 
       def setup_gem_support( options, spec = nil, config = {} )
+        unless model.properties.member?( 'project.build.sourceEncoding' )
+          properties( 'project.build.sourceEncoding' => 'utf-8' )
+        end
         if spec.nil?
           require_path = '.'
           name = ::File.basename( ::File.expand_path( '.' ) )
@@ -311,9 +314,6 @@ module Maven
 
       def spec( spec, name = nil, options = {} )
         name ||= "#{spec.name}-#{spec.version}.gemspec"
-        unless model.properties.member?( 'project.build.sourceEncoding' )
-          properties( 'project.build.sourceEncoding' => 'utf-8' ) 
-        end
 
         @gemfile_options = nil
 
@@ -1117,7 +1117,11 @@ module Maven
         end
         if args.last.is_a?(Hash)
           options = args.last
-          
+        elsif @group
+          options = {}
+          args << options
+        end
+        if options
           # on ruby-maven side we ignore the require option
           options.delete( :require )
           options.delete( 'require' )
@@ -1128,15 +1132,15 @@ module Maven
             @has_path = true
           else
             platform = options.delete( :platform ) || options.delete( 'platform' )
-            group = options.delete( :group ) || options.delete( 'group' ) || @group || nil
-             if group
+            group = options.delete( :group ) || options.delete( 'group' ) || @group
+            if group
                case group.to_sym
                when :test
                  options[ :scope ] = :test 
                when :development
                  options[ :scope ] = :provided
                end
-             end
+            end
             if platform.nil? || is_jruby_platform( platform )
               options[ :version ] = '[0,)' if args.size == 2 && options[ :version ].nil? && options[ 'version' ].nil?
               do_dependency( bang, :gem, *args )
