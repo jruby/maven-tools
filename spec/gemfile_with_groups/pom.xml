@@ -17,7 +17,7 @@
   <name>gemfile_with_groups</name>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>1.0.0-rc4</jruby.plugins.version>
+    <jruby.plugins.version>1.0.0</jruby.plugins.version>
   </properties>
   <dependencies>
     <dependency>
