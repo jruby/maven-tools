@@ -20,6 +20,6 @@
 #
 module Maven
   module Tools
-    VERSION = '0.34.4'.freeze
+    VERSION = '0.34.5'.freeze
   end
 end
