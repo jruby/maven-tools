@@ -17,7 +17,14 @@ Gem::Specification.new do |s|
   s.files += Dir['lib/**/*rb']
   s.files += Dir['spec/**/*rb']
   s.files += Dir['MIT-LICENSE'] + Dir['*.md']
-  s.test_files += Dir['spec/**/*_spec.rb']
+  s.test_files += Dir['spec/**/*.rb']
+  s.test_files += Dir['spec/**/*.java']
+  s.test_files += Dir['spec/**/*.xml']
+  s.test_files += Dir['spec/**/*file']
+  s.test_files += Dir['spec/**/Gemfile.lock']
+  s.test_files += Dir['spec/**/.keep']
+  s.test_files += Dir['spec/**/*gemspec']
+  s.test_files += Dir['spec/**/*gem']
 
   s.add_runtime_dependency 'virtus', '~> 1.0'
 
