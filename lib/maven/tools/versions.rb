@@ -22,15 +22,12 @@ module Maven
   module Tools
     unless defined? VERSIONS
       VERSIONS = { 
-        :jruby_rack => "1.1.13.2",
-        :assembly_plugin => "2.4",
-        :war_plugin => "2.2",
         :jar_plugin => "2.4",
         :clean_plugin => "2.4",
-        :jruby_plugins => "1.0.0-rc4",
-        :bundler_version => "1.3.5",
-        :jruby_version => "1.7.6",
-        :tesla_version => "0.0.8"
+        :jruby_plugins => "1.0.1",
+        :bundler_version => "1.6.2",
+        :jruby_version => "1.7.12",
+        :tesla_version => "0.1.0"
       }.freeze
     end
   end

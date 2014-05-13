@@ -112,21 +112,31 @@ module Maven
         name = ::File.join( basedir, name ) unless ::File.exists?( name )
         basedir = ::File.dirname( name ) unless basedir
 
-        @inside_gemfile = true
+        
+        @inside_gemfile = true   
         # the eval might need those options for gemspec declaration
-        pr = profile :gemfile do
-          activation do
-            file( :missing => name + '.lock' )
+        lockfile = ::File.expand_path( name + '.lock' )
+        if File.exists? lockfile
+          pr = profile :gemfile do
+            activation do
+              file( :missing => name + '.lock' )
+            end
+            
+            FileUtils.cd( basedir ) do
+              f = ::File.expand_path( name )
+              eval( ::File.read( f ), nil, f )
+            end
           end
-
+          @inside_gemfile = :gemfile
+        else
           FileUtils.cd( basedir ) do
             f = ::File.expand_path( name )
             eval( ::File.read( f ), nil, f )
-          end
+          end 
+          @inside_gemfile = false
         end
 
         if @gemspec_args
-          @inside_gemfile = :gemfile
           case @gemspec_args[ 0 ]
           when Hash
             gemspec( @gemspec_args[ 0 ].merge( options ) )
@@ -140,25 +150,24 @@ module Maven
           setup_gem_support( options )
         end
 
-        if pr.dependencies.empty?
+        if pr && pr.dependencies.empty?
           @current.profiles.delete( pr )
         end
 
-        lockfile = ::File.expand_path( name + '.lock' )
-        if File.exists? lockfile
+        if pr && !pr.dependencies.empty?
           profile :gemfile_lock do
             activation do
               file( :exists => name + '.lock' )
             end
             locked = GemfileLock.new( lockfile )
-            locked.hull.each do |name, version|
-              gem name, version unless model.artifact_id == name && model.group_id == 'rubygems'
-            end
+            add_scoped_hull( locked, pr.dependencies )
+            add_scoped_hull( locked, pr.dependencies, :provided )
+            add_scoped_hull( locked, pr.dependencies, :test )
           end
         end
 
         if @has_path or @has_git
-          gem 'bundler', :scope => :provided unless gem? 'bundler'
+          gem 'bundler', VERSIONS[ :bundler_version ], :scope => :provided unless gem? 'bundler'
           jruby_plugin :gem do
             execute_goal :exec, :filename => 'bundle', :args => 'install'
           end
@@ -169,6 +178,21 @@ module Maven
         @has_path = nil
         @has_git = nil
       end
+
+      def add_scoped_hull( locked, deps, scope = nil )
+        options = {}
+        options[ :scope ] = scope if scope
+        scope ||= "compile runtime default"
+        scope = scope.to_s
+        names = deps.select do |d|
+          sc = d.scope || 'default'
+          scope.match /#{sc}/
+        end.collect { |d| d.artifact_id }
+        locked.dependency_hull( names ).each do |name, version|
+          gem name, version, options unless model.artifact_id == name && model.group_id == 'rubygems'
+        end
+      end
+      private :add_scoped_hull
 
       def setup_gem_support( options, spec = nil, config = {} )
         unless model.properties.member?( 'project.build.sourceEncoding' )
@@ -356,7 +380,7 @@ module Maven
                 config )
 
         deps = nil
-        if @inside_gemfile
+        if @inside_gemfile.is_a? Symbol
           profile! @inside_gemfile do
             deps = all_deps( spec )
           end

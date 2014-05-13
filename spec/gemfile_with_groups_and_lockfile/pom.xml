@@ -11,65 +11,20 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>rubygems</groupId>
-  <artifactId>bouncy-castle-java</artifactId>
-  <version>1.5.0149</version>
-  <packaging>gem</packaging>
-  <name>Gem redistribution of Bouncy Castle jars</name>
-  <url>http://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java/</url>
-  <description>Gem redistribution of "Legion of the Bouncy Castle Java cryptography APIs" jars at http://www.bouncycastle.org/java.html</description>
-  <developers>
-    <developer>
-      <name>Hiroshi Nakamura</name>
-      <email>nahi@ruby-lang.org</email>
-    </developer>
-  </developers>
-  <scm>
-    <connection>https://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java.git</connection>
-    <url>http://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java/</url>
-  </scm>
+  <groupId>dummy</groupId>
+  <artifactId>gemfile_with_groups_and_lockfile</artifactId>
+  <version>0.0.0</version>
+  <name>gemfile_with_groups_and_lockfile</name>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <jruby.plugins.version>1.0.1</jruby.plugins.version>
   </properties>
-  <dependencies>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.49</version>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.49</version>
-    </dependency>
-  </dependencies>
   <repositories>
     <repository>
       <id>rubygems-releases</id>
       <url>http://rubygems-proxy.torquebox.org/releases</url>
     </repository>
   </repositories>
-  <build>
-    <extensions>
-      <extension>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-extension</artifactId>
-        <version>${jruby.plugins.version}</version>
-      </extension>
-    </extensions>
-    <directory>${basedir}/pkg</directory>
-    <plugins>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-maven-plugin</artifactId>
-        <version>${jruby.plugins.version}</version>
-        <configuration>
-          <gemspec>bouncy-castle-java.gemspec</gemspec>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <profiles>
     <profile>
       <id>gemfile</id>
@@ -81,22 +36,17 @@
       <dependencies>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>virtus</artifactId>
-          <version>[0,)</version>
-          <type>gem</type>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
-          <artifactId>rake</artifactId>
-          <version>[10.2,10.99999]</version>
-          <type>gem</type>
-        </dependency>
-        <dependency>
-          <groupId>rubygems</groupId>
           <artifactId>rspec</artifactId>
-          <version>[2.11,2.99999]</version>
+          <version>2.13.0</version>
           <type>gem</type>
           <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>copyright-header</artifactId>
+          <version>1.0.12</version>
+          <type>gem</type>
+          <scope>provided</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -110,70 +60,78 @@
       <dependencies>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>virtus</artifactId>
-          <version>1.0.2</version>
+          <artifactId>copyright-header</artifactId>
+          <version>1.0.12</version>
           <type>gem</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>axiom-types</artifactId>
-          <version>0.1.1</version>
+          <artifactId>github-linguist</artifactId>
+          <version>2.6.7</version>
           <type>gem</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>descendants_tracker</artifactId>
-          <version>0.0.4</version>
+          <artifactId>charlock_holmes</artifactId>
+          <version>0.6.9.4</version>
           <type>gem</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>thread_safe</artifactId>
-          <version>0.3.3</version>
+          <artifactId>escape_utils</artifactId>
+          <version>0.3.2</version>
           <type>gem</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>ice_nine</artifactId>
-          <version>0.11.0</version>
+          <artifactId>mime-types</artifactId>
+          <version>1.25.1</version>
           <type>gem</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>coercible</artifactId>
-          <version>1.0.1</version>
+          <artifactId>pygments.rb</artifactId>
+          <version>0.4.2</version>
           <type>gem</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>equalizer</artifactId>
-          <version>0.1.0</version>
+          <artifactId>posix-spawn</artifactId>
+          <version>0.3.8</version>
           <type>gem</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>rake</artifactId>
-          <version>10.2.2</version>
+          <artifactId>yajl-ruby</artifactId>
+          <version>1.1.0</version>
           <type>gem</type>
+          <scope>provided</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
           <artifactId>rspec</artifactId>
-          <version>2.14.1</version>
+          <version>2.13.0</version>
           <type>gem</type>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
           <artifactId>rspec-core</artifactId>
-          <version>2.14.7</version>
+          <version>2.13.1</version>
           <type>gem</type>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>rubygems</groupId>
           <artifactId>rspec-expectations</artifactId>
-          <version>2.14.5</version>
+          <version>2.13.0</version>
           <type>gem</type>
           <scope>test</scope>
         </dependency>
@@ -187,7 +145,7 @@
         <dependency>
           <groupId>rubygems</groupId>
           <artifactId>rspec-mocks</artifactId>
-          <version>2.14.6</version>
+          <version>2.13.1</version>
           <type>gem</type>
           <scope>test</scope>
         </dependency>

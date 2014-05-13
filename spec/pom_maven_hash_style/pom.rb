@@ -1,6 +1,6 @@
 project :name => 'my name', :url => 'example.com' do
 
-  model_version '1.0.0'
+  model_version '1.0.1'
 
   parent( :group_id => 'example',
           :artifact_id => 'parent',

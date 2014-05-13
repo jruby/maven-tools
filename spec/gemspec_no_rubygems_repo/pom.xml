@@ -13,7 +13,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>rubygems</groupId>
   <artifactId>bouncy-castle-java</artifactId>
-  <version>1.5.0149</version>
+  <version>1.5.1</version>
   <packaging>gem</packaging>
   <name>Gem redistribution of Bouncy Castle jars</name>
   <url>http://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java/</url>
@@ -35,27 +35,12 @@
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>virtus</artifactId>
-      <version>[0,)</version>
+      <artifactId>minitest</artifactId>
+      <version>[4.4,4.99999]</version>
       <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.49</version>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.49</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>rubygems-releases</id>
-      <url>http://rubygems-proxy.torquebox.org/releases</url>
-    </repository>
-  </repositories>
   <build>
     <extensions>
       <extension>

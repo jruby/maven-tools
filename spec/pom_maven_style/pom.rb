@@ -1,6 +1,6 @@
 project do
 
-  model_version '1.0.0'
+  model_version '1.0.1'
 
   parent 'example:parent:1.1' do
     relative_path '../pom.xml'
