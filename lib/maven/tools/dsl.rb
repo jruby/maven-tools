@@ -845,7 +845,12 @@ module Maven
             @current.build.plugins
           end
         else
-          @current.plugins
+          if @context == :overrides
+            @current.plugin_management ||= PluginManagement.new
+            @current.plugin_management.plugins
+          else
+            @current.plugins
+          end
         end
       end
       private :plugins
@@ -1072,10 +1077,14 @@ module Maven
         end
       end
 
-      def phase( name )
-        @phase = name
-        yield
-        @phase = nil
+      def phase( name, &block )
+        if @context != :plugin && block
+          @phase = name
+          yield
+          @phase = nil
+        else
+          @current.phase = name
+        end
       end
 
       def profile!( id, &block )
@@ -1249,11 +1258,29 @@ module Maven
       end
 
       def xml( xml )
-        raise  'Xpp3DomBuilder.build( java.io.StringReader.new( xml ) )'
+        def xml.to_xml
+          self
+        end
+        xml
       end
 
-      def set_config(  receiver, options )
+      def prepare_config( receiver, options )
+        return unless options
+        inherited = options.delete( 'inherited' ) || options.delete( :inherited )
+        receiver.inherited = inherited if inherited
+      end
+
+      def set_config( receiver, options )
+        prepare_config( receiver, options )
         receiver.configuration = options
+      end
+
+      def configuration( v )
+        if @context == :notifier
+          @current.configuration = v
+        else
+          set_config( @current, v )
+        end
       end
 
       private

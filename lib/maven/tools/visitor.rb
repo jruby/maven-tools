@@ -22,7 +22,8 @@ module Maven
         @io.print "#{indent}<#{name}"
         attr.each do |k,v|
           @io.puts
-          @io.print "#{indent}  #{k.to_s[1..-1]}='#{v}'"
+          vv = v.gsub( /"/, '&quot;' )
+          @io.print "#{indent}  #{k.to_s[1..-1]}=\"#{vv}\""
         end
         @io.puts ">"
         inc
@@ -42,9 +43,13 @@ module Maven
       end
 
       def tag( name, value )
-        unless value.nil?
-          name = camel_case_lower( name )
-          @io.puts "#{indent}<#{name}>#{escape_value( value )}</#{name}>"
+        if value != nil
+          if value.respond_to? :to_xml
+            @io.puts "#{indent}#{value.to_xml}"
+          else
+            name = camel_case_lower( name )
+            @io.puts "#{indent}<#{name}>#{escape_value( value )}</#{name}>"
+          end
         end
       end
 
@@ -119,7 +124,6 @@ module Maven
 
       def accept_hash( name, hash )
         unless hash.empty?
-          # TODO attributes
           attr = hash.select do |k, v|
             [ k, v ] if k.to_s.match( /^@/ )
           end
@@ -128,8 +132,9 @@ module Maven
             case v
             when Array
               accept_array( k, v )
+            when Hash
+              accept_hash( k, v )
             else
-              # TODO xml content
               tag( k, v ) unless k.to_s.match( /^@/ )
             end
           end

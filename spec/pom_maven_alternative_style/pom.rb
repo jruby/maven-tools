@@ -161,6 +161,62 @@ project 'my name', 'example.com' do
       includes [ '**/*' ]
       excludes [ '*~' ]
     end
+
+    plugin :jar, '1.0', :inherited => true do
+      configuration :finalName => :testing
+    end
+    
+    jruby_plugin :gem, '1.0.0' do
+      gem :bundler, '1.6.2'
+    end
+
+    phase :package do
+      plugin :antrun do
+        execute_goals( 'run',
+                       :id => 'copy',
+                       'tasks' => {
+                         'exec' => {
+                           '@executable' => '/bin/sh',
+                           '@osfamily' => 'unix',
+                           'arg' => {
+                             '@line' => '-c \'cp "${jruby.basedir}/bin/jruby.bash" "${jruby.basedir}/bin/jruby"\''
+                           }
+                         },
+                         'chmod' => {
+                           '@file' => '${jruby.basedir}/bin/jruby',
+                           '@perm' => '755'
+                         }
+                       } )
+        jar 'org.super.duper:executor:1.0.0'
+      end
+    end
+    
+    plugin 'org.codehaus.mojo:exec-maven-plugin' do
+      execute_goal( 'exec',
+                    :id => 'invoker-generator',
+                    'arguments' => [ '-Djruby.bytecode.version=${base.java.version}',
+                                     '-classpath',
+                                     xml( '<classpath/>' ),
+                                     'org.jruby.anno.InvokerGenerator',
+                                     '${anno.sources}/annotated_classes.txt',
+                                     '${project.build.outputDirectory}' ],
+                    'executable' =>  'java',
+                    'classpathScope' =>  'compile' )
+    end
+
+    overrides do
+      plugin( "org.mortbay.jetty:jetty-maven-plugin:8.1",
+              :path => '/',
+              :connectors => [ { :@implementation => "org.eclipse.jetty.server.nio.SelectChannelConnector",
+                                 :port => '${run.port}' },
+                               { :@implementation => "org.eclipse.jetty.server.ssl.SslSelectChannelConnector",
+                                 :port => '${run.sslport}',
+                                 :keystore => '${run.keystore}',
+                                 :keyPassword => '${run.keystore.pass}',
+                                 :trustPassword => '${run.truststore.pass}' } ],
+              :httpConnector => { :port => '${run.port}' } )
+    end
+    
   end
 end
 

@@ -182,179 +182,65 @@ project :name => 'my name', :url => 'example.com' do
                    :directory => 'testresources',
                    :includes => [ '**/*' ],
                    :excludes => [ '*~' ] )
+    plugin( :jar, '1.0',
+            :inherited => true,
+            :finalName => :testing )
+
+    jruby_plugin :gem, '1.0.0' do
+      gem :bundler, '1.6.2'
+    end
+
+    plugin :antrun do
+      execute_goals( 'run',
+                     :id => 'copy',
+                     :phase => 'package',
+                     'tasks' => {
+                       'exec' => {
+                         '@executable' => '/bin/sh',
+                         '@osfamily' => 'unix',
+                         'arg' => {
+                           '@line' => '-c \'cp "${jruby.basedir}/bin/jruby.bash" "${jruby.basedir}/bin/jruby"\''
+                         }
+                       },
+                       'chmod' => {
+                         '@file' => '${jruby.basedir}/bin/jruby',
+                         '@perm' => '755'
+                       }
+                     } )
+      jar 'org.super.duper:executor:1.0.0'
+    end
+
+    plugin 'org.codehaus.mojo:exec-maven-plugin' do
+      execute_goal( 'exec',
+                    :id => 'invoker-generator',
+                    'arguments' => [ '-Djruby.bytecode.version=${base.java.version}',
+                                     '-classpath',
+                                     xml( '<classpath/>' ),
+                                     'org.jruby.anno.InvokerGenerator',
+                                     '${anno.sources}/annotated_classes.txt',
+                                     '${project.build.outputDirectory}' ],
+                    'executable' =>  'java',
+                    'classpathScope' =>  'compile' )
+    end
+    
+    plugin_management do
+      plugin( "org.mortbay.jetty:jetty-maven-plugin:8.1",
+              :path => '/',
+              :connectors => [ { :@implementation => "org.eclipse.jetty.server.nio.SelectChannelConnector",
+                                 :port => '${run.port}' },
+                               { :@implementation => "org.eclipse.jetty.server.ssl.SslSelectChannelConnector",
+                                 :port => '${run.sslport}',
+                                 :keystore => '${run.keystore}',
+                                 :keyPassword => '${run.keystore.pass}',
+                                 :trustPassword => '${run.truststore.pass}' } ],
+              :httpConnector => { :port => '${run.port}' } )
+    end
   end
 end
 
-
-#   <dependencies>
-#     <dependency>
-#       <groupId/>
-#       <artifactId/>
-#       <version/>
-#       <type/>
-#       <classifier/>
-#       <scope/>
-#       <systemPath/>
-#       <exclusions>
-#         <exclusion>
-#           <artifactId/>
-#           <groupId/>
-#         </exclusion>
-#       </exclusions>
-#       <optional/>
-#     </dependency>
-#   </dependencies>
-
-#   <repositories>
-#     <repository>
-#       <releases>
-#         <enabled/>
-#         <updatePolicy/>
-#         <checksumPolicy/>
-#       </releases>
-#       <snapshots>
-#         <enabled/>
-#         <updatePolicy/>
-#         <checksumPolicy/>
-#       </snapshots>
-#       <id/>
-#       <name/>
-#       <url/>
-#       <layout/>
-#     </repository>
-#   </repositories>
-#   <pluginRepositories>
-#     <pluginRepository>
-#       <releases>
-#         <enabled/>
-#         <updatePolicy/>
-#         <checksumPolicy/>
-#       </releases>
-#       <snapshots>
-#         <enabled/>
-#         <updatePolicy/>
-#         <checksumPolicy/>
-#       </snapshots>
-#       <id/>
-#       <name/>
-#       <url/>
-#       <layout/>
-#     </pluginRepository>
-#   </pluginRepositories>
-
-#   <build>
-#     <sourceDirectory/>
-#     <scriptSourceDirectory/>
-#     <testSourceDirectory/>
-#     <outputDirectory/>
-#     <testOutputDirectory/>
-#     <extensions>
-#       <extension>
-#         <groupId/>
-#         <artifactId/>
-#         <version/>
-#       </extension>
-#     </extensions>
-#     <defaultGoal/>
-#     <resources>
-#       <resource>
-#         <targetPath/>
-#         <filtering/>
-#         <directory/>
-#         <includes/>
-#         <excludes/>
-#       </resource>
-#     </resources>
-#     <testResources>
-#       <testResource>
-#         <targetPath/>
-#         <filtering/>
-#         <directory/>
-#         <includes/>
-#         <excludes/>
-#       </testResource>
-#     </testResources>
 #     <directory/>
 #     <finalName/>
 #     <filters/>
-#     <pluginManagement>
-#       <plugins>
-#         <plugin>
-#           <groupId/>
-#           <artifactId/>
-#           <version/>
-#           <extensions/>
-#           <executions>
-#             <execution>
-#               <id/>
-#               <phase/>
-#               <goals/>
-#               <inherited/>
-#               <configuration/>
-#             </execution>
-#           </executions>
-#           <dependencies>
-#             <dependency>
-#               <groupId/>
-#               <artifactId/>
-#               <version/>
-#               <type/>
-#               <classifier/>
-#               <scope/>
-#               <systemPath/>
-#               <exclusions>
-#                 <exclusion>
-#                   <artifactId/>
-#                   <groupId/>
-#                 </exclusion>
-#               </exclusions>
-#               <optional/>
-#             </dependency>
-#           </dependencies>
-#           <goals/>
-#           <inherited/>
-#           <configuration/>
-#         </plugin>
-#       </plugins>
-#     </pluginManagement>
-#     <plugins>
-#       <plugin>
-#         <groupId/>
-#         <artifactId/>
-#         <version/>
-#         <extensions/>
-#         <executions>
-#           <execution>
-#             <id/>
-#             <phase/>
-#             <goals/>
-#             <inherited/>
-#             <configuration/>
-#           </execution>
-#         </executions>
-#         <dependencies>
-#           <dependency>
-#             <groupId/>
-#             <artifactId/>
-#             <version/>
-#             <type/>
-#             <classifier/>
-#             <scope/>
-#             <systemPath/>
-#             <exclusions>
-#               <exclusion>
-#                 <artifactId/>
-#                 <groupId/>
-#               </exclusion>
-#             </exclusions>
-#             <optional/>
-#           </dependency>
-#         </dependencies>
-#         <goals/>
-#         <inherited/>
-#         <configuration/>
-#       </plugin>
-#     </plugins>
 #   </build>
 
 #   <reports/>

@@ -84,6 +84,7 @@ ci_management do
     configuration :key1 => 'value1', :key2 => 'value2'
   end
 end
+
 distribution do
   status 'active'
   download_url 'http://dev.example.com/downloads'
@@ -162,6 +163,7 @@ repository do
     checksum_policy 'none'
   end
 end
+
 snapshot_repository do
   id 'snapshots'
   url 'http://snaphots.example.com'
@@ -176,6 +178,7 @@ snapshot_repository do
     checksum_policy 'none'
   end
 end
+
 plugin_repository do
   id :first
   url 'http://pluginrepo.example.com'
@@ -210,6 +213,7 @@ resource do
   includes [ '**/*' ]
   excludes [ '*~' ]
 end
+
 test_resource do
   target_path 'target/test'
   filtering false
@@ -217,6 +221,97 @@ test_resource do
   includes [ '**/*' ]
   excludes [ '*~' ]
 end
+
+plugin :jar, '1.0', :inherited => true do
+  configuration :finalName => :testing
+end
+
+jruby_plugin :gem, '1.0.0' do
+  gem :bundler, '1.6.2'
+end
+
+phase :package do
+  plugin :antrun do
+    execute_goals( 'run',
+                   :id => 'copy',
+                   'tasks' => {
+                     'exec' => {
+                       '@executable' => '/bin/sh',
+                       '@osfamily' => 'unix',
+                       'arg' => {
+                         '@line' => '-c \'cp "${jruby.basedir}/bin/jruby.bash" "${jruby.basedir}/bin/jruby"\''
+                       }
+                     },
+                     'chmod' => {
+                       '@file' => '${jruby.basedir}/bin/jruby',
+                       '@perm' => '755'
+                     }
+                   } )
+    jar 'org.super.duper:executor:1.0.0'
+  end
+end
+
+plugin 'org.codehaus.mojo:exec-maven-plugin' do
+  execute_goal( 'exec',
+                :id => 'invoker-generator',
+                'arguments' => [ '-Djruby.bytecode.version=${base.java.version}',
+                                 '-classpath',
+                                 xml( '<classpath/>' ),
+                                 'org.jruby.anno.InvokerGenerator',
+                                 '${anno.sources}/annotated_classes.txt',
+                                 '${project.build.outputDirectory}' ],
+                'executable' =>  'java',
+                'classpathScope' =>  'compile' )
+end
+
+plugin_management do
+  plugin( "org.mortbay.jetty:jetty-maven-plugin:8.1",
+          :path => '/',
+          :connectors => [ { :@implementation => "org.eclipse.jetty.server.nio.SelectChannelConnector",
+                             :port => '${run.port}' },
+                           { :@implementation => "org.eclipse.jetty.server.ssl.SslSelectChannelConnector",
+                             :port => '${run.sslport}',
+                             :keystore => '${run.keystore}',
+                             :keyPassword => '${run.keystore.pass}',
+                             :trustPassword => '${run.truststore.pass}' } ],
+          :httpConnector => { :port => '${run.port}' } )
+end
+
+#           <groupId/>
+#           <artifactId/>
+#           <version/>
+#           <extensions/>
+#           <executions>
+#             <execution>
+#               <id/>
+#               <phase/>
+#               <goals/>
+#               <inherited/>
+#               <configuration/>
+#             </execution>
+#           </executions>
+#           <dependencies>
+#             <dependency>
+#               <groupId/>
+#               <artifactId/>
+#               <version/>
+#               <type/>
+#               <classifier/>
+#               <scope/>
+#               <systemPath/>
+#               <exclusions>
+#                 <exclusion>
+#                   <artifactId/>
+#                   <groupId/>
+#                 </exclusion>
+#               </exclusions>
+#               <optional/>
+#             </dependency>
+#           </dependencies>
+#           <goals/>
+#           <inherited/>
+#           <configuration/>
+#         </plugin>
 
 #   <scm>
 #     <connection/>
