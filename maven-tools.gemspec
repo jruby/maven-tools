@@ -14,6 +14,8 @@ Gem::Specification.new do |s|
 
   s.license = 'MIT'
 
+  s.files += Dir['*.gemspec']
+  s.files += Dir['*file']
   s.files += Dir['lib/**/*rb']
   s.files += Dir['spec/**/*rb']
   s.files += Dir['MIT-LICENSE'] + Dir['*.md']
