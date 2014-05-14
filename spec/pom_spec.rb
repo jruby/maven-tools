@@ -3,7 +3,7 @@ require 'maven/tools/pom'
 
 describe Maven::Tools::POM do
 
-  ( Dir[ File.join( File.dirname( __FILE__ ), 'gem*' ) ] + Dir[ File.join( File.dirname( __FILE__ ), 'pom*' ) ] ).each do |dir|
+  ( Dir[ File.join( File.dirname( __FILE__ ), 'gem*' ) ] + Dir[ File.join( File.dirname( __FILE__ ), 'pom*' ) ] + Dir[ File.join( File.dirname( __FILE__ ), 'mavenfile*' ) ] ).each do |dir|
     if File.directory?( dir )
       it "should convert #{dir}" do
         pom = Maven::Tools::POM.new( dir )

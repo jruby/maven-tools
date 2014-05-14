@@ -73,7 +73,6 @@ project 'my name', 'example.com' do
     repository( :first, 
                 'http://repo.example.com',
                 'First',
-                :unique_version => 123,
                 :layout => 'legacy' ) do
       releases( :enabled => true,
                 :update_policy => 'daily',
@@ -85,7 +84,6 @@ project 'my name', 'example.com' do
     snapshot_repository( 'snapshots', 
                          'http://snaphots.example.com',
                          'First Snapshots',
-                         :unique_version => 1234,
                          :layout => 'legacy' ) do
       releases( :enabled => false,
                 :update_policy => 'daily',
@@ -114,7 +112,6 @@ project 'my name', 'example.com' do
          :optional => false )
   end
   repository( 'first', 'http://repo.example.com', 'First' ) do
-    unique_version 123
     layout 'legacy'
     releases( :enabled => true,
               :update_policy => 'daily',
@@ -126,7 +123,6 @@ project 'my name', 'example.com' do
   snapshot_repository( 'snapshots', 
                        'http://snaphots.example.com',
                        'First Snapshots',
-                       :unique_version => 12345,
                        :layout => 'legacy' ) do
     releases( :update_policy => 'daily',
               :checksum_policy => :strict )
@@ -134,7 +130,6 @@ project 'my name', 'example.com' do
                :checksum_policy => 'none' )
   end
   plugin_repository( :first, 'http://pluginrepo.example.com', 'First' ) do
-    unique_version 12
     layout 'legacy'
     releases( :enabled => true,
               :update_policy => 'daily',

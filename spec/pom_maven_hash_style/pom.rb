@@ -76,20 +76,18 @@ project :name => 'my name', :url => 'example.com' do
   end
   distribution( :status => 'active',
                 :download_url => 'http://dev.example.com/downloads' ) do
-    repository( :unique_version => 123,
-                :id => 'first',
+    repository( :id => 'first',
                 :name => 'First',
                 :url => 'http://repo.example.com',
                 :layout => 'legacy' ) do
       releases( :enabled => true,
                 :update_policy => 'daily',
                 :checksum_policy => :strict )
-      snapshots( :enabled =>false,
+      snapshots( :enabled => false,
                  :update_policy => :never,
                  :checksum_policy => 'none' )
     end
-    snapshot_repository( :unique_version => 1234,
-                         :id => 'snapshots',
+    snapshot_repository( :id => 'snapshots',
                          :name => 'First Snapshots',
                          :url => 'http://snaphots.example.com',
                          :layout => 'legacy' ) do
@@ -136,7 +134,6 @@ project :name => 'my name', :url => 'example.com' do
   repository( :id => 'first', 
               :url => 'http://repo.example.com', 
               :name => 'First',
-              :unique_version => 123,
               :layout => 'legacy' ) do
     releases( :enabled => true,
               :update_policy => 'daily',
@@ -148,7 +145,6 @@ project :name => 'my name', :url => 'example.com' do
   snapshot_repository( :id => 'snapshots', 
                        :url => 'http://snaphots.example.com',
                        :name => 'First Snapshots',
-                       :unique_version => 12345,
                        :layout => 'legacy' ) do
     releases( :update_policy => 'daily',
               :checksum_policy => :strict )
@@ -158,7 +154,6 @@ project :name => 'my name', :url => 'example.com' do
   plugin_repository( :id => :first, 
                      :url => 'http://pluginrepo.example.com', 
                      :name => 'First',
-                     :unique_version => 12,
                      :layout => 'legacy' ) do
     releases( :enabled => true,
               :update_policy => 'daily',

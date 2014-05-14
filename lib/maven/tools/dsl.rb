@@ -46,8 +46,8 @@ module Maven
         @model
       end
 
-      def eval_pom( src, reference_file = '.' )
-        @source = reference_file
+      def eval_pom( src, reference_file )
+        @source = reference_file || '.'
         eval( src, nil, ::File.expand_path( @source ) )
       ensure
         @source = nil
@@ -110,8 +110,6 @@ module Maven
           name = 'Gemfile'
         end
         name = ::File.join( basedir, name ) unless ::File.exists?( name )
-        basedir = ::File.dirname( name ) unless basedir
-
         
         @inside_gemfile = true   
         # the eval might need those options for gemspec declaration
@@ -326,7 +324,7 @@ module Maven
         spec_file = ::File.read( f )
         begin
           spec = Gem::Specification.from_yaml( spec_file )
-        rescue Gem::Exception
+        rescue
           FileUtils.cd( basedir ) do
             # TODO jruby java user.dir
             spec = eval( spec_file, nil, f )
@@ -492,6 +490,7 @@ module Maven
         issues = IssueManagement.new
         args, options = args_and_options( *args )
         issues.url = args[ 0 ]
+        issues.system = args[ 1 ]
         fill_options( issues, options )
         nested_block( :issue_management, issues, block ) if block
         @current.issue_management = issues
@@ -540,6 +539,7 @@ module Maven
         @current.notifiers <<  n
         n
       end
+
       def mailing_list( *args, &block )
         list = MailingList.new
         args, options = args_and_options( *args )
@@ -638,7 +638,7 @@ module Maven
       def test_resource( options = {}, &block )
         # strange behaviour when calling specs from Rakefile
         return if @current.nil?
-        resource = TestResource.new
+        resource = Resource.new
         fill_options( resource, options )
         nested_block( :test_resource, resource, block ) if block
         if @context == :project
@@ -715,6 +715,10 @@ module Maven
         rp
       end
 
+      def enabled( value )
+        @current.enabled = ( value.to_s == 'true' )
+      end
+
       def args_and_options( *args )
         if args.last.is_a? Hash
           [ args[0..-2], args.last ]
@@ -774,7 +778,7 @@ module Maven
 
       def exclusion( *gav )
         gav = gav.join( ':' )
-        ex = fill_gav( Extension, gav)
+        ex = fill_gav( Exclusion, gav )
         @current.exclusions << ex
         ex
       end
@@ -895,12 +899,13 @@ module Maven
 
       # hook for polyglot maven to register those tasks
       def add_execute_task( options, &block )
+        @model.properties[ 'tesla.version' ] = VERSIONS[ :tesla_version ]
         plugin!( 'io.tesla.polyglot:tesla-polyglot-maven-plugin',
-                 VERSIONS[ :tesla_version ] ) do
+                 '${tesla.version}' ) do
           execute_goal( :execute, options )
           
           jar!( 'io.tesla.polyglot:tesla-polyglot-ruby',
-                VERSIONS[ :tesla_version ] )
+                '${tesla.version}' )
         end
       end
 

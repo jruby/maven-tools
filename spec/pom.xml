@@ -124,7 +124,6 @@
   </ciManagement>
   <distributionManagement>
     <repository>
-      <uniqueVersion>123</uniqueVersion>
       <releases>
         <enabled>true</enabled>
         <updatePolicy>daily</updatePolicy>
@@ -141,7 +140,6 @@
       <layout>legacy</layout>
     </repository>
     <snapshotRepository>
-      <uniqueVersion>1234</uniqueVersion>
       <releases>
         <enabled>false</enabled>
         <updatePolicy>daily</updatePolicy>
@@ -222,7 +220,6 @@
   </dependencies>
   <repositories>
     <repository>
-      <uniqueVersion>123</uniqueVersion>
       <releases>
         <enabled>true</enabled>
         <updatePolicy>daily</updatePolicy>
@@ -239,7 +236,6 @@
       <layout>legacy</layout>
     </repository>
     <repository>
-      <uniqueVersion>12345</uniqueVersion>
       <releases>
         <enabled>false</enabled>
         <updatePolicy>daily</updatePolicy>
@@ -258,7 +254,6 @@
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <uniqueVersion>12</uniqueVersion>
       <releases>
         <enabled>true</enabled>
         <updatePolicy>daily</updatePolicy>

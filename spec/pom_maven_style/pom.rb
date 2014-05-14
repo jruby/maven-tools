@@ -102,7 +102,6 @@ project do
       id :first
       url 'http://repo.example.com'
       name 'First'
-      unique_version 123
       layout 'legacy'
       releases do 
         enabled true
@@ -118,7 +117,6 @@ project do
     snapshot_repository( 'snapshots', 
                          'http://snaphots.example.com',
                          'First Snapshots',
-                         :unique_version => 1234,
                          :layout => 'legacy' ) do
       releases( :enabled => false,
                 :update_policy => 'daily',
@@ -159,7 +157,6 @@ project do
     id :first
     url 'http://repo.example.com'
     name 'First'
-    unique_version 123
     layout 'legacy'
     releases do 
       enabled true
@@ -176,7 +173,6 @@ project do
     id 'snapshots'
     url 'http://snaphots.example.com'
     name 'First Snapshots'
-    unique_version 12345
     layout 'legacy'
     releases do 
       update_policy 'daily'
@@ -191,7 +187,6 @@ project do
     id :first
     url 'http://pluginrepo.example.com'
     name 'First'
-    unique_version 12
     layout 'legacy'
     releases do 
       enabled true
