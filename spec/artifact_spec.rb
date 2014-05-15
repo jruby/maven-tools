@@ -30,15 +30,35 @@ describe Maven::Tools::Artifact do
   end
 
   it 'should convert ruby version contraints - jars' do
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '=1' ).to_s.must_equal 'rubygems:asd:jar:[1,1.0.0.0.0.1)'
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '>=1' ).to_s.must_equal 'rubygems:asd:jar:[1,)'
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<=1' ).to_s.must_equal 'rubygems:asd:jar:[0,1]'
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '>1' ).to_s.must_equal 'rubygems:asd:jar:(1,)'
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<1' ).to_s.must_equal 'rubygems:asd:jar:[0,1)'
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '!1' ).to_s.must_equal 'rubygems:asd:jar:(1,)'
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<2', '>1' ).to_s.must_equal 'rubygems:asd:jar:(1,2)'
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<=2', '>1' ).to_s.must_equal 'rubygems:asd:jar:(1,2]'
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<2', '>=1' ).to_s.must_equal 'rubygems:asd:jar:[1,2)'
-    Maven::Tools::Artifact.from( :jar, 'rubygems:asd', '<=2', '>=1' ).to_s.must_equal 'rubygems:asd:jar:[1,2]'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '=1' ).to_s.must_equal 'org.something:asd:jar:[1,1.0.0.0.0.1)'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '>=1' ).to_s.must_equal 'org.something:asd:jar:[1,)'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<=1' ).to_s.must_equal 'org.something:asd:jar:[0,1]'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '>1' ).to_s.must_equal 'org.something:asd:jar:(1,)'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<1' ).to_s.must_equal 'org.something:asd:jar:[0,1)'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '!1' ).to_s.must_equal 'org.something:asd:jar:(1,)'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<2', '>1' ).to_s.must_equal 'org.something:asd:jar:(1,2)'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<=2', '>1' ).to_s.must_equal 'org.something:asd:jar:(1,2]'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<2', '>=1' ).to_s.must_equal 'org.something:asd:jar:[1,2)'
+    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<=2', '>=1' ).to_s.must_equal 'org.something:asd:jar:[1,2]'
+  end  
+
+  it 'passes in scope to artifact' do
+    a = Maven::Tools::Artifact.from( :jar, 'org.something:asd', '1' )
+    a.to_s.must_equal 'org.something:asd:jar:1'
+    a[ :scope ].must_be_nil
+    a = Maven::Tools::Artifact.from( :jar, 'org.something:asd', '1', :scope => :provided )
+    a.to_s.must_equal 'org.something:asd:jar:1'
+    a[ :scope ].must_equal :provided
+  end
+  it 'passes in exclusions to artifact' do
+    a = Maven::Tools::Artifact.from( :jar, 'org.something:asd', '1' )
+    a.to_s.must_equal 'org.something:asd:jar:1'
+    a[ :exclusions ].must_be_nil
+    a = Maven::Tools::Artifact.from( :jar, 'org.something:asd', '1', :exclusions => ["org.something:dsa"] )
+    a.to_s.must_equal 'org.something:asd:jar:1:[org.something:dsa]'
+    a[ :exclusions ].must_equal [ 'org.something:dsa' ]
+    a = Maven::Tools::Artifact.from( :jar, 'org.something:asd', '1', :exclusions => ["org.something:dsa", "org.anything:qwe"] )
+    a.to_s.must_equal 'org.something:asd:jar:1:[org.something:dsa,org.anything:qwe]'
+    a[ :exclusions ].must_equal [ 'org.something:dsa', 'org.anything:qwe' ]
   end
 end
