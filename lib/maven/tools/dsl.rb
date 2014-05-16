@@ -357,7 +357,9 @@ module Maven
           spec.licenses.each do |l|
             license( l )
           end
-          spec.authors.zip( spec.email || [] ).each do |d|
+          authors = [ spec.authors || [] ].flatten
+          emails = [ spec.email || [] ].flatten
+          authors.zip( emails ).each do |d|
             developer( :name => d[0], :email => d[1] )
           end
           unless options[ :only_metadata ]
@@ -1302,9 +1304,17 @@ module Maven
             r.releases = repository_policy( r.releases, c )
           end
         end
-        r.id = args[ 0 ]
-        r.url = args[ 1 ]
-        r.name = args[ 2 ]
+        if options.size == 1 && args.size == 1
+          warn "deprecated use :url => '...'"
+          p options
+          p args
+          # allow old method signature
+          r.url = args[ 0 ]          
+        else
+          r.id = args[ 0 ]
+          r.url = args[ 1 ]
+          r.name = args[ 2 ]
+        end
         fill_options( r, options )
         nested_block( :repository, r, block ) if block
         case method

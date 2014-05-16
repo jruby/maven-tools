@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name = 'bouncy-castle-java'
   s.version = "1.5.0#{BouncyCastle::VERSION_}"
   s.author = 'Hiroshi Nakamura'
-  s.email = [ 'nahi@ruby-lang.org' ]
+  s.email = 'nahi@ruby-lang.org'
   s.rubyforge_project = "jruby-extras"
   s.homepage = 'http://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java/'
   s.summary = 'Gem redistribution of Bouncy Castle jars'
