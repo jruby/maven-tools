@@ -527,8 +527,12 @@ module Maven
         @current.relocation = relocation
       end
 
-      def system( arg )
-        @current.system = arg
+      def system( *args )
+        if @current && @current.respond_to?( :system )
+          @current.system = args[ 0 ]
+        else
+          Kernel.system( *args )
+        end
       end
 
       def notifier( *args, &block )
@@ -1305,9 +1309,7 @@ module Maven
           end
         end
         if options.size == 1 && args.size == 1
-          warn "deprecated use :url => '...'"
-          p options
-          p args
+          warn "deprecated repository, use :url => '...'"
           # allow old method signature
           r.url = args[ 0 ]          
         else
