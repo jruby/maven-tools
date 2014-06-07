@@ -122,7 +122,7 @@ module Maven
       end
 
       def snapshot_version( val )
-        if val.match /[a-z]|[A-Z]/ and not val.match /-SNAPSHOT|[${}]/
+        if val.match(/[a-z]|[A-Z]/) && !val.match(/-SNAPSHOT|[${}]/)
           val + '-SNAPSHOT'
         else
           val
