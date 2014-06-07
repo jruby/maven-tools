@@ -187,10 +187,18 @@ module Maven
           scope.match /#{sc}/
         end.collect { |d| d.artifact_id }
         locked.dependency_hull( names ).each do |name, version|
-          gem name, version, options unless model.artifact_id == name && model.group_id == 'rubygems'
+         gem( name, version, options ) unless has_gem( name )
         end
       end
       private :add_scoped_hull
+
+      def has_gem( name )
+        ( model.artifact_id == name && model.group_id == 'rubygems' ) ||
+          ( @current.dependencies.detect do |d|
+              d.artifact_id == name && d.group_id == 'rubygems'
+            end != nil )
+      end
+      private :has_gem
 
       def setup_gem_support( options, spec = nil, config = {} )
         unless model.properties.member?( 'project.build.sourceEncoding' )
@@ -243,6 +251,9 @@ module Maven
           plugin( :clean, VERSIONS[ :clean_plugin ],
                   :filesets => [ { :directory => output,
                                    :includes => [ "#{jar}.jar" ] } ] )
+          true
+        else
+          false
         end
       end
       private :setup_gem_support
@@ -362,14 +373,19 @@ module Maven
           authors.zip( emails ).each do |d|
             developer( :name => d[0], :email => d[1] )
           end
-          unless options[ :only_metadata ]
-            packaging 'gem'
+        end
+
+        has_jars = setup_gem_support( options, spec )
+
+        if @context == :project and not options[ :only_metadata ]
+          packaging 'gem'
+          if has_jars
+            extension 'de.saumya.mojo:gem-with-jar-extension:${jruby.plugins.version}'
+          else
             extension 'de.saumya.mojo:gem-extension:${jruby.plugins.version}'
           end
         end
 
-        setup_gem_support( options, spec )
-        
         return if options[ :only_metadata ]
 
         config = { :gemspec => name.sub( /^#{basedir}\/?/, '' ) }

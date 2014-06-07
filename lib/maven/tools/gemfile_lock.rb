@@ -54,8 +54,8 @@ module Maven
       end
 
       def recurse(result, dep)
-        result[dep] = self[dep].version if self[dep] && !result.key?(dep)
         if d = self[dep]
+          result[dep] = d.version if  !result.key?(dep)
           d.dependencies.each do |name, version|
             unless result.key? name
               if name != 'bundler'

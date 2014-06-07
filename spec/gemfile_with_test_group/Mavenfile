@@ -1,0 +1,4 @@
+gemfile
+properties 'tesla.dump.pom' => 'pom.xml'
+
+jruby_plugin( :gem ) { execute_goal :initialize }
