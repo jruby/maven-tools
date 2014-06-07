@@ -12,9 +12,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>dummy</groupId>
-  <artifactId>gemfile_with_groups</artifactId>
+  <artifactId>gemfile_without_gemspec</artifactId>
   <version>0.0.0</version>
-  <name>gemfile_with_groups</name>
+  <name>gemfile_without_gemspec</name>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <jruby.plugins.version>1.0.2</jruby.plugins.version>
@@ -22,17 +22,9 @@
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>rspec</artifactId>
-      <version>2.13.0</version>
+      <artifactId>virtus</artifactId>
+      <version>[0,)</version>
       <type>gem</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>copyright-headers</artifactId>
-      <version>1.0.3</version>
-      <type>gem</type>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
   <repositories>

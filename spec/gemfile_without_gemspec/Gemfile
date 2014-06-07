@@ -1,5 +1,5 @@
 #-*- mode: ruby -*-
 
-gemfile
+gem 'virtus', :require => false
 
 # vim: syntax=Ruby

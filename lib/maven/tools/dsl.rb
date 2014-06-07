@@ -146,6 +146,10 @@ module Maven
           end
         else
           setup_gem_support( options )
+          
+          jruby_plugin!( :gem ) do
+            execute_goal :initialize
+          end
         end
 
         if pr && pr.dependencies.empty?
@@ -166,7 +170,7 @@ module Maven
 
         if @has_path or @has_git
           gem 'bundler', VERSIONS[ :bundler_version ], :scope => :provided unless gem? 'bundler'
-          jruby_plugin :gem do
+          jruby_plugin! :gem do
             execute_goal :exec, :filename => 'bundle', :args => 'install'
           end
         end
@@ -392,8 +396,7 @@ module Maven
         if options[ :include_jars ] || options[ 'include_jars' ] 
           config[ :includeDependencies ] = true
         end
-        plugin( 'de.saumya.mojo:gem-maven-plugin:${jruby.plugins.version}',
-                config )
+        jruby_plugin!( :gem, config )
 
         deps = nil
         if @inside_gemfile.is_a? Symbol

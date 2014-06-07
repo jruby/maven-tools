@@ -49,6 +49,11 @@
         <executions>
           <execution>
             <goals>
+              <goal>initialize</goal>
+            </goals>
+          </execution>
+          <execution>
+            <goals>
               <goal>exec</goal>
             </goals>
             <configuration>
