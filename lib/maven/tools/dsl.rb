@@ -246,7 +246,10 @@ module Maven
           end
         end
         if jar && ( source || 
-                    ::File.exists?( ::File.join( basedir, 'src', 'main', 'java' ) ) ) && spec.platform.to_s.match( /java|jruby/ )
+                    ::File.exists?( ::File.join( basedir, 'src', 'main', 'java' ) ) )
+          unless spec.nil? || spec.platform.to_s.match( /java|jruby/ ) )
+            raise "gem is not a java platform gem but has a jar and source"
+          end
           plugin( :jar, VERSIONS[ :jar_plugin ],
                   :outputDirectory => output,
                   :finalName => jar ) do
