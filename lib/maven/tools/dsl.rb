@@ -245,11 +245,12 @@ module Maven
             source_directory source
           end
         end
-        if jar && ( source || 
+        if jar && ( source ||
                     ::File.exists?( ::File.join( basedir, 'src', 'main', 'java' ) ) )
-          unless spec.nil? || spec.platform.to_s.match( /java|jruby/ ) )
-            raise "gem is not a java platform gem but has a jar and source"
+          unless spec.nil? || spec.platform.to_s.match( /java|jruby/ )
+            warn "gem is not a java platform gem but has a jar and source"
           end
+ 
           plugin( :jar, VERSIONS[ :jar_plugin ],
                   :outputDirectory => output,
                   :finalName => jar ) do
@@ -257,7 +258,7 @@ module Maven
           end
           plugin( :clean, VERSIONS[ :clean_plugin ],
                   :filesets => [ { :directory => output,
-                                   :includes => [ "#{jar}.jar" ] } ] )
+                                   :includes => [ "#{jar}.jar", '*/**/*.jar' ] } ] )
           true
         else
           false
@@ -398,6 +399,7 @@ module Maven
         config = { :gemspec => name.sub( /^#{basedir}\/?/, '' ) }
         if options[ :include_jars ] || options[ 'include_jars' ] 
           config[ :includeDependencies ] = true
+          config[ :useRepositoryLayout ] = true
         end
         jruby_plugin!( :gem, config )
 

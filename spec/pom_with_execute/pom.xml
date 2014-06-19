@@ -16,7 +16,7 @@
   <version>0.0.0</version>
   <name>example with execute</name>
   <properties>
-    <tesla.version>0.1.0</tesla.version>
+    <tesla.version>0.1.1</tesla.version>
   </properties>
   <build>
     <plugins>

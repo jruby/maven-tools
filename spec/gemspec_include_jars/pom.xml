@@ -30,7 +30,7 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>1.0.2</jruby.plugins.version>
+    <jruby.plugins.version>1.0.3</jruby.plugins.version>
   </properties>
   <dependencies>
     <dependency>
@@ -67,6 +67,7 @@
         <configuration>
           <gemspec>bouncy-castle-java.gemspec</gemspec>
           <includeDependencies>true</includeDependencies>
+          <useRepositoryLayout>true</useRepositoryLayout>
         </configuration>
       </plugin>
     </plugins>
