@@ -303,7 +303,7 @@ module Maven
           file.populate_unlocked do |dsl|
             setup_jruby( dsl.jruby )
             dsl.artifacts.each do |a|
-              dependency a
+              _dependency a
             end
           end
         else
@@ -414,7 +414,7 @@ module Maven
         
         unless deps.java_runtime.empty?
           deps.java_runtime.each do |d|
-            dependency Maven::Tools::Artifact.new( *d )
+            _dependency Maven::Tools::Artifact.new( *d )
           end
         end
       end
@@ -434,6 +434,21 @@ module Maven
         deps
       end
       private :all_deps
+
+      def licenses
+        yield
+      end
+      alias :developers :licenses
+      alias :contributors :licenses
+      alias :mailing_lists :licenses
+      alias :notifiers :licenses
+      alias :dependencies :licenses
+      alias :repositories :licenses
+      alias :plugin_repositories :licenses
+      alias :extensions :licenses
+      alias :resources :licenses
+      alias :testResources :licenses
+      alias :plugins :licenses
 
       def build( &block )
         build = @current.build ||= Build.new
@@ -983,15 +998,15 @@ module Maven
         exec
       end
 
-      def dependency( type, *args, &block )
+      def _dependency( type, *args, &block )
         do_dependency( false, type, *args, &block )
       end
 
-      def dependency!( type, *args, &block )
+      def _dependency!( type, *args, &block )
         do_dependency( true, type, *args, &block )
       end
 
-      def dependency?( type, *args )
+      def _dependency?( type, *args )
         find_dependency( dependency_container,
                          retrieve_dependency( type, *args ) ) != nil
       end
@@ -1127,12 +1142,27 @@ module Maven
         end
       end
 
-      def profile( id, &block )
+      def profile( *args, &block )
         profile = Profile.new
-        profile.id = id if id
+        args, options = args_and_options( *args )
+        profile.id = args[ 0 ]
+        fill_options( profile, options )
         @current.profiles << profile
         nested_block( :profile, profile, block ) if block
         profile
+      end
+
+      def dependency( *args, &block )
+        dep = Dependency.new
+        args, options = args_and_options( *args )
+        dep.group_id = args[ 0 ]
+        dep.artifact_id = args[ 1 ]
+        dep.version = args[ 2 ]
+        dep.type = :jar
+        fill_options( dep, options )
+        nested_block( :dependency, dep, block ) if block
+        dependency_container << dep
+        dep
       end
 
       def report_set( *reports, &block )
@@ -1165,7 +1195,7 @@ module Maven
       end
 
       def jar!( *args )
-        dependency!( :jar, *args )
+        _dependency!( :jar, *args )
       end
 
       def gem( *args )
@@ -1222,7 +1252,7 @@ module Maven
 
       def local( path, options = {} )
         path = ::File.expand_path( path )
-        dependency( :jar,
+        _dependency( :jar,
                     Maven::Tools::Artifact.new_local( path, :jar, options ) )
       end
 
@@ -1265,11 +1295,11 @@ module Maven
             #     ( args.size == 1 && args[0].is_a?( Hash ) )
               case method.to_s[ -1 ]
               when '?'
-                dependency?( method.to_s[0..-2].to_sym, *args, &block )
+                _dependency?( method.to_s[0..-2].to_sym, *args, &block )
               when '!'
-                dependency!( method.to_s[0..-2].to_sym, *args, &block  )
+                _dependency!( method.to_s[0..-2].to_sym, *args, &block  )
               else
-                dependency( method, *args, &block )
+                _dependency( method, *args, &block )
               end
               # elsif @current.respond_to? method
               #   @current.send( method, *args )

@@ -23,43 +23,51 @@ project do
     url 'ngo.org'
   end
 
-  license do
-    name 'AGPL'
-    url 'gnu.org/agpl'
-    distribution 'online'
-    comments 'should be used more often'
+  licenses do
+    license do
+      name 'AGPL'
+      url 'gnu.org/agpl'
+      distribution 'online'
+      comments 'should be used more often'
+    end
   end
 
-  developer do
-    id '1'
-    name 'first'
-    email 'first@example.com'
-    url 'example.com/first'
-    organization 'orga'
-    organization_url 'example.org'
-    roles 'developer', 'architect'
-    timezone 'IST'
-    properties :gender => :male
+  developers do
+    developer do
+      id '1'
+      name 'first'
+      email 'first@example.com'
+      url 'example.com/first'
+      organization 'orga'
+      organization_url 'example.org'
+      roles 'developer', 'architect'
+      timezone 'IST'
+      properties :gender => :male
+    end
+  end
+  
+  contributors do
+    contributor do
+      name 'first'
+      email 'first@example.com'
+      url 'example.com/first'
+      organization 'orga'
+      organization_url 'example.org'
+      roles 'developer', 'architect'
+      timezone 'IST'
+      properties :gender => :male
+    end
   end
 
-  contributor do
-    name 'first'
-    email 'first@example.com'
-    url 'example.com/first'
-    organization 'orga'
-    organization_url 'example.org'
-    roles 'developer', 'architect'
-    timezone 'IST'
-    properties :gender => :male
-  end
-
-  mailing_list do
-    name 'development'
-    subscribe 'subcribe@example.com'
-    unsubscribe 'unsubcribe@example.com'
-    post 'post@example.com'
-    archive 'example.com/archive'
-    other_archives 'example.com/archive1', 'example.com/archive2'
+  mailing_lists do
+    mailing_list do
+      name 'development'
+      subscribe 'subcribe@example.com'
+      unsubscribe 'unsubcribe@example.com'
+      post 'post@example.com'
+      archive 'example.com/archive'
+      other_archives 'example.com/archive1', 'example.com/archive2'
+    end
   end
 
   prerequisites do
@@ -136,67 +144,83 @@ project do
   end
   properties :key1 => 'value1', 'key2' => :value2
   dependency_management do
-    jar( 'com.example:tools:1.2.3' ) do
+    dependencies do
+      dependency do
+        group_id 'com.example'
+        artifact_id 'tools'
+        version '1.2.3'
+        classifier 'super'
+        scope 'provided'
+        system_path '/home/development/tools.jar'
+        optional true
+        exclusion 'org.example:some'
+        exclusion 'org.example', 'something'
+      end
+    end
+  end
+  dependencies do
+    dependency do
+      group_id 'com.example'
+      artifact_id 'tools'
+      version '2.3'
+      type :war
       classifier 'super'
       scope 'provided'
-      system_path '/home/development/tools.jar'
-      optional true
+      system_path '/home/development/wartools.jar'
+      optional false
       exclusion 'org.example:some'
       exclusion 'org.example', 'something'
     end
   end
-  war( 'com.example:tools', '2.3' ) do
-    classifier 'super'
-    scope 'provided'
-    system_path '/home/development/wartools.jar'
-    optional false
-    exclusion 'org.example:some'
-    exclusion 'org.example', 'something'
-  end
-  repository do
-    id :first
-    url 'http://repo.example.com'
-    name 'First'
-    layout 'legacy'
-    releases do 
-      enabled true
-      update_policy 'daily'
-      checksum_policy :strict
+  repositories do
+    repository do
+      id :first
+      url 'http://repo.example.com'
+      name 'First'
+      layout 'legacy'
+      releases do 
+        enabled true
+        update_policy 'daily'
+        checksum_policy :strict
+      end
+      snapshots do 
+        enabled false
+        update_policy :never
+        checksum_policy 'none'
+      end
     end
-    snapshots do 
-      enabled false
-      update_policy :never
-      checksum_policy 'none'
-    end
-  end
-  snapshot_repository do
-    id 'snapshots'
-    url 'http://snaphots.example.com'
-    name 'First Snapshots'
-    layout 'legacy'
-    releases do 
-      update_policy 'daily'
-      checksum_policy :strict
-    end
-    snapshots do
-      update_policy :never
-      checksum_policy 'none'
+  
+    snapshot_repository do
+      id 'snapshots'
+      url 'http://snaphots.example.com'
+      name 'First Snapshots'
+      layout 'legacy'
+      releases do 
+        update_policy 'daily'
+        checksum_policy :strict
+      end
+      snapshots do
+        update_policy :never
+        checksum_policy 'none'
+      end
     end
   end
-  plugin_repository do
-    id :first
-    url 'http://pluginrepo.example.com'
-    name 'First'
-    layout 'legacy'
-    releases do 
-      enabled true
-      update_policy 'daily'
-      checksum_policy :strict
-    end
-    snapshots do 
-      enabled false
-      update_policy :never
-      checksum_policy 'none'
+  plugin_repositories do
+    plugin_repository do
+      id :first
+      url 'http://pluginrepo.example.com'
+      name 'First'
+      layout 'legacy'
+      releases do 
+        enabled true
+        update_policy 'daily'
+        checksum_policy :strict
+      end
+      snapshots do 
+        enabled false
+        update_policy :never
+        checksum_policy 'none'
+      end
     end
   end
   build do
@@ -228,7 +252,12 @@ project do
     end
 
     jruby_plugin :gem, '1.0.0' do
-      gem :bundler, '1.6.2'
+      dependency do
+        group_id 'rubygems'
+        artifact_id 'bundler'
+        version '1.6.2'
+        type :gem
+      end
     end
 
     plugin :antrun do
@@ -249,7 +278,11 @@ project do
         id 'copy'
         phase 'package'
       end
-      jar 'org.super.duper:executor:1.0.0'
+      dependency do
+        group_id 'org.super.duper'
+        artifact_id 'executor'
+        version '1.0.0'
+      end
     end
     
     plugin 'org.codehaus.mojo:exec-maven-plugin' do
