@@ -162,9 +162,10 @@ module Maven
               file( :exists => name + '.lock' )
             end
             locked = GemfileLock.new( lockfile )
-            add_scoped_hull( locked, pr.dependencies )
-            add_scoped_hull( locked, pr.dependencies, :provided )
-            add_scoped_hull( locked, pr.dependencies, :test )
+            done = add_scoped_hull( locked, pr.dependencies )
+            done += add_scoped_hull( locked, pr.dependencies,
+                                        done, :provided )
+            add_scoped_hull( locked, pr.dependencies, done, :test )
           end
         end
 
@@ -181,9 +182,8 @@ module Maven
         @has_git = nil
       end
 
-      def add_scoped_hull( locked, deps, scope = nil )
-        options = {}
-        options[ :scope ] = scope if scope
+      def add_scoped_hull( locked, deps, done = [], scope = nil )
+        result = {}
         scope ||= "compile runtime default"
         scope = scope.to_s
         names = deps.select do |d|
@@ -191,8 +191,19 @@ module Maven
           scope.match /#{sc}/
         end.collect { |d| d.artifact_id }
         locked.dependency_hull( names ).each do |name, version|
-         gem( name, version, options ) unless has_gem( name )
+          result[ name ] = version unless done.member?( name )
         end
+        unless result.empty?
+          scope.sub!( / .*$/, '' )
+          jruby_plugin!( :gem ) do
+            execute_goal( :sets, 
+                          :id => "install gem sets for #{scope}",
+                          :phase => :initialize,
+                          :scope => scope,
+                          :gems => result )
+          end
+        end
+        result.keys
       end
       private :add_scoped_hull
 
@@ -829,7 +840,8 @@ module Maven
       end
 
       def setup_jruby_plugins_version
-        unless @current.properties.key?( 'jruby.plugins.version' )
+        if not @current.properties.key?( 'jruby.plugins.version' ) and
+           not (@context == :profile and model.properties.key?( 'jruby.plugins.version' ) )
           properties( 'jruby.plugins.version' => VERSIONS[ :jruby_plugins ] )
         end
       end
