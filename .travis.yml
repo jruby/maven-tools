@@ -4,7 +4,19 @@ rvm:
   - 2.0.0
   - 2.1.0
   - ruby-head
-  - jruby-19mode
-#  - jruby-20mode
-  - jruby-head
-
+matrix:
+  include:
+    - rvm: jruby
+      jdk: openjdk6
+      script: mvn test
+    - rvm: jruby
+      jdk: openjdk7
+      script: mvn test
+    - rvm: jruby
+      jdk: oraclejdk7
+      script: mvn test
+    - rvm: jruby
+      jdk: oraclejdk8
+      script: mvn test
+  allow_failures:
+    - rvm: ruby-head

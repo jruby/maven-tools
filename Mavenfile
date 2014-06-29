@@ -7,16 +7,14 @@ plugin( 'de.saumya.mojo:minitest-maven-plugin', '${jruby.plugins.version}',
   execute_goals(:spec)
 end
 
-properties( # lock down versions
-            'jruby.plugins.version' => '1.0.1',
-            'jruby.version' => '1.7.12',
+snapshot_repository :jruby, 'http://ci.jruby.org/snapshots/maven'
 
-            # running the specs with this matrix
-            # (jruby-1.6.7 produces a lot of yaml errors parsing gemspecs)
-            # overwrite via cli -Djruby.versions=9000.dev-SNAPSHOT
-            'jruby.versions' => ['1.7.4','1.7.12'].join(','),
-            # overwrite via cli -Djruby.modes=2.0
-            'jruby.modes' => '1.9,2.0,2.1'
-           )
+# (jruby-1.6.7 produces a lot of yaml errors parsing gemspecs)
+properties( 'jruby.versions' => ['1.7.13','9000.dev-SNAPSHOT'].join(','),
+            'jruby.modes' => ['1.9', '2.0','2.1'].join(','),
+            # just lock the versions
+            'jruby.version' => '1.7.13',
+            'tesla.dump.pom' => 'pom.xml',
+            'tesla.dump.readonly' => true )
 
 # vim: syntax=Ruby
