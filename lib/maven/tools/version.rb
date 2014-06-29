@@ -20,6 +20,6 @@
 #
 module Maven
   module Tools
-    VERSION = '1.0.0.rdev'.freeze
+    VERSION = '1.0.0'.freeze
   end
 end
