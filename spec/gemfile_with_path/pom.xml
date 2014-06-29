@@ -48,11 +48,13 @@
         <version>${jruby.plugins.version}</version>
         <executions>
           <execution>
+            <id>install gems</id>
             <goals>
               <goal>initialize</goal>
             </goals>
           </execution>
           <execution>
+            <id>bundle install</id>
             <goals>
               <goal>exec</goal>
             </goals>

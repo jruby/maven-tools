@@ -41,6 +41,7 @@
         <version>${jruby.plugins.version}</version>
         <executions>
           <execution>
+            <id>install gems</id>
             <goals>
               <goal>initialize</goal>
             </goals>

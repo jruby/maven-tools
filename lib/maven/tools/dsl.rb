@@ -148,7 +148,7 @@ module Maven
           setup_gem_support( options )
           
           jruby_plugin!( :gem ) do
-            execute_goal :initialize
+            execute_goal :initialize, :id => 'install gems'
           end
         end
 
@@ -172,7 +172,10 @@ module Maven
         if @has_path or @has_git
           gem 'bundler', VERSIONS[ :bundler_version ], :scope => :provided unless gem? 'bundler'
           jruby_plugin! :gem do
-            execute_goal :exec, :filename => 'bundle', :args => 'install'
+            execute_goal( :exec,
+                          :id => 'bundle install', 
+                          :filename => 'bundle',
+                          :args => 'install' )
           end
         end
       ensure
@@ -714,7 +717,28 @@ module Maven
           @current.resources << resource
         end
       end
+      
+      def build_method( m, val )
+        m = "#{m}=".to_sym
+        if @context == :project
+          ( @current.build ||= Build.new ).send m, val
+        else
+          @current.send m, val
+        end
+      end
+      private :build_method
 
+      def final_name( val )
+        build_method( __method__, val )
+      end
+
+      def directory( val )
+        build_method( __method__, val )
+      end
+
+      def output_directory( val )
+        build_method( __method__, val )
+      end
       def repository( *args, &block )
         do_repository( :repository=, *args, &block )
       end
@@ -865,8 +889,9 @@ module Maven
 
       def plugin!( *gav, &block )
         gav, options = plugin_gav( *gav )
+        ga = gav.sub( /:[^:]*$/, '' )
         pl = plugins.detect do |p|
-          "#{p.group_id}:#{p.artifact_id}:#{p.version}" == gav
+          "#{p.group_id}:#{p.artifact_id}" == ga
         end
         if pl
           do_plugin( false, pl, options, &block )
