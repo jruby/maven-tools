@@ -2,8 +2,7 @@
 
 gemspec
 
-plugin( 'de.saumya.mojo:minitest-maven-plugin', '${jruby.plugins.version}', 
-        :minispecDirectory =>"spec/*spec.rb" ) do
+jruby_plugin( :minitest, :minispecDirectory =>"spec/*spec.rb" ) do
   execute_goals(:spec)
 end
 
