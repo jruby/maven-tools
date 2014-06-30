@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2012 to original author or authors
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+
+-->
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dummy</groupId>
+  <artifactId>pom_from_jarfile_with_repos</artifactId>
+  <version>0.0.0</version>
+  <name>pom_from_jarfile_with_repos</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby</artifactId>
+      <version>1.7.13</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+    </dependency>
+  </dependencies>
+  <repositories>
+    <repository>
+      <name>http://1.2.3.4/artifactory/</name>
+      <url>http://1.2.3.4/artifactory/</url>
+    </repository>
+    <repository>
+      <name>takari</name>
+      <url>http://otto.takari.io:8081/nexus/content/groups/public</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <name>tesla</name>
+      <url>http://repository.tesla.io:8081/nexus/content/groups/public</url>
+    </repository>
+  </repositories>
+</project>

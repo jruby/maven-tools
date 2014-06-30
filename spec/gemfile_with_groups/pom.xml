@@ -25,14 +25,28 @@
       <artifactId>rspec</artifactId>
       <version>2.13.0</version>
       <type>gem</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>cucumber</artifactId>
+      <version>2.13.0</version>
+      <type>gem</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>copyright-headers</artifactId>
+      <artifactId>copyright-header</artifactId>
       <version>1.0.3</version>
       <type>gem</type>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>minitest</artifactId>
+      <version>0.5.3</version>
+      <type>gem</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <repositories>

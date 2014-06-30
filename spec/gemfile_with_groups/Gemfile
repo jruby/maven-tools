@@ -1,9 +1,15 @@
 #-*- mode: ruby -*-
 
-group :test do
+group :test, :development do
   gem 'rspec',        '2.13.0'
 end
 
-gem 'copyright-headers', '1.0.3', :group => :development
+group :test do
+  gem 'cucumber',        '2.13.0'
+end
+
+gem 'copyright-header', '1.0.3', :group => [:development, :test]
+
+gem 'minitest', '0.5.3', :group => :test
 
 # vim: syntax=Ruby

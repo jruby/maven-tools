@@ -98,7 +98,7 @@ module Maven
       end
 
       def group( *args )
-        @group = args[ 0 ]
+        @group = args
         yield
       ensure
         @group = nil
@@ -315,7 +315,7 @@ module Maven
 
         if options[ :skip_locked ] or not file.exists_lock?
           file.populate_unlocked do |dsl|
-            setup_jruby( dsl.jruby )
+            jarfile_dsl( dsl )
             dsl.artifacts.each do |a|
               _dependency a
             end
@@ -325,7 +325,7 @@ module Maven
             artifact( dep )
           end
           file.populate_unlocked do |dsl|
-            setup_jruby( dsl.jruby )
+            jarfile_dsl( dsl )
             dsl.artifacts.each do |a|
               if a[ :system_path ]
                 dependeny a
@@ -334,6 +334,17 @@ module Maven
           end
         end
       end
+      
+      def jarfile_dsl( dsl )
+        setup_jruby( dsl.jruby )
+        dsl.repositories.each do |r|
+          repository r
+        end
+        dsl.snapshot_repositories.each do |r|
+          snapshot_repository r
+        end
+      end
+      private :jarfile_dsl
 
       def gemspec( name = nil, options = {} )
         if @inside_gemfile == true
@@ -1269,12 +1280,12 @@ module Maven
             platform = options.delete( :platform ) || options.delete( 'platform' )
             group = options.delete( :group ) || options.delete( 'group' ) || @group
             if group
-               case group.to_sym
-               when :test
-                 options[ :scope ] = :test 
-               when :development
-                 options[ :scope ] = :provided
-               end
+              group = [ group ].flatten.each { |g| g.to_sym }
+              if group.member? :development
+                options[ :scope ] = :provided
+              elsif group.member? :test
+                options[ :scope ] = :test 
+              end
             end
             if platform.nil? || is_jruby_platform( platform )
               options[ :version ] = '[0,)' if args.size == 2 && options[ :version ].nil? && options[ 'version' ].nil?
