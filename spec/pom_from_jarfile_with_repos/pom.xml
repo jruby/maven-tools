@@ -31,10 +31,12 @@
   </dependencies>
   <repositories>
     <repository>
+      <id>http://1.2.3.4/artifactory/</id>
       <name>http://1.2.3.4/artifactory/</name>
       <url>http://1.2.3.4/artifactory/</url>
     </repository>
     <repository>
+      <id>takari</id>
       <name>takari</name>
       <url>http://otto.takari.io:8081/nexus/content/groups/public</url>
     </repository>
@@ -45,6 +47,7 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+      <id>tesla</id>
       <name>tesla</name>
       <url>http://repository.tesla.io:8081/nexus/content/groups/public</url>
     </repository>

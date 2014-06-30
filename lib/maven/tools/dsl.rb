@@ -338,10 +338,10 @@ module Maven
       def jarfile_dsl( dsl )
         setup_jruby( dsl.jruby )
         dsl.repositories.each do |r|
-          repository r
+          repository r.merge( {:id => r[:name] } )
         end
         dsl.snapshot_repositories.each do |r|
-          snapshot_repository r
+          snapshot_repository r.merge( {:id => r[:name] } )
         end
       end
       private :jarfile_dsl
