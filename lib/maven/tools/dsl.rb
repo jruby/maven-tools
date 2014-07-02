@@ -13,7 +13,7 @@ module Maven
         @model = Model.new
         @model.model_version = '4.0.0'
         @model.name = ::File.basename( basedir )
-        @model.group_id = 'dummy'
+        @model.group_id = 'no_group_id_given'
         @model.artifact_id = model.name
         @model.version = '0.0.0'
         @context = :project
@@ -87,7 +87,7 @@ module Maven
       end
 
       def is_jruby_platform( *args )
-        args.detect { |a| :jruby == a.to_sym }
+        args.flatten.detect { |a| :jruby == a.to_sym }
       end
       private :is_jruby_platform
 
@@ -1277,8 +1277,8 @@ module Maven
           elsif options.key?( :path )
             @has_path = true
           else
-            platform = options.delete( :platform ) || options.delete( 'platform' )
-            group = options.delete( :group ) || options.delete( 'group' ) || @group
+            platform = options.delete( :platform ) || options.delete( 'platform' ) || options.delete( :platforms ) || options.delete( 'platforms' )
+            group = options.delete( :groups ) || options.delete( 'groups' ) ||  options.delete( :group ) || options.delete( 'group' ) || @group
             if group
               group = [ group ].flatten.each { |g| g.to_sym }
               if group.member? :development
