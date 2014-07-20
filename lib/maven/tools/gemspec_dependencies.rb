@@ -15,7 +15,7 @@ module Maven
 
       def java_runtime
         warn 'deprecated us java_dependencies instead'
-        _deps( :java ).select { |d| d[0] == :compile }.collect { |d| d.shift }
+        _deps( :java ).select { |d| d[0] == :compile }.collect { |d| d[ 1..-1] }
       end
 
       def java_dependencies

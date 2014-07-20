@@ -37,5 +37,15 @@ describe Maven::Tools::GemspecDependencies do
                            ["de.sdas.asd", "das", "jar", "123", ["fds:fre"]],
                            ["de.sdas.asd", "das", "jar", "bla", "123", ["fds:fre", "ferf:de"]],
                            ["de.sdas.asd", "das", "jar", "blub", "123", ["fds:fre","ferf:de"]] ]
+    subject.java_dependencies.must_equal [ [:compile, "sdas", "das", "jar", "tes", "123"],
+                           [:compile, "sdas", "das", "jar", "123"],
+                           [:compile, "sdas.asd", "das", "jar", "123", ["fds:fre"]],
+                           [:compile, "sdas.asd", "das", "jar", "bla", "123", ["fds:fre", "ferf:de"]],
+                           [:compile, "sdas.asd", "das", "jar", "blub", "123", ["fds:fre", "ferf:de"]],
+                           [:compile, "de.sdas", "das", "jar", "tes", "123"],
+                           [:compile, "de.sdas", "das", "jar", "123"],
+                           [:compile, "de.sdas.asd", "das", "jar", "123", ["fds:fre"]],
+                           [:compile, "de.sdas.asd", "das", "jar", "bla", "123", ["fds:fre", "ferf:de"]],
+                           [:compile, "de.sdas.asd", "das", "jar", "blub", "123", ["fds:fre","ferf:de"]] ]
   end
 end

@@ -28,7 +28,8 @@ module Maven
           scope = part.sub( /.*:/, '' ).to_sym
           ''
         end
-        [ scope ] + to_split_coordinate( line )
+	coord = to_split_coordinate( line ) 
+        [ scope ] + coord if coord
       end
 
       def to_split_coordinate( line )

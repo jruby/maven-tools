@@ -76,7 +76,7 @@ describe Maven::Tools::Coordinate do
   end
 
   it 'supports declarations with scope' do
-    subject.to_split_coordinate_with_scope('gem ruby-maven, ~> 3.1.1.0, :scope => :provided').must_equal [:java_provided, "rubygems", "ruby-maven", "gem", "[3.1.1.0,3.1.1.99999]"]
-    subject.to_split_coordinate_with_scope("gem 'ruby-maven', '~> 3.1.1.0', :scope => :test").must_equal [:java_test, "rubygems", "ruby-maven", "gem", "[3.1.1.0,3.1.1.99999]"]
+    subject.to_split_coordinate_with_scope('jar rubygems:ruby-maven, ~> 3.1.1.0, :scope => :provided').must_equal [:provided, "rubygems", "ruby-maven", "jar", "[3.1.1.0,3.1.1.99999]"]
+    subject.to_split_coordinate_with_scope("jar 'rubygems:ruby-maven', '~> 3.1.1.0', :scope => :test").must_equal [:test, "rubygems", "ruby-maven", "jar", "[3.1.1.0,3.1.1.99999]"]
   end
 end
