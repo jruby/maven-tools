@@ -153,7 +153,11 @@ module Maven
         end
 
         if pr && pr.dependencies.empty?
-          @current.profiles.delete( pr )
+          if @current.respond_to? :delete
+            @current.profiles.delete( pr )
+          else
+            @current.profiles.remove( pr )
+          end
         end
 
         if pr && !pr.dependencies.empty?
