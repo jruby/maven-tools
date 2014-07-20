@@ -142,6 +142,7 @@ module Maven
           options.delete( :version )
           options.delete( :classifier )
           options.delete( :exclusions )
+          options.delete( :scope ) if options[ :scope ] == :compile
           self.merge!( options )
         end
       end
