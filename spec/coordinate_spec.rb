@@ -74,4 +74,9 @@ describe Maven::Tools::Coordinate do
     subject.to_coordinate('pom "e:f:jdk15", "(1.8,1.9.9)"').must_equal "e:f:pom:jdk15:(1.8,1.9.9)"
     subject.to_coordinate('pom "e:f:jdk15", "[1.8, 1.9.9]"').must_equal "e:f:pom:jdk15:[1.8,1.9.9]"
   end
+
+  it 'supports declarations with scope' do
+    subject.to_split_coordinate_with_scope('gem ruby-maven, ~> 3.1.1.0, :scope => :provided').must_equal [:java_provided, "rubygems", "ruby-maven", "gem", "[3.1.1.0,3.1.1.99999]"]
+    subject.to_split_coordinate_with_scope("gem 'ruby-maven', '~> 3.1.1.0', :scope => :test").must_equal [:java_test, "rubygems", "ruby-maven", "gem", "[3.1.1.0,3.1.1.99999]"]
+  end
 end

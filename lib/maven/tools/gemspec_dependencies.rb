@@ -14,7 +14,12 @@ module Maven
       end
 
       def java_runtime
-        _deps( :java_runtime )
+        warn 'deprecated us java_dependencies instead'
+        _deps( :java ).select { |d| d[0] == :compile }.collect { |d| d.shift }
+      end
+
+      def java_dependencies
+        _deps( :java )
       end
 
       def runtime
@@ -43,8 +48,11 @@ module Maven
           _deps( dep.type ) << "rubygems:#{dep.name}:#{to_version( *versions )}"
         end
         @spec.requirements.each do |req|
-          coord = to_split_coordinate( req )
-          _deps( :java_runtime ) << coord if coord
+          req.sub!( /#.*^/, '' )
+          coord = to_split_coordinate_with_scope( req )
+          if coord && coord.size > 1
+            _deps( :java ) << coord
+          end
         end
       end
     end

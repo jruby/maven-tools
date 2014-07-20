@@ -437,10 +437,10 @@ module Maven
           deps = all_deps( spec )
         end
         
-        unless deps.java_runtime.empty?
-          deps.java_runtime.each do |d|
-            _dependency Maven::Tools::Artifact.new( *d )
-          end
+        deps.java_dependencies.each do |d|
+          scope = d.shift
+          d += [nil, nil, { :scope => scope } ][ (d.size - 4 )..2 ]
+          _dependency Maven::Tools::Artifact.new( *d )
         end
       end
 
