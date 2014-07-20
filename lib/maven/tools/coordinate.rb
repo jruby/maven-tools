@@ -21,13 +21,22 @@
 module Maven
   module Tools
     module Coordinate
+      def to_split_coordinate_with_scope( line )
+        line = line.sub( /#.*^/, '' )
+        scope = :compile
+        line.sub!( /,\s+:scope\s+=>\s(:provided|:runtime|:compile|:test)/ ) do |part|
+          scope = part.sub( /.*:/, '' ).to_sym
+          ''
+        end
+        [ scope ] + to_split_coordinate( line )
+      end
+
       def to_split_coordinate( line )
         if line =~ /^\s*(jar|pom)\s/
           packaging = line.strip.sub(/\s+.*/, '')
 
           # Remove packaging, comments and whitespaces
           sanitized_line = line.sub(/\s*[a-z]+\s+/, '').sub(/#.*/,'').gsub(/\s+/,'')
-
 
           exclusions = nil
           sanitized_line.gsub!( /[,:](\[.+:.+\]|'\[.+:.+\]'|"\[.+:.+\]")/ ) do |match|
@@ -66,8 +75,8 @@ module Maven
           parts.insert( 2, packaging )
           parts << exclusions
                        
-          # make sure there are not nils
-          parts.select { |o| !o.nil? }
+          # make sure there are no nils
+          parts.compact
         end
       end
 
