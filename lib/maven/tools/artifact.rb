@@ -151,6 +151,10 @@ module Maven
         [ self[:group_id], self[:artifact_id], self[:version], self[:classifier] ].select { |o| o }.join( ':' )
       end
 
+      def key
+        @key ||= [ self[:group_id], self[:artifact_id], self[:classifier] ].select { |o| o }.join( ':' )
+      end
+
       def exclusions
         if key?( :exclusions )
           self[:exclusions].inspect.gsub( /[\[\]" ]/, '' ).split( /,/ )

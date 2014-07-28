@@ -14,14 +14,22 @@ module Maven
       end
 
       def java_runtime
-        warn 'deprecated us java_dependencies instead'
+        warn 'deprecated us java_dependency_artifacts instead'
         _deps( :java ).select { |d| d[0] == :compile }.collect { |d| d[ 1..-1] }
       end
 
       def java_dependencies
+        warn 'deprecated us java_dependency_artifacts instead'
         _deps( :java )
       end
 
+      def java_dependency_artifacts
+        _deps( :java ).collect do |d|
+          scope = d.shift
+          d += [nil, nil, { :scope => scope } ][ (d.size - 4 )..2 ]
+          Maven::Tools::Artifact.new( *d )
+        end
+      end
       def runtime
         _deps( :runtime )
       end

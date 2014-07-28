@@ -441,10 +441,8 @@ module Maven
           deps = all_deps( spec )
         end
         
-        deps.java_dependencies.each do |d|
-          scope = d.shift
-          d += [nil, nil, { :scope => scope } ][ (d.size - 4 )..2 ]
-          _dependency Maven::Tools::Artifact.new( *d )
+        deps.java_dependency_artifacts.each do |a|
+          _dependency a
         end
       end
 
@@ -1053,10 +1051,11 @@ module Maven
       def _dependency( type, *args, &block )
         do_dependency( false, type, *args, &block )
       end
-
+      alias :dependency_artifact :_dependency
       def _dependency!( type, *args, &block )
         do_dependency( true, type, *args, &block )
       end
+      alias :dependency_artifact! :_dependency!
 
       def _dependency?( type, *args )
         find_dependency( dependency_container,
