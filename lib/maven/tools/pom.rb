@@ -32,6 +32,7 @@ module Maven
 
       def eval_spec( s, snapshot )
         @model = tesla do
+          # spec = s, name = nil
           spec s, nil, :snapshot => snapshot, :no_rubygems_repo => true
         end
       end

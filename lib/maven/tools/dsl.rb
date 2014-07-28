@@ -263,7 +263,8 @@ module Maven
             source_directory source
           end
         end
-        if jar && ( source ||
+        # TODO rename "no_rubygems_repo" to "no_jar_support"
+        if  options[ :no_rubygems_repo ] != true && jar && ( source ||
                     ::File.exists?( ::File.join( basedir, 'src', 'main', 'java' ) ) )
           unless spec.nil? || spec.platform.to_s.match( /java|jruby/ )
             warn "gem is not a java platform gem but has a jar and source"
