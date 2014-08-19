@@ -19,6 +19,7 @@ describe Maven::Tools::Coordinate do
     subject.to_version('~>1.8.2.beta123.12').must_equal "[1.8.2.beta123.12-SNAPSHOT,1.8.99999]"
     subject.to_version('~>1.8.2.1beta').must_equal "[1.8.2.1beta-SNAPSHOT,1.8.99999]"
     subject.to_version('~>1.8').must_equal "[1.8,1.99999]"
+    subject.to_version('~>0').must_equal "[0,99999]"
     subject.to_version('>1.2').must_equal "(1.2,)"
     subject.to_version('>1.2.GA').must_equal "(1.2.GA-SNAPSHOT,)"
     subject.to_version('<1.2').must_equal "[0,1.2)"
