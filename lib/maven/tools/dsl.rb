@@ -373,7 +373,7 @@ module Maven
         spec_file = ::File.read( f )
         begin
           spec = Gem::Specification.from_yaml( spec_file )
-        rescue
+        rescue Exception
           FileUtils.cd( basedir ) do
             # TODO jruby java user.dir
             spec = eval( spec_file, nil, f )
