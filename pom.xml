@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>rubygems</groupId>
   <artifactId>maven-tools</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <packaging>gem</packaging>
   <name>helpers for maven related tasks</name>
   <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
