@@ -23,7 +23,7 @@ require 'maven/tools/dsl/dependency_dsl'
 module Maven
   module Tools
     module DSL
-      class JarfileDSL
+      class Jarfile
         extend Options
 
         class Data
@@ -52,7 +52,7 @@ module Maven
         attr_reader :parent
         
         def help
-          warn "\n# Jarfile DSL #\n\n"
+          warn "\n# Jarfile DSL #\n"
           warn self.class.help_block( :local => "path-to-local-jar", :jar => nil, :pom => nil, :repository => nil, :snapshot_repository => nil, :jruby => nil, :scope => nil)[0..-2]
         end
 

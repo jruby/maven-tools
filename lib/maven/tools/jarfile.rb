@@ -22,7 +22,7 @@ require ::File.join(::File.dirname(__FILE__), 'coordinate.rb')
 require ::File.join(::File.dirname(__FILE__), 'artifact.rb')
 require 'fileutils'
 require 'delegate'
-require 'maven/tools/dsl/jarfile_dsl'
+require 'maven/tools/dsl/jarfile'
 module Maven
   module Tools
 
@@ -166,16 +166,16 @@ module Maven
       end
 
       def setup_unlocked( parent )
-        Maven::Tools::DSL::JarfileDSL.new( @file, parent )
+        Maven::Tools::DSL::Jarfile.new( @file, parent )
       end
 
       def setup_locked( parent )
-        Maven::Tools::DSL::JarfileDSL.new( @file, LockedParent.new( parent ) )
+        Maven::Tools::DSL::Jarfile.new( @file, LockedParent.new( parent ) )
       end
 
       def populate_unlocked( container = nil, &block )
         if ::File.exists?(@file)
-          dsl = Maven::Tools::DSL::JarfileDSL.new( @file )
+          dsl = Maven::Tools::DSL::Jarfile.new( @file )
           #dsl.eval_file( @file )
 
           if block
