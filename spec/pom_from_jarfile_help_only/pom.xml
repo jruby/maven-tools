@@ -12,28 +12,26 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>no_group_id_given</groupId>
-  <artifactId>pom_from_jarfile</artifactId>
+  <artifactId>pom_from_jarfile_help_only</artifactId>
   <version>0.0.0</version>
   <name>example from jarfile</name>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <groupId>asd</groupId>
+      <artifactId>asd</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>asd</groupId>
+          <artifactId>asd</artifactId>
+        </exclusion>
+        <exclusion>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>ruby.maven-tools.jar</groupId>
-      <artifactId>myfirst</artifactId>
-      <version>0</version>
-      <scope>system</scope>
-      <systemPath>myfirst.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-noasm</artifactId>
-      <version>1.7.13</version>
+      <groupId>asd</groupId>
+      <artifactId>asd</artifactId>
       <type>pom</type>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 </project>

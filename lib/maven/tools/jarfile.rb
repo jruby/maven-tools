@@ -21,6 +21,8 @@
 require ::File.join(::File.dirname(__FILE__), 'coordinate.rb')
 require ::File.join(::File.dirname(__FILE__), 'artifact.rb')
 require 'fileutils'
+require 'delegate'
+require 'maven/tools/dsl/jarfile_dsl'
 module Maven
   module Tools
 
@@ -79,6 +81,7 @@ module Maven
         end
 
         def eval_file( file )
+          warn "#{self.class} is deprecated"
           if ::File.exists?( file )
             eval( ::File.read( file ), nil, file )
             self
@@ -152,10 +155,28 @@ module Maven
           
       end
 
+      class LockedParent < SimpleDelegator
+        def initialize(obj)
+          super  
+        end
+        
+        def dependencies
+          @d ||= []
+        end
+      end
+
+      def setup_unlocked( parent )
+        Maven::Tools::DSL::JarfileDSL.new( @file, parent )
+      end
+
+      def setup_locked( parent )
+        Maven::Tools::DSL::JarfileDSL.new( @file, LockedParent.new( parent ) )
+      end
+
       def populate_unlocked( container = nil, &block )
         if ::File.exists?(@file)
-          dsl = DSL.new
-          dsl.eval_file( @file )
+          dsl = Maven::Tools::DSL::JarfileDSL.new( @file )
+          #dsl.eval_file( @file )
 
           if block
             block.call( dsl )

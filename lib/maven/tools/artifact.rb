@@ -136,7 +136,7 @@ module Maven
           self[ :artifact_id ] ||= options[ :artifact_id ]
           self[ :version ] ||= options[ :version ]
           self[ :classifier ] ||= options[ :classifier ] if options[ :classifier ] 
-          self[ :exclusions ] ||= options[ :exclusions ] if options[ :exclusions ]
+          self[ :exclusions ] ||= prepare( options[ :exclusions ] ) if options[ :exclusions ]
           options.delete( :group_id )
           options.delete( :artifact_id )
           options.delete( :version )
@@ -145,6 +145,41 @@ module Maven
           options.delete( :scope ) if options[ :scope ] == :compile
           self.merge!( options )
         end
+      end
+
+      def prepare( excl )
+        excl.collect do |e|
+          case e
+          when String
+            e
+          when Array
+            e.join ':'
+          else
+            raise 'only String and Array allowed'
+          end
+        end
+      end
+      private :prepare
+      
+      ATTRS = :type=, :group_id=, :artifact_id=, :version=, :classifier=, :exclusions=, :scope=
+      def method_missing( m, arg = nil )
+        if ATTRS.member? m
+          # setter
+          self[ m.to_s[ 0..-2].to_sym ] = arg
+        elsif ATTRS.member?( "#{m}=".to_sym )
+          if arg.nil?
+            # getter
+            self[ m ]
+          else
+            # setter
+            self[ m ] = arg
+          end
+        else
+          super
+        end
+      end
+      def respond_to?( m )
+        ATTRS.member? m
       end
 
       def gav

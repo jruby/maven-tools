@@ -286,12 +286,13 @@ module Maven
       private :setup_gem_support
 
       def setup_jruby( jruby, jruby_scope = :provided )
+        warn "deprecated: use jruby DSL directly"
         jruby ||= VERSIONS[ :jruby_version ]
 
-        if jruby.match( /-SNAPSHOT/ ) != nil
-          snapshot_repository( 'http://ci.jruby.org/snapshots/maven',
-                               :id => 'jruby-snapshots' )
-        end
+        # if jruby.match( /-SNAPSHOT/ ) != nil
+        #   snapshot_repository( 'http://ci.jruby.org/snapshots/maven',
+        #                        :id => 'jruby-snapshots' )
+        # end
         scope( jruby_scope ) do
           if ( jruby < '1.6' )
             raise 'jruby before 1.6 are not supported'
@@ -319,29 +320,25 @@ module Maven
         end
 
         if options[ :skip_locked ] or not file.exists_lock?
-          file.populate_unlocked do |dsl|
-            jarfile_dsl( dsl )
-            dsl.artifacts.each do |a|
-              _dependency a
-            end
-          end
+          dsl = file.setup_unlocked( @current )
+          # TODO this setup should be partly part of Jarfile
+          jarfile_dsl( dsl )
         else
           file.locked.each do |dep|
             artifact( dep )
           end
           file.populate_unlocked do |dsl|
+            dsl = file.setup_locked( @current )
+            # TODO this setup should be partly part of Jarfile
             jarfile_dsl( dsl )
-            dsl.artifacts.each do |a|
-              if a[ :system_path ]
-                dependeny a
-              end
+            dsl.parent.dependencies.each do |d|
+              @current.dependencies << d if d.system_path
             end
           end
         end
       end
       
       def jarfile_dsl( dsl )
-        setup_jruby( dsl.jruby )
         dsl.repositories.each do |r|
           repository r.merge( {:id => r[:name] } )
         end
