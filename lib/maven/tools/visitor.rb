@@ -19,19 +19,19 @@ module Maven
       end
 
       def start_raw_tag( name, attr = {} )
-        @io.print "#{indent}<#{name}"
+        @io << "#{indent}<#{name}"
         attr.each do |k,v|
-          @io.puts
+          @io << "\n"
           vv = v.gsub( /"/, '&quot;' )
-          @io.print "#{indent}  #{k.to_s[1..-1]}=\"#{vv}\""
+          @io << "#{indent}  #{k.to_s[1..-1]}=\"#{vv}\""
         end
-        @io.puts ">"
+        @io << ">\n"
         inc
       end
 
       def end_raw_tag( name )
         dec
-        @io.puts "#{indent}</#{name}>"
+        @io << "#{indent}</#{name}>\n"
       end
 
       def start_tag( name, attr = {} )
@@ -45,17 +45,17 @@ module Maven
       def tag( name, value )
         if value != nil
           if value.respond_to? :to_xml
-            @io.puts "#{indent}#{value.to_xml}"
+            @io << "#{indent}#{value.to_xml}\n"
           else
             name = camel_case_lower( name )
-            @io.puts "#{indent}<#{name}>#{escape_value( value )}</#{name}>"
+            @io << "#{indent}<#{name}>#{escape_value( value )}</#{name}>\n"
           end
         end
       end
 
       def raw_tag( name, value )
         unless value.nil?
-          @io.puts "#{indent}<#{name}>#{escape_value( value )}</#{name}>"
+          @io << "#{indent}<#{name}>#{escape_value( value )}</#{name}>\n"
         end
       end
 

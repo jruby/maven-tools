@@ -19,7 +19,6 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 require 'fileutils'
-require 'stringio'
 require 'maven/tools/model'
 require 'maven/tools/dsl'
 require 'maven/tools/visitor'
@@ -81,10 +80,10 @@ module Maven
 
       def to_s
         if @model
-          io = StringIO.new
+          io = String.new
           v = ::Maven::Tools::Visitor.new( io )
           v.accept_project( @model )
-          io.string
+          io
         end
       end
 
