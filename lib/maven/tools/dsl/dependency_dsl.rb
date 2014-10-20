@@ -29,9 +29,15 @@ module Maven
 
         class << self
           def create( parent, type, scope, *args, &block )
-            a = DependencyDSL.from( type, *args, &block )
-            a.scope = scope if scope
-            
+            if type
+              a = DependencyDSL.from( type, *args, &block )
+              a.scope = scope if scope
+            else
+              scope = args.shift
+              args += [nil, nil, { :scope => scope } ][ (args.size - 4 )..2 ]
+              a = DependencyDSL.new( *args )
+            end
+
             options = process_exclusions( a.model, a.dup )
             a.instance_eval &block if block
             fill_options( a.model, options, :type )

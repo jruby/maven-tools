@@ -46,6 +46,15 @@ module Maven
         @model
       end
 
+      # TODO remove me
+      def needs_torquebox= t
+        @needs_torquebox = t
+      end
+      # TODO remove me
+      def current
+        @current
+      end
+
       def eval_pom( src, reference_file )
         @source = reference_file || '.'
         eval( src, nil, ::File.expand_path( @source ) )
@@ -353,112 +362,25 @@ module Maven
           @gemspec_args = [ name, options ]
           return
         end
-        if name.is_a? Hash
-          options = name
-          name = nil
-        end
-        if name
-          name = ::File.join( basedir, name )
-        else name
-          gemspecs = Dir[ ::File.join( basedir, "*.gemspec" ) ]
-          raise "more then one gemspec file found" if gemspecs.size > 1
-          raise "no gemspec file found" if gemspecs.size == 0
-          name = gemspecs.first
-        end
-        spec = nil
-        f = ::File.expand_path( name )
-        spec_file = ::File.read( f )
-        begin
-          spec = Gem::Specification.from_yaml( spec_file )
-        rescue Exception
-          FileUtils.cd( basedir ) do
-            # TODO jruby java user.dir
-            spec = eval( spec_file, nil, f )
-          end
-        end
-        
-        self.spec( spec, name, options )
-      end
-
-      def spec( spec, name = nil, options = {} )
-        name ||= "#{spec.name}-#{spec.version}.gemspec"
-
-        @gemfile_options = nil
-
         if @context == :project
-          build.directory = '${basedir}/pkg'
-          version = spec.version.to_s
-          if options[ :snapshot ] && spec.version.prerelease?
-            version += '-SNAPSHOT'
+          if @inside_gemfile.is_a? Symbol
+            options[ :profile ] = @inside_gemfile
           end
-          id "rubygems:#{spec.name}:#{version}"
-          name( spec.summary || spec.name )
-          description spec.description
-          url spec.homepage
-          if spec.homepage && spec.homepage.match( /github.com/ )
-            con = spec.homepage.sub( /http:/, 'https:' ).sub( /\/?$/, ".git" )
-            scm :url => spec.homepage, :connection => con
-          end
-
-          spec.licenses.each do |l|
-            license( l )
-          end
-          authors = [ spec.authors || [] ].flatten
-          emails = [ spec.email || [] ].flatten
-          authors.zip( emails ).each do |d|
-            developer( :name => d[0], :email => d[1] )
-          end
-        end
-
-        has_jars = setup_gem_support( options, spec )
-
-        if @context == :project and not options[ :only_metadata ]
-          packaging 'gem'
-          if has_jars
-            extension 'de.saumya.mojo:gem-with-jar-extension:${jruby.plugins.version}'
-          else
-            extension 'de.saumya.mojo:gem-extension:${jruby.plugins.version}'
-          end
-        end
-
-        return if options[ :only_metadata ]
-
-        config = { :gemspec => name.sub( /^#{basedir}\/?/, '' ) }
-        if options[ :include_jars ] || options[ 'include_jars' ] 
-          config[ :includeDependencies ] = true
-          config[ :useRepositoryLayout ] = true
-        end
-        jruby_plugin!( :gem, config )
-
-        deps = nil
-        if @inside_gemfile.is_a? Symbol
-          profile! @inside_gemfile do
-            deps = all_deps( spec )
-          end
+          options[ :no_gems ] = gemspec_without_gem_dependencies?
+          require_relative 'dsl/project_gemspec'
+          DSL::ProjectGemspec.new( self, name, options )
         else
-          deps = all_deps( spec )
-        end
-        
-        deps.java_dependency_artifacts.each do |a|
-          _dependency a
+          require_relative 'dsl/profile_gemspec'
+          DSL::ProfileGemspec.new( self, name, options )
         end
       end
 
-      def all_deps( spec )
-        deps = Maven::Tools::GemspecDependencies.new( spec )
-        deps.runtime.each do |d|
-          gem d
-        end
-        unless deps.development.empty?
-          scope :test do
-            deps.development.each do |d|
-              gem d
-            end          
-          end
-        end
-        deps
+      def gemspec_without_gem_dependencies?
+        gems = GemspecDependencies.new( Gem::Specification.new )
+        gems.runtime << 123
+        deps = gems.send( :_deps, :runtime )
+        deps.size == 0
       end
-      private :all_deps
 
       def licenses
         yield

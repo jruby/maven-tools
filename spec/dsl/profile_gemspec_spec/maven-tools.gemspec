@@ -1,0 +1,422 @@
+--- !ruby/object:Gem::Specification
+name: maven-tools
+version: !ruby/object:Gem::Version
+  version: 1.0.5
+platform: ruby
+authors:
+- Christian Meier
+autorequire: 
+bindir: bin
+cert_chain: []
+date: 2014-09-24 00:00:00.000000000 Z
+dependencies:
+- !ruby/object:Gem::Dependency
+  name: virtus
+  requirement: !ruby/object:Gem::Requirement
+    requirements:
+    - - ~>
+      - !ruby/object:Gem::Version
+        version: '1.0'
+  type: :runtime
+  prerelease: false
+  version_requirements: !ruby/object:Gem::Requirement
+    requirements:
+    - - ~>
+      - !ruby/object:Gem::Version
+        version: '1.0'
+- !ruby/object:Gem::Dependency
+  name: rake
+  requirement: !ruby/object:Gem::Requirement
+    requirements:
+    - - ~>
+      - !ruby/object:Gem::Version
+        version: '10.0'
+  type: :development
+  prerelease: false
+  version_requirements: !ruby/object:Gem::Requirement
+    requirements:
+    - - ~>
+      - !ruby/object:Gem::Version
+        version: '10.0'
+- !ruby/object:Gem::Dependency
+  name: minitest
+  requirement: !ruby/object:Gem::Requirement
+    requirements:
+    - - ~>
+      - !ruby/object:Gem::Version
+        version: '5.3'
+  type: :development
+  prerelease: false
+  version_requirements: !ruby/object:Gem::Requirement
+    requirements:
+    - - ~>
+      - !ruby/object:Gem::Version
+        version: '5.3'
+description: adds versions conversion from rubygems to maven and vice versa, ruby
+  DSL for POM (Project Object Model from maven), pom generators, etc
+email:
+- m.kristian@web.de
+executables: []
+extensions: []
+extra_rdoc_files: []
+files:
+- maven-tools.gemspec
+- Rakefile
+- Mavenfile
+- Gemfile
+- lib/maven_tools.rb
+- lib/maven-tools.rb
+- lib/maven/tools/visitor.rb
+- lib/maven/tools/version.rb
+- lib/maven/tools/artifact.rb
+- lib/maven/tools/model.rb
+- lib/maven/tools/versions.rb
+- lib/maven/tools/gemspec_dependencies.rb
+- lib/maven/tools/gemfile_lock.rb
+- lib/maven/tools/dsl.rb
+- lib/maven/tools/jarfile.rb
+- lib/maven/tools/pom.rb
+- lib/maven/tools/coordinate.rb
+- lib/maven/tools/dsl/models.rb
+- lib/maven/tools/dsl/dependency_dsl.rb
+- lib/maven/tools/dsl/jarfile.rb
+- lib/maven/tools/dsl/jruby_dsl.rb
+- lib/maven/tools/dsl/exclusions_dsl.rb
+- lib/maven/tools/dsl/options.rb
+- spec/artifact_spec.rb
+- spec/jarfile_spec.rb
+- spec/coordinate_spec.rb
+- spec/pom_spec.rb
+- spec/spec_helper.rb
+- spec/gemspec_dependencies_spec.rb
+- spec/gemfile_with_source/bouncy-castle-version.rb
+- spec/pom_from_jarfile_with_jruby/pom.rb
+- spec/pom_maven_style/pom.rb
+- spec/gemspec_in_profile/bouncy-castle-version.rb
+- spec/gemfile_with_lock/bouncy-castle-version.rb
+- spec/pom_from_jarfile_help_only/pom.rb
+- spec/pom_from_jarfile/pom.rb
+- spec/gemfile_include_jars/bouncy-castle-version.rb
+- spec/gemfile/bouncy-castle-version.rb
+- spec/pom_with_execute/pom.rb
+- spec/gemspec/bouncy-castle-version.rb
+- spec/gemspec_with_source/bouncy-castle-version.rb
+- spec/pom_maven_hash_style/pom.rb
+- spec/gemspec_include_jars/bouncy-castle-version.rb
+- spec/gemspec_with_extras/bouncy-castle-version.rb
+- spec/gemfile_with_extras/bouncy-castle-version.rb
+- spec/pom_from_jarfile_with_exclusions/pom.rb
+- spec/pom_maven_alternative_style/pom.rb
+- MIT-LICENSE
+- README.md
+- spec/pom.xml
+- spec/gemfile_with_source/pom.xml
+- spec/pom_from_jarfile_with_jruby/pom.xml
+- spec/gemspec_in_profile/pom.xml
+- spec/pom_from_jarfile_with_repos/pom.xml
+- spec/gemfile_with_lock/pom.xml
+- spec/gemfile_with_test_group/pom.xml
+- spec/gemspec_with_prereleased_dependency_and_no_repo/pom.xml
+- spec/gemspec_with_custom_source_and_custom_jarname/pom.xml
+- spec/gemspec_prerelease_snapshot/pom.xml
+- spec/gemfile_with_path/pom.xml
+- spec/pom_from_jarfile_help_only/pom.xml
+- spec/gemfile_with_source_and_custom_jarname/pom.xml
+- spec/pom_from_jarfile/pom.xml
+- spec/gemspec_no_rubygems_repo/pom.xml
+- spec/gemfile_include_jars/pom.xml
+- spec/gemfile_with_source_and_no_jar/pom.xml
+- spec/gemspec_with_access_to_model/pom.xml
+- spec/gemfile/pom.xml
+- spec/gemspec_with_source_and_custom_jarname/pom.xml
+- spec/pom_with_execute/pom.xml
+- spec/gemspec/pom.xml
+- spec/gemspec_with_custom_source/pom.xml
+- spec/gemfile_with_platforms/pom.xml
+- spec/gemfile_with_access_to_model/pom.xml
+- spec/gemspec_with_source/pom.xml
+- spec/gemfile_with_groups_and_lockfile/pom.xml
+- spec/gemspec_prerelease/pom.xml
+- spec/gemfile_with_groups/pom.xml
+- spec/gemfile_with_custom_source/pom.xml
+- spec/gemspec_with_prereleased_dependency/pom.xml
+- spec/gemfile_without_gemspec/pom.xml
+- spec/gemfile_with_custom_source_and_custom_jarname/pom.xml
+- spec/gemspec_include_jars/pom.xml
+- spec/gemspec_with_extras/pom.xml
+- spec/gemspec_with_source_and_no_jar/pom.xml
+- spec/gemfile_with_extras/pom.xml
+- spec/pom_from_jarfile_with_exclusions/pom.xml
+- spec/gemfile_with_source/Mavenfile
+- spec/pom_from_jarfile_with_jruby/Jarfile
+- spec/gemspec_in_profile/Mavenfile
+- spec/pom_from_jarfile_with_repos/Jarfile
+- spec/pom_from_jarfile_with_repos/Mavenfile
+- spec/gemfile_with_lock/Mavenfile
+- spec/gemfile_with_lock/Gemfile
+- spec/gemfile_with_test_group/Mavenfile
+- spec/gemfile_with_test_group/Gemfile
+- spec/gemspec_with_prereleased_dependency_and_no_repo/Mavenfile
+- spec/gemspec_with_custom_source_and_custom_jarname/Mavenfile
+- spec/gemspec_prerelease_snapshot/Mavenfile
+- spec/gemfile_with_path/Mavenfile
+- spec/gemfile_with_path/Gemfile
+- spec/pom_from_jarfile_help_only/Jarfile
+- spec/gemfile_with_source_and_custom_jarname/Mavenfile
+- spec/gemfile_with_source_and_custom_jarname/Gemfile
+- spec/pom_from_jarfile/Jarfile
+- spec/gemspec_no_rubygems_repo/Mavenfile
+- spec/gemfile_include_jars/Mavenfile
+- spec/gemfile_include_jars/Gemfile
+- spec/gemfile_with_source_and_no_jar/Mavenfile
+- spec/gemfile_with_source_and_no_jar/Gemfile
+- spec/gemspec_with_access_to_model/Mavenfile
+- spec/gemfile/Mavenfile
+- spec/gemfile/Gemfile
+- spec/gemspec_with_source_and_custom_jarname/Mavenfile
+- spec/mavenfile/Mavenfile
+- spec/gemspec/Mavenfile
+- spec/gemspec_with_custom_source/Mavenfile
+- spec/gemfile_with_platforms/Mavenfile
+- spec/gemfile_with_platforms/Gemfile
+- spec/gemfile_with_access_to_model/Mavenfile
+- spec/gemfile_with_access_to_model/Gemfile
+- spec/gemspec_with_source/Mavenfile
+- spec/gemfile_with_groups_and_lockfile/Mavenfile
+- spec/gemfile_with_groups_and_lockfile/Gemfile
+- spec/gemspec_prerelease/Mavenfile
+- spec/gemfile_with_groups/Mavenfile
+- spec/gemfile_with_groups/Gemfile
+- spec/gemfile_with_custom_source/Mavenfile
+- spec/gemfile_with_custom_source/Gemfile
+- spec/gemspec_with_prereleased_dependency/Mavenfile
+- spec/gemfile_without_gemspec/Mavenfile
+- spec/gemfile_without_gemspec/Gemfile
+- spec/gemfile_with_custom_source_and_custom_jarname/Mavenfile
+- spec/gemfile_with_custom_source_and_custom_jarname/Gemfile
+- spec/gemspec_include_jars/Mavenfile
+- spec/gemspec_with_extras/Mavenfile
+- spec/gemspec_with_source_and_no_jar/Mavenfile
+- spec/gemfile_with_extras/Mavenfile
+- spec/gemfile_with_extras/Gemfile
+- spec/pom_from_jarfile_with_exclusions/Jarfile
+- spec/gemfile_with_lock/Gemfile.lock
+- spec/gemfile_with_test_group/Gemfile.lock
+- spec/gemfile_with_groups_and_lockfile/Gemfile.lock
+- spec/gemfile_with_source/src/main/java/.keep
+- spec/gemspec_with_custom_source_and_custom_jarname/src/java/.keep
+- spec/gemfile_with_source_and_custom_jarname/src/main/java/.keep
+- spec/gemfile_with_source_and_no_jar/src/main/java/.keep
+- spec/gemspec_with_source_and_custom_jarname/src/main/java/.keep
+- spec/gemspec_with_custom_source/src/java/.keep
+- spec/gemspec_with_source/src/main/java/.keep
+- spec/gemfile_with_custom_source/src/java/.keep
+- spec/gemfile_with_custom_source_and_custom_jarname/src/java/.keep
+- spec/gemspec_with_source_and_no_jar/src/main/java/.keep
+- spec/gemfile_with_source/bouncy-castle-java.gemspec
+- spec/gemspec_in_profile/bouncy-castle-java.gemspec
+- spec/gemfile_with_lock/bouncy-castle-java.gemspec
+- spec/gemspec_with_prereleased_dependency_and_no_repo/bouncy-castle-java.gemspec
+- spec/my/my.gemspec
+- spec/gemspec_with_custom_source_and_custom_jarname/bouncy-castle-java.gemspec
+- spec/gemspec_prerelease_snapshot/bouncy-castle-java.gemspec
+- spec/gemfile_with_source_and_custom_jarname/bouncy-castle-java.gemspec
+- spec/gemspec_no_rubygems_repo/bouncy-castle-java.gemspec
+- spec/gemfile_include_jars/bouncy-castle-java.gemspec
+- spec/gemfile_with_source_and_no_jar/bouncy-castle-java.gemspec
+- spec/gemspec_with_access_to_model/bouncy-castle-java.gemspec
+- spec/gemfile/bouncy-castle-java.gemspec
+- spec/gemspec_with_source_and_custom_jarname/bouncy-castle-java.gemspec
+- spec/gemspec/bouncy-castle-java.gemspec
+- spec/gemspec_with_custom_source/bouncy-castle-java.gemspec
+- spec/gemfile_with_access_to_model/bouncy-castle-java.gemspec
+- spec/gemspec_with_source/bouncy-castle-java.gemspec
+- spec/gemspec_prerelease/bouncy-castle-java.gemspec
+- spec/gemfile_with_custom_source/bouncy-castle-java.gemspec
+- spec/gemspec_with_prereleased_dependency/bouncy-castle-java.gemspec
+- spec/gemfile_with_custom_source_and_custom_jarname/bouncy-castle-java.gemspec
+- spec/gemspec_include_jars/bouncy-castle-java.gemspec
+- spec/gemspec_with_extras/bouncy-castle-java.gemspec
+- spec/gemspec_with_source_and_no_jar/bouncy-castle-java.gemspec
+- spec/gemfile_with_extras/bouncy-castle-java.gemspec
+homepage: http://github.com/torquebox/maven-tools
+licenses:
+- MIT
+metadata: {}
+post_install_message: 
+rdoc_options: []
+require_paths:
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement
+  requirements:
+  - - '>='
+    - !ruby/object:Gem::Version
+      version: '0'
+required_rubygems_version: !ruby/object:Gem::Requirement
+  requirements:
+  - - '>='
+    - !ruby/object:Gem::Version
+      version: '0'
+requirements: []
+rubyforge_project: 
+rubygems_version: 2.4.2
+signing_key: 
+specification_version: 4
+summary: helpers for maven related tasks
+test_files:
+- spec/artifact_spec.rb
+- spec/jarfile_spec.rb
+- spec/coordinate_spec.rb
+- spec/pom_spec.rb
+- spec/spec_helper.rb
+- spec/gemspec_dependencies_spec.rb
+- spec/gemfile_with_source/bouncy-castle-version.rb
+- spec/pom_from_jarfile_with_jruby/pom.rb
+- spec/pom_maven_style/pom.rb
+- spec/gemspec_in_profile/bouncy-castle-version.rb
+- spec/gemfile_with_lock/bouncy-castle-version.rb
+- spec/pom_from_jarfile_help_only/pom.rb
+- spec/pom_from_jarfile/pom.rb
+- spec/gemfile_include_jars/bouncy-castle-version.rb
+- spec/gemfile/bouncy-castle-version.rb
+- spec/pom_with_execute/pom.rb
+- spec/gemspec/bouncy-castle-version.rb
+- spec/gemspec_with_source/bouncy-castle-version.rb
+- spec/pom_maven_hash_style/pom.rb
+- spec/gemspec_include_jars/bouncy-castle-version.rb
+- spec/gemspec_with_extras/bouncy-castle-version.rb
+- spec/gemfile_with_extras/bouncy-castle-version.rb
+- spec/pom_from_jarfile_with_exclusions/pom.rb
+- spec/pom_maven_alternative_style/pom.rb
+- spec/pom.xml
+- spec/gemfile_with_source/pom.xml
+- spec/pom_from_jarfile_with_jruby/pom.xml
+- spec/gemspec_in_profile/pom.xml
+- spec/pom_from_jarfile_with_repos/pom.xml
+- spec/gemfile_with_lock/pom.xml
+- spec/gemfile_with_test_group/pom.xml
+- spec/gemspec_with_prereleased_dependency_and_no_repo/pom.xml
+- spec/gemspec_with_custom_source_and_custom_jarname/pom.xml
+- spec/gemspec_prerelease_snapshot/pom.xml
+- spec/gemfile_with_path/pom.xml
+- spec/pom_from_jarfile_help_only/pom.xml
+- spec/gemfile_with_source_and_custom_jarname/pom.xml
+- spec/pom_from_jarfile/pom.xml
+- spec/gemspec_no_rubygems_repo/pom.xml
+- spec/gemfile_include_jars/pom.xml
+- spec/gemfile_with_source_and_no_jar/pom.xml
+- spec/gemspec_with_access_to_model/pom.xml
+- spec/gemfile/pom.xml
+- spec/gemspec_with_source_and_custom_jarname/pom.xml
+- spec/pom_with_execute/pom.xml
+- spec/gemspec/pom.xml
+- spec/gemspec_with_custom_source/pom.xml
+- spec/gemfile_with_platforms/pom.xml
+- spec/gemfile_with_access_to_model/pom.xml
+- spec/gemspec_with_source/pom.xml
+- spec/gemfile_with_groups_and_lockfile/pom.xml
+- spec/gemspec_prerelease/pom.xml
+- spec/gemfile_with_groups/pom.xml
+- spec/gemfile_with_custom_source/pom.xml
+- spec/gemspec_with_prereleased_dependency/pom.xml
+- spec/gemfile_without_gemspec/pom.xml
+- spec/gemfile_with_custom_source_and_custom_jarname/pom.xml
+- spec/gemspec_include_jars/pom.xml
+- spec/gemspec_with_extras/pom.xml
+- spec/gemspec_with_source_and_no_jar/pom.xml
+- spec/gemfile_with_extras/pom.xml
+- spec/pom_from_jarfile_with_exclusions/pom.xml
+- spec/gemfile_with_source/Mavenfile
+- spec/pom_from_jarfile_with_jruby/Jarfile
+- spec/gemspec_in_profile/Mavenfile
+- spec/pom_from_jarfile_with_repos/Jarfile
+- spec/pom_from_jarfile_with_repos/Mavenfile
+- spec/gemfile_with_lock/Mavenfile
+- spec/gemfile_with_lock/Gemfile
+- spec/gemfile_with_test_group/Mavenfile
+- spec/gemfile_with_test_group/Gemfile
+- spec/gemspec_with_prereleased_dependency_and_no_repo/Mavenfile
+- spec/gemspec_with_custom_source_and_custom_jarname/Mavenfile
+- spec/gemspec_prerelease_snapshot/Mavenfile
+- spec/gemfile_with_path/Mavenfile
+- spec/gemfile_with_path/Gemfile
+- spec/pom_from_jarfile_help_only/Jarfile
+- spec/gemfile_with_source_and_custom_jarname/Mavenfile
+- spec/gemfile_with_source_and_custom_jarname/Gemfile
+- spec/pom_from_jarfile/Jarfile
+- spec/gemspec_no_rubygems_repo/Mavenfile
+- spec/gemfile_include_jars/Mavenfile
+- spec/gemfile_include_jars/Gemfile
+- spec/gemfile_with_source_and_no_jar/Mavenfile
+- spec/gemfile_with_source_and_no_jar/Gemfile
+- spec/gemspec_with_access_to_model/Mavenfile
+- spec/gemfile/Mavenfile
+- spec/gemfile/Gemfile
+- spec/gemspec_with_source_and_custom_jarname/Mavenfile
+- spec/mavenfile/Mavenfile
+- spec/gemspec/Mavenfile
+- spec/gemspec_with_custom_source/Mavenfile
+- spec/gemfile_with_platforms/Mavenfile
+- spec/gemfile_with_platforms/Gemfile
+- spec/gemfile_with_access_to_model/Mavenfile
+- spec/gemfile_with_access_to_model/Gemfile
+- spec/gemspec_with_source/Mavenfile
+- spec/gemfile_with_groups_and_lockfile/Mavenfile
+- spec/gemfile_with_groups_and_lockfile/Gemfile
+- spec/gemspec_prerelease/Mavenfile
+- spec/gemfile_with_groups/Mavenfile
+- spec/gemfile_with_groups/Gemfile
+- spec/gemfile_with_custom_source/Mavenfile
+- spec/gemfile_with_custom_source/Gemfile
+- spec/gemspec_with_prereleased_dependency/Mavenfile
+- spec/gemfile_without_gemspec/Mavenfile
+- spec/gemfile_without_gemspec/Gemfile
+- spec/gemfile_with_custom_source_and_custom_jarname/Mavenfile
+- spec/gemfile_with_custom_source_and_custom_jarname/Gemfile
+- spec/gemspec_include_jars/Mavenfile
+- spec/gemspec_with_extras/Mavenfile
+- spec/gemspec_with_source_and_no_jar/Mavenfile
+- spec/gemfile_with_extras/Mavenfile
+- spec/gemfile_with_extras/Gemfile
+- spec/pom_from_jarfile_with_exclusions/Jarfile
+- spec/gemfile_with_lock/Gemfile.lock
+- spec/gemfile_with_test_group/Gemfile.lock
+- spec/gemfile_with_groups_and_lockfile/Gemfile.lock
+- spec/gemfile_with_source/src/main/java/.keep
+- spec/gemspec_with_custom_source_and_custom_jarname/src/java/.keep
+- spec/gemfile_with_source_and_custom_jarname/src/main/java/.keep
+- spec/gemfile_with_source_and_no_jar/src/main/java/.keep
+- spec/gemspec_with_source_and_custom_jarname/src/main/java/.keep
+- spec/gemspec_with_custom_source/src/java/.keep
+- spec/gemspec_with_source/src/main/java/.keep
+- spec/gemfile_with_custom_source/src/java/.keep
+- spec/gemfile_with_custom_source_and_custom_jarname/src/java/.keep
+- spec/gemspec_with_source_and_no_jar/src/main/java/.keep
+- spec/gemfile_with_source/bouncy-castle-java.gemspec
+- spec/gemspec_in_profile/bouncy-castle-java.gemspec
+- spec/gemfile_with_lock/bouncy-castle-java.gemspec
+- spec/gemspec_with_prereleased_dependency_and_no_repo/bouncy-castle-java.gemspec
+- spec/my/my.gemspec
+- spec/gemspec_with_custom_source_and_custom_jarname/bouncy-castle-java.gemspec
+- spec/gemspec_prerelease_snapshot/bouncy-castle-java.gemspec
+- spec/gemfile_with_source_and_custom_jarname/bouncy-castle-java.gemspec
+- spec/gemspec_no_rubygems_repo/bouncy-castle-java.gemspec
+- spec/gemfile_include_jars/bouncy-castle-java.gemspec
+- spec/gemfile_with_source_and_no_jar/bouncy-castle-java.gemspec
+- spec/gemspec_with_access_to_model/bouncy-castle-java.gemspec
+- spec/gemfile/bouncy-castle-java.gemspec
+- spec/gemspec_with_source_and_custom_jarname/bouncy-castle-java.gemspec
+- spec/gemspec/bouncy-castle-java.gemspec
+- spec/gemspec_with_custom_source/bouncy-castle-java.gemspec
+- spec/gemfile_with_access_to_model/bouncy-castle-java.gemspec
+- spec/gemspec_with_source/bouncy-castle-java.gemspec
+- spec/gemspec_prerelease/bouncy-castle-java.gemspec
+- spec/gemfile_with_custom_source/bouncy-castle-java.gemspec
+- spec/gemspec_with_prereleased_dependency/bouncy-castle-java.gemspec
+- spec/gemfile_with_custom_source_and_custom_jarname/bouncy-castle-java.gemspec
+- spec/gemspec_include_jars/bouncy-castle-java.gemspec
+- spec/gemspec_with_extras/bouncy-castle-java.gemspec
+- spec/gemspec_with_source_and_no_jar/bouncy-castle-java.gemspec
+- spec/gemfile_with_extras/bouncy-castle-java.gemspec
+has_rdoc: 
+

@@ -1,0 +1,129 @@
+#
+# Copyright (C) 2014 Christian Meier
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+# the Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+require 'maven/tools/coordinate'
+require 'maven/tools/versions'
+require 'maven/tools/dsl/jruby_dsl'
+require 'maven/tools/dsl/dependency_dsl'
+module Maven
+  module Tools
+    module DSL
+      class Gemspec
+
+        def initialize( parent, name = nil, options = {} )
+          @parent = parent
+          if name.is_a? Hash
+            options = name
+            name = options[ 'name' ] || options[ :name ]
+          end
+          if name
+            name = ::File.join( @parent.basedir, name )
+          else
+            gemspecs = Dir[ ::File.join( @parent.basedir, "*.gemspec" ) ]
+            raise "more then one gemspec file found" if gemspecs.size > 1
+            raise "no gemspec file found" if gemspecs.size == 0
+            name = gemspecs.first
+          end
+          path = File.expand_path( name ) 
+          spec_file = File.read( path )
+          begin
+            spec = Gem::Specification.from_yaml( spec_file )
+          rescue Exception
+            FileUtils.cd( @parent.basedir ) do
+              spec = eval( spec_file, nil, path )
+            end
+          end
+          name ||= "#{spec.name}-#{spec.version}.gemspec"
+          process( spec, name, options )
+        end
+
+        attr_reader :parent
+        
+        def process( spec, name, options )       
+          config = { :gemspec => name.sub( /^#{@parent.basedir}\/?/, '' ) }
+          if options[ :include_jars ] || options[ 'include_jars' ] 
+            config[ :includeDependencies ] = true
+            config[ :useRepositoryLayout ] = true
+          end
+          @parent.jruby_plugin!( :gem, config )
+
+          gem_deps( spec, options ) unless options[ :no_gems ]
+          other_deps( spec )
+        end
+
+        def gem_deps( spec, options )
+          spec.dependencies.each do |dep|
+            versions = dep.requirement.requirements.collect do |req|
+              # use this construct to get the same result in 1.8.x and 1.9.x
+              req.collect{ |i| i.to_s }.join
+            end
+            scope = dep.type == :development ? :test : nil
+            gem( scope, "rubygems:#{dep.name}:#{to_version( *versions )}" )
+          end
+        end
+
+        def other_deps( spec )
+          spec.requirements.each do |req|
+            req.sub!( /#.*^/, '' )
+            method = req.sub(/\s.*$/, '' ).to_sym
+            line = req.sub(/^[^\s]*\s/, '' )
+            send method, line
+          end
+        end
+
+        def help
+          warn "\n# Jarfile DSL #\n"
+          warn self.class.help_block( :local => "path-to-local-jar", :jar => nil, :pom => nil, :repository => nil, :snapshot_repository => nil, :jruby => nil, :scope => nil)[0..-2]
+        end
+
+        def gem( scope, coord )
+          DependencyDSL.create( @parent.current, :gem, scope, coord )
+        end
+
+        def jar( line )
+          maven_dependency( "jar #{line}" )
+        end
+
+        def pom( line )
+          maven_dependency( "pom #{line}" )
+        end
+
+        def method_missing( m, *args )
+          if args.size == 1
+            warn "unknown declaration: #{m} " + args[0]
+          else
+            super
+          end
+        end
+
+        private
+
+        include Maven::Tools::Coordinate
+
+        def maven_dependency( line )
+          coord = to_split_coordinate_with_scope( line )
+          if coord && coord.size > 1
+            DependencyDSL.create( @parent.current, nil, nil, *coord )
+          end
+        end
+      end
+    end
+  end
+end

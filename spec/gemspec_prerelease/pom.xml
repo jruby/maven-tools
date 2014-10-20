@@ -13,7 +13,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>rubygems</groupId>
   <artifactId>bouncy-castle-java</artifactId>
-  <version>1.5.beta.1</version>
+  <version>1.5.beta.1-SNAPSHOT</version>
   <packaging>gem</packaging>
   <name>Gem redistribution of Bouncy Castle jars</name>
   <url>http://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java/</url>

@@ -19,7 +19,7 @@ task :specs do
   $LOAD_PATH << "spec"
   $LOAD_PATH << "lib"
 
-  Dir['spec/*_spec.rb'].each { |f| require File.basename(f.sub(/.rb$/, '')) }
+  Dir['spec/**/*_spec.rb'].each { |f| require f.sub(/spec\//, '') }
 end
 
 task :headers do
