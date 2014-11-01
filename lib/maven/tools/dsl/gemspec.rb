@@ -29,9 +29,19 @@ module Maven
 
         def initialize( parent, name = nil, options = {} )
           @parent = parent
-          if name.is_a? Hash
+          case name
+          when Hash
             options = name
             name = options[ 'name' ] || options[ :name ]
+          when Gem::Specification
+            spec = name
+            if spec.spec_file
+              name = File.basename( spec.spec_file )
+            else
+              name = nil
+            end
+            process( spec, name, options )
+            return
           end
           if name
             name = ::File.join( @parent.basedir, name )
@@ -57,7 +67,9 @@ module Maven
         attr_reader :parent
         
         def process( spec, name, options )       
-          config = { :gemspec => name.sub( /^#{@parent.basedir}\/?/, '' ) }
+          if name
+            config = { :gemspec => name.sub( /^#{@parent.basedir}\/?/, '' ) }
+          end
           if options[ :include_jars ] || options[ 'include_jars' ] 
             config[ :includeDependencies ] = true
             config[ :useRepositoryLayout ] = true
