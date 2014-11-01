@@ -18,17 +18,40 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-require 'maven/tools/dsl/jruby_dsl'
 require 'maven/tools/dsl/dependency_dsl'
+require 'maven/tools/dsl/jarfile_lock'
 module Maven
   module Tools
     module DSL
       class Jarfile
         extend Options
 
-        class Data
+        class ParentWithLock
+
+          class Guarded < SimpleDelegator
+            def initialize(deps, lock_file)
+              super deps
+              @lock = lock_file
+            end
+        
+            def <<( d )
+              unless @lock.locked?( "#{d.group_id}:#{d.artifact_id}" )
+                super d
+              end
+            end
+          end
+
+          attr_reader :lock, :parent
+         
+          def initialize( parent, lock_file )
+            @lock = lock_file
+            @parent = parent
+            @deps = Guarded.new( parent ? parent.dependencies : [],
+                                 lock_file )
+          end
+
           def dependencies
-            @dependencies ||= []
+            @deps
           end
         end
 
@@ -45,15 +68,22 @@ module Maven
           @snapshot_repositories ||= []
         end
 
-        def initialize( file = 'Jarfile', parent = Data.new )
-          @parent = parent
+        def initialize( file = 'Jarfile', parent = nil )
+          @parent = ParentWithLock.new( parent, JarfileLock.new( file ) )
           eval( File.read( file ) )
         end
-        attr_reader :parent
         
+        def parent
+          @parent.parent
+        end
+
+        def lockfile
+          @parent.lock
+        end
+
         def help
           warn "\n# Jarfile DSL #\n"
-          warn self.class.help_block( :local => "path-to-local-jar", :jar => nil, :pom => nil, :repository => nil, :snapshot_repository => nil, :jruby => nil, :scope => nil)[0..-2]
+          warn self.class.help_block( :local => "path-to-local-jar", :jar => nil, :pom => nil, :repository => nil, :snapshot_repository => nil, :scope => nil)[0..-2]
         end
 
         def local( path )
@@ -102,11 +132,12 @@ module Maven
         end
 
         def jruby( *args, &block )
-          if args.empty? && !block
-            @jruby ? @jruby.legacy_version : nil
-          else
-            @jruby = JRubyDSL.create( @parent, :provided, *args, &block )
-          end
+          warn "jruby declaration is deprecated and has no effect"
+          # if args.empty? && !block
+          #   @jruby ? @jruby.legacy_version : nil
+          # else
+          #   @jruby = JRubyDSL.create( @parent, :provided, *args, &block )
+          # end
         end
       end
     end

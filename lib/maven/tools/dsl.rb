@@ -328,21 +328,22 @@ module Maven
           file = Maven::Tools::Jarfile.new( ::File.expand_path( file ) )
         end
 
-        if options[ :skip_locked ] or not file.exists_lock?
+        if options[ :skip_locked ]
           dsl = file.setup_unlocked( @current )
-          # TODO this setup should be partly part of Jarfile
-          jarfile_dsl( dsl )
         else
-          file.locked.each do |dep|
-            artifact( dep )
-          end
-          file.populate_unlocked do |dsl|
-            dsl = file.setup_locked( @current )
-            # TODO this setup should be partly part of Jarfile
-            jarfile_dsl( dsl )
-            dsl.parent.dependencies.each do |d|
-              @current.dependencies << d if d.system_path
-            end
+          dsl = file.setup_locked( @current )
+        end
+        # TODO this setup should be partly part of Jarfile
+        jarfile_dsl( dsl )
+        dsl.parent.dependencies.each do |d|
+          @current.dependencies << d# if d.system_path
+        end
+        dsl.lockfile.coordinates.each do |d|
+          artifact( d )
+        end
+        scope( :test ) do
+          dsl.lockfile.coordinates( :test ).each do |d|
+            artifact( d )
           end
         end
       end
@@ -375,6 +376,7 @@ module Maven
         end
       end
 
+      # TODO remove this hack to get jar-dependencies to work
       def gemspec_without_gem_dependencies?
         gems = GemspecDependencies.new( Gem::Specification.new )
         gems.runtime << 123

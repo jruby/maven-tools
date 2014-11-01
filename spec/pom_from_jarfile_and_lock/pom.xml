@@ -12,21 +12,26 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>no_group_id_given</groupId>
-  <artifactId>pom_from_jarfile</artifactId>
+  <artifactId>pom_from_jarfile_and_lock</artifactId>
   <version>0.0.0</version>
   <name>example from jarfile</name>
   <dependencies>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>simple-slf4</artifactId>
+      <version>[1.6.4,1.6.99999]</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <version>1.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
-    </dependency>
-    <dependency>
-      <groupId>ruby.maven-tools.jar</groupId>
-      <artifactId>myfirst</artifactId>
-      <version>0</version>
-      <scope>system</scope>
-      <systemPath>myfirst.jar</systemPath>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

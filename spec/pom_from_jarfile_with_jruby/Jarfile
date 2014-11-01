@@ -1,3 +1,4 @@
+# not used anymore
 jruby '1.7.16' do
   no_asm true
   scope :compile
