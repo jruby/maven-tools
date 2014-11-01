@@ -18,6 +18,23 @@
   <name>Gem redistribution of Bouncy Castle jars</name>
   <url>http://github.com/jruby/jruby/tree/master/gems/bouncy-castle-java/</url>
   <description>Gem redistribution of "Legion of the Bouncy Castle Java cryptography APIs" jars at http://www.bouncycastle.org/java.html</description>
+  <licenses>
+    <license>
+      <name>EPL-1.0</name>
+      <url>http://opensource.org/licenses/EPL-1.0</url>
+      <comments>Eclipse Public License 1.0</comments>
+    </license>
+    <license>
+      <name>GPL-2.0</name>
+      <url>http://opensource.org/licenses/GPL-2.0</url>
+      <comments>GNU General Public License version 2.0</comments>
+    </license>
+    <license>
+      <name>LGPL-2.1</name>
+      <url>http://opensource.org/licenses/LGPL-2.1</url>
+      <comments>GNU Library or "Lesser" General Public License version 2.1</comments>
+    </license>
+  </licenses>
   <developers>
     <developer>
       <name>Hiroshi Nakamura</name>

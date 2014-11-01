@@ -8,6 +8,38 @@ end
 
 task :default => [ :specs ]
 
+desc 'generate licenses data from internet'
+task :licenses do
+  require 'open-uri'
+  require 'ostruct'
+  
+  File.open( 'lib/maven/tools/licenses.rb', 'w' ) do |f|
+    url = 'http://opensource.org'
+    f.puts "require 'ostruct'"
+    f.puts 'module Maven'
+    f.puts '  module Tools'
+    f.puts '    LICENSES = {}'
+    
+    open( url + '/licenses/alphabetical' ).each_line do |line|
+      
+      if line =~ /.*"\/licenses\// and line =~ /<li>/
+        l = OpenStruct.new
+        line.sub!( /.*"(\/licenses\/([^"]*))">/ ) do
+          l.url = "http://opensource.org#{$1}"
+          l.short = $1.sub( /\/licenses\//, '' )
+          ''
+        end
+        line.sub!( /\ \(.*$/, '' )
+        f.puts "    LICENSES[ #{l.short.downcase.inspect} ] = OpenStruct.new :short => #{l.short.inspect}, :name => #{line.strip.inspect}, :url => #{l.url.inspect}"
+      end
+    end
+    f.puts '    LICENSES.freeze'
+    f.puts '  end'
+    f.puts 'end'
+  end
+  
+end
+
 desc 'run minispecs'
 task :specs do
   begin

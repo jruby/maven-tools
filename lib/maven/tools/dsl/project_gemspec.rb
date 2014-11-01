@@ -20,6 +20,7 @@
 #
 require 'maven/tools/dsl/gemspec'
 require 'maven/tools/dsl/gem_support'
+require 'maven/tools/licenses'
 module Maven
   module Tools
     module DSL
@@ -30,7 +31,7 @@ module Maven
         def process( spec, name, options )
           @parent.build.directory = '${basedir}/pkg'
           version = spec.version.to_s
-          if spec.version.prerelease?
+          if spec.version.prerelease? && options[ :snapshot ] != false
             version += '-SNAPSHOT'
           end
           @parent.id "rubygems:#{spec.name}:#{version}"
@@ -43,7 +44,10 @@ module Maven
           end
 
           spec.licenses.each do |l|
-            @parent.license( l )
+            lic = Maven::Tools::LICENSES[ l.downcase ]
+            @parent.license( :name => lic.short,
+                             :url => lic.url,
+                             :comments => lic.name )
           end
           authors = [ spec.authors || [] ].flatten
           emails = [ spec.email || [] ].flatten
