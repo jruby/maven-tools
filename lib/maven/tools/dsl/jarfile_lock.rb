@@ -19,7 +19,11 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 require 'fileutils'
-require 'jar_dependencies'
+begin
+  require 'jar_dependencies'
+rescue LoadError
+  # we do not declare jar-dependencies gem as dependency
+end
 module Maven
   module Tools
     module DSL
@@ -45,18 +49,21 @@ module Maven
         data[ scope ] || []
       end
 
+      # TODO should move into jbundler
       def require( scope = :runtime )
-        data[ scope ].each do |coord|
+        coordicates( scope ).each do |coord|
           Jars.require_jar( coord.split( /:/ ) )
         end
       end
       
+      # TODO should move into jbundler
       def classpath( scope = :runtime )
-        data[ scope ].collect do |coord|
+        coordicates( scope ).collect do |coord|
           path_to_jar( coord.split( /:/ ) )
         end
       end
 
+      # TODO should move into jbundler
       def downloaded?
         classpath.member?( nil ) == false &&
           classpath( :test ).member?( nil ) == false
@@ -82,7 +89,7 @@ module Maven
 
       def locked?( coordinate )
         coord = coordinate.sub(/^([^:]+:[^:]+):.+/) { $1 }
-        all = ( data[ :runtime ] || [] ) + ( data[ :test ] || [] )
+        all = coordinates( :runtime ) + coordinates( :test )
         all.detect do |l|
           l.sub(/^([^:]+:[^:]+):.+/) { $1 } == coord 
         end != nil
@@ -94,7 +101,8 @@ module Maven
         @data ||= {}
       end
 
-      def path_to_jar( group_id, artifact_id, *classifier_version )
+      # TODO should move into jar-dependencies
+      def to_path( group_id, artifact_id, *classifier_version )
         version = classifier_version[ -1 ]
         classifier = classifier_version[ -2 ]
 
