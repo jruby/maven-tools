@@ -19,6 +19,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 require 'fileutils'
+require 'yaml'
 begin
   require 'jar_dependencies'
 rescue LoadError
@@ -74,17 +75,25 @@ module Maven
         update( deps )
       end
 
-      def update( deps )
-        result = true
+      def update_unlocked( deps )
+        conflict = true
         d = data
         deps.each do |k,v|
-          if locked?( e.coord )
-            result = false
+          if exists?( e.coord )
+            # do nothing
+          elsif locked?( e.coord )
+            # mark result as conflict
+            conflict = false
           else
+            # add it
             d[ k ] = v.collect{ |e| e.coord }
           end
         end
-        result
+        conflict
+      end
+
+      def exists?( coordinate )
+        coordinates( :runtime ) + coordinates( :test ).member?( coordinate )
       end
 
       def locked?( coordinate )
