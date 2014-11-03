@@ -113,6 +113,12 @@ module Maven
           if options[ :include_jars ] || options[ 'include_jars' ] 
             config[ :includeDependencies ] = true
             config[ :useRepositoryLayout ] = true
+            @parent.plugin :dependency do
+              @parent.execute_goal( 'copy-dependencies',
+                                    :phase => 'generate-test-resources',
+                                    :outputDirectory => spec.require_path,
+                                    :useRepositoryLayout => true )
+            end
           end
           @parent.jruby_plugin!( :gem, config )
 
