@@ -324,30 +324,16 @@ module Maven
           options = file
           file = 'Jarfile'
         end
-        unless file.is_a?( Maven::Tools::Jarfile )
-          file = Maven::Tools::Jarfile.new( ::File.expand_path( file ) )
+        if file.is_a?( Maven::Tools::Jarfile )
+          warn "DEPRECATED use filename instead"
+          file = jfile.file
         end
+        dsl = Maven::Tools::DSL::Jarfile.new( @current, file, options[ :skip_lock ] )
 
-        if options[ :skip_locked ]
-          dsl = file.setup_unlocked( @current )
-        else
-          dsl = file.setup_locked( @current )
-        end
-        # TODO this setup should be partly part of Jarfile
+        # TODO this setup should be part of DSL::Jarfile
         jarfile_dsl( dsl )
-        dsl.parent.dependencies.each do |d|
-          @current.dependencies << d# if d.system_path
-        end
-        dsl.lockfile.coordinates.each do |d|
-          artifact( d )
-        end
-        scope( :test ) do
-          dsl.lockfile.coordinates( :test ).each do |d|
-            artifact( d )
-          end
-        end
       end
-      
+
       def jarfile_dsl( dsl )
         dsl.repositories.each do |r|
           repository r.merge( {:id => r[:name] } )

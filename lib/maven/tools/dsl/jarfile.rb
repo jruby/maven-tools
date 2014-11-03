@@ -46,6 +46,7 @@ module Maven
           def initialize( parent, lock_file )
             @lock = lock_file
             @parent = parent
+            # TODO remove case when parent is nil
             @deps = Guarded.new( parent ? parent.dependencies : [],
                                  lock_file )
           end
@@ -61,24 +62,47 @@ module Maven
         end
 
         def repositories
+          # TODO remove this part
           @repositories ||= []
         end
         
         def snapshot_repositories
+          # TODO remove this part
           @snapshot_repositories ||= []
         end
 
-        def initialize( file = 'Jarfile', parent = nil )
-          @parent = ParentWithLock.new( parent, JarfileLock.new( file ) )
+        def initialize( parent, file = 'Jarfile', skip_lock = false )
+          warn "DEPRECATED to have nil as parent" unless parent
+          lockfile = JarfileLock.new( skip_lock ? nil : file )
+
+          # the dependencies are only add if they are not locked
+          @parent = ParentWithLock.new( parent, lockfile )
+
+          # parse jarfile DSL
           eval( File.read( file ) )
-        end
-        
-        def parent
-          @parent.parent
+
+          # fill dependencies from lockfile
+          lockfile.coordinates.each do |d|
+            add( Maven::Tools::Artifact.from_coordinate( d ) )
+          end
+          scope( :test ) do
+            lockfile.coordinates( :test ).each do |d|
+              add( Maven::Tools::Artifact.from_coordinate( d ) )
+            end
+          end
         end
 
-        def lockfile
-          @parent.lock
+        def add( artifact )
+          dep = Dependency.new
+
+          # use the fill_options to fill up the dependency
+          self.class.fill_options( dep, artifact, :type )
+
+          # adjust the scope
+          dep.scope = @scope if @scope
+
+          # use the original parent if present
+          (@parent.parent || @parent ).dependencies << dep
         end
 
         def help
@@ -88,11 +112,10 @@ module Maven
 
         def local( path )
           a = Artifact.new_local( ::File.expand_path( path ), :jar )
-          dep = Dependency.new
-          self.class.fill_options( dep, a )
-          @parent.dependencies << dep
+          add( a )
           # TODO remove this part
           artifacts << a
+          a
         end
 
         def jar( *args, &block )
@@ -132,7 +155,7 @@ module Maven
         end
 
         def jruby( *args, &block )
-          warn "jruby declaration is deprecated and has no effect"
+          warn "DEPRECATED jruby declaration has no effect anymore"
           # if args.empty? && !block
           #   @jruby ? @jruby.legacy_version : nil
           # else

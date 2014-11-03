@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013 Christian Meier
+# Copyright (C) 2014 Christian Meier
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -20,118 +20,84 @@
 #
 require 'fileutils'
 require 'yaml'
-begin
-  require 'jar_dependencies'
-rescue LoadError
-  # we do not declare jar-dependencies gem as dependency
-end
 module Maven
   module Tools
     module DSL
-    class JarfileLock
-      
-      def initialize( jarfile )
-        @file = File.expand_path( jarfile + ".lock" )
-        if File.exists?( @file )
-          data = YAML.load( File.read( @file ) )
-          @data = data if data.is_a? Hash
+      class JarfileLock
+        
+        def initialize( jarfile )
+          @file = File.expand_path( jarfile + ".lock" ) if jarfile
+          if @file && File.exists?( @file )
+            lock = YAML.load( File.read( @file ) )
+            if lock.is_a? Hash
+              @data = lock
+            else
+              # fallback on old format and treat them all as "runtime"
+              data[ :runtime ] = lock.split( /\ / )
+            end
+          end
         end
-      end
-      
-      def dump
-        if @data
-          File.write( @file, @data.to_yaml )
-        else
-          FileUtils.rm_f( @file )
-        end
-      end
-
-      def coordinates( scope = :runtime )
-        data[ scope ] || []
-      end
-
-      # TODO should move into jbundler
-      def require( scope = :runtime )
-        coordicates( scope ).each do |coord|
-          Jars.require_jar( coord.split( /:/ ) )
-        end
-      end
-      
-      # TODO should move into jbundler
-      def classpath( scope = :runtime )
-        coordicates( scope ).collect do |coord|
-          path_to_jar( coord.split( /:/ ) )
-        end
-      end
-
-      # TODO should move into jbundler
-      def downloaded?
-        classpath.member?( nil ) == false &&
-          classpath( :test ).member?( nil ) == false
-      end
-
-      def replace( deps )
-        data.clear
-        update( deps )
-      end
-
-      def update_unlocked( deps )
-        conflict = true
-        d = data
-        deps.each do |k,v|
-          if exists?( e.coord )
-            # do nothing
-          elsif locked?( e.coord )
-            # mark result as conflict
-            conflict = false
+        
+        def dump
+          if @data and not @data.empty?
+            File.write( @file, @data.to_yaml )
           else
-            # add it
-            d[ k ] = v.collect{ |e| e.coord }
+            FileUtils.rm_f( @file )
           end
         end
-        conflict
-      end
 
-      def exists?( coordinate )
-        coordinates( :runtime ) + coordinates( :test ).member?( coordinate )
-      end
-
-      def locked?( coordinate )
-        coord = coordinate.sub(/^([^:]+:[^:]+):.+/) { $1 }
-        all = coordinates( :runtime ) + coordinates( :test )
-        all.detect do |l|
-          l.sub(/^([^:]+:[^:]+):.+/) { $1 } == coord 
-        end != nil
-      end
-
-      private
-
-      def data
-        @data ||= {}
-      end
-
-      # TODO should move into jar-dependencies
-      def to_path( group_id, artifact_id, *classifier_version )
-        version = classifier_version[ -1 ]
-        classifier = classifier_version[ -2 ]
-
-        jar = to_jar( group_id, artifact_id, version, classifier )
-        ( [ Jars.home ] + $LOAD_PATH ).each do |path|
-          if File.exists?( f = File.join( path, jar ) )
-            return f
-          end
+        def coordinates( scope = :runtime )
+          data[ scope ] || []
         end
-        nil
-      end
 
-      def to_jar( group_id, artifact_id, version, classifier )
-        file = "#{group_id.gsub( /\./, '/' )}/#{artifact_id}/#{version}/#{artifact_id}-#{version}"
-        file << "-#{classifier}" if classifier
-        file << '.jar'
-        file
-      end
+        def replace( deps )
+          data.clear
+          @all = nil
+          update_unlocked( deps )
+        end
 
-    end
+        def update_unlocked( deps )
+          success = true
+          deps.each do |k,v|
+            bucket = ( data[ k ] ||= [] )
+            v.each do |e|
+              coord = e.respond_to?( :coord ) ? e.coord : e
+              if exists?( coord )
+                # do nothing
+              elsif locked?( coord )
+                # mark result as conflict
+                success = false
+              else
+                # add it
+               bucket << coord
+              end
+            end
+          end
+          @all = nil
+          success
+        end
+
+        def exists?( coordinate )
+          all.member?( coordinate )
+        end
+
+        def locked?( coordinate )
+          coord = coordinate.sub(/^([^:]+:[^:]+):.+/) { $1 }
+          all.detect do |l|
+            l.sub(/^([^:]+:[^:]+):.+/) { $1 } == coord 
+          end != nil
+        end
+
+        private
+        
+        def all
+          @all ||= coordinates( :runtime ) + coordinates( :test )
+        end
+
+        def data
+          @data ||= {}
+        end        
+      end
     end
   end
 end

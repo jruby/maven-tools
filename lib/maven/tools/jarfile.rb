@@ -30,9 +30,11 @@ module Maven
       include Coordinate
 
       def initialize(file = 'Jarfile')
+        warn 'DEPRECATED to favour of Maven::Tools::DSL::Jarfile'
         @file = file
         @lockfile = file + ".lock"
       end
+      attr_reader :file
 
       def mtime
         ::File.mtime(@file)
@@ -166,17 +168,16 @@ module Maven
       end
 
       def setup_unlocked( parent )
-        Maven::Tools::DSL::Jarfile.new( @file, parent )
+        Maven::Tools::DSL::Jarfile.new( parent, @file )
       end
 
       def setup_locked( parent )
-        Maven::Tools::DSL::Jarfile.new( @file, LockedParent.new( parent ) )
+        Maven::Tools::DSL::Jarfile.new( LockedParent.new( parent ), @file )
       end
 
       def populate_unlocked( container = nil, &block )
         if ::File.exists?(@file)
-          dsl = Maven::Tools::DSL::Jarfile.new( @file )
-          #dsl.eval_file( @file )
+          dsl = Maven::Tools::DSL::Jarfile.new( nil, @file )
 
           if block
             block.call( dsl )
