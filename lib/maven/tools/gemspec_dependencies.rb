@@ -8,6 +8,7 @@ module Maven
         if gemspec.is_a? Gem::Specification
           @spec = gemspec
         else
+          warn 'DEPRECATED use Maven::Tools::DSL::Gemspec instead'
           @spec = Gem::Specification.load( gemspec )
         end
         _setup

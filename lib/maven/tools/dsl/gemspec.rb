@@ -34,38 +34,78 @@ module Maven
             options = name
             name = options[ 'name' ] || options[ :name ]
           when Gem::Specification
-            spec = name
-            if spec.spec_file
-              name = File.basename( spec.spec_file )
-            else
-              name = nil
-            end
-            process( spec, name, options )
+            process_gem_spec( name, options )
             return
           end
-          if name
-            name = ::File.join( @parent.basedir, name )
-          else
-            gemspecs = Dir[ ::File.join( @parent.basedir, "*.gemspec" ) ]
-            raise "more then one gemspec file found" if gemspecs.size > 1
-            raise "no gemspec file found" if gemspecs.size == 0
-            name = gemspecs.first
-          end
-          path = File.expand_path( name ) 
-          spec_file = File.read( path )
-          begin
-            spec = Gem::Specification.from_yaml( spec_file )
-          rescue Exception
-            FileUtils.cd( @parent.basedir ) do
-              spec = eval( spec_file, nil, path )
-            end
-          end
+          name = find_gemspec_file( name )
+          spec = gem_specification( name )
           name ||= "#{spec.name}-#{spec.version}.gemspec"
           process( spec, name, options )
         end
 
         attr_reader :parent
-        
+
+        def help
+          warn "\n# Jarfile DSL #\n"
+          warn self.class.help_block( :local => "path-to-local-jar", :jar => nil, :pom => nil, :repository => nil, :snapshot_repository => nil, :jruby => nil, :scope => nil)[0..-2]
+        end
+
+        def gem( scope, coord )
+          DependencyDSL.create( @parent.current, :gem, scope, coord )
+        end
+
+        def jar( line )
+          maven_dependency( "jar #{line}" )
+        end
+
+        def pom( line )
+          maven_dependency( "pom #{line}" )
+        end
+
+        def method_missing( m, *args )
+          if args.size == 1
+            warn "unknown declaration: #{m} " + args[0]
+          else
+            super
+          end
+        end
+
+        private
+
+        include Maven::Tools::Coordinate
+
+        def process_gem_spec( spec, options )
+          if spec.spec_file
+            name = File.basename( spec.spec_file )
+          else
+            name = nil
+          end
+          process( spec, name, options )
+        end
+
+        def find_gemspec_file( name )
+          if name
+            ::File.join( @parent.basedir, name )
+          else
+            gemspecs = Dir[ ::File.join( @parent.basedir, "*.gemspec" ) ]
+            raise "more then one gemspec file found" if gemspecs.size > 1
+            raise "no gemspec file found" if gemspecs.size == 0
+            gemspecs.first
+          end
+        end
+
+        def gem_specification( name )
+          path = File.expand_path( name ) 
+          spec_file = File.read( path )
+          begin
+            Gem::Specification.from_yaml( spec_file )
+          rescue Exception
+            FileUtils.cd( @parent.basedir ) do
+              return eval( spec_file, nil, path )
+            end
+          end
+        end
+
         def process( spec, name, options )       
           if name
             config = { :gemspec => name.sub( /^#{@parent.basedir}\/?/, '' ) }
@@ -99,35 +139,6 @@ module Maven
             send method, line
           end
         end
-
-        def help
-          warn "\n# Jarfile DSL #\n"
-          warn self.class.help_block( :local => "path-to-local-jar", :jar => nil, :pom => nil, :repository => nil, :snapshot_repository => nil, :jruby => nil, :scope => nil)[0..-2]
-        end
-
-        def gem( scope, coord )
-          DependencyDSL.create( @parent.current, :gem, scope, coord )
-        end
-
-        def jar( line )
-          maven_dependency( "jar #{line}" )
-        end
-
-        def pom( line )
-          maven_dependency( "pom #{line}" )
-        end
-
-        def method_missing( m, *args )
-          if args.size == 1
-            warn "unknown declaration: #{m} " + args[0]
-          else
-            super
-          end
-        end
-
-        private
-
-        include Maven::Tools::Coordinate
 
         def maven_dependency( line )
           coord = to_split_coordinate_with_scope( line )
