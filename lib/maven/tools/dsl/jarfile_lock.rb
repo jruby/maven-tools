@@ -61,6 +61,7 @@ module Maven
           deps.each do |k,v|
             bucket = ( data[ k ] ||= [] )
             v.each do |e|
+              # TODO remove check and use only e.coord
               coord = e.respond_to?( :coord ) ? e.coord : e
               if exists?( coord )
                 # do nothing
@@ -69,7 +70,9 @@ module Maven
                 success = false
               else
                 # add it
-               bucket << coord
+                if not e.respond_to?( :coord ) && e.gav =~ /system$/
+                  bucket << coord
+                end
               end
             end
           end

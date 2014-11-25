@@ -83,11 +83,13 @@ module Maven
 
           # fill dependencies from lockfile
           lockfile.coordinates.each do |d|
-            add( Maven::Tools::Artifact.from_coordinate( d ) )
+            a = Maven::Tools::Artifact.from_coordinate( d )
+            add( a ) unless a[:systemPath]
           end
           scope( :test ) do
             lockfile.coordinates( :test ).each do |d|
-              add( Maven::Tools::Artifact.from_coordinate( d ) )
+              a = Maven::Tools::Artifact.from_coordinate( d )
+              add( a ) unless a[:systemPath]
             end
           end
         end
