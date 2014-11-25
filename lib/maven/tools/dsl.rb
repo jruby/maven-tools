@@ -1219,6 +1219,9 @@ module Maven
         if @context
           m = "#{method}=".to_sym
           if @current.respond_to? m
+            if method == :properties && defined? JRUBY_VERSION
+              return @current.properties = java.util.Properties.new
+            end
             #p @context
             #p m
             #p args
