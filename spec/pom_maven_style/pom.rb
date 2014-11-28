@@ -255,7 +255,7 @@ project do
       dependency do
         group_id 'rubygems'
         artifact_id 'bundler'
-        version '1.6.2'
+        version '1.7.7'
         type :gem
       end
     end

@@ -30,7 +30,7 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>1.0.4</jruby.plugins.version>
+    <jruby.plugins.version>1.0.7</jruby.plugins.version>
     <version_from_model>1.5.0</version_from_model>
   </properties>
   <repositories>
