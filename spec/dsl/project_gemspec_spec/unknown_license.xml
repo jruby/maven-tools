@@ -1,0 +1,55 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>rubygems</groupId>
+  <artifactId>maven-tools</artifactId>
+  <version>123</version>
+  <packaging>gem</packaging>
+  <name>helpers for maven related tasks</name>
+  <url>http://github.com/torquebox/maven-tools</url>
+  <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
+  <licenses>
+    <license>
+      <name>unknown</name>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Christian Meier</name>
+      <email>m.kristian@web.de</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>https://github.com/torquebox/maven-tools.git</connection>
+    <url>http://github.com/torquebox/maven-tools</url>
+  </scm>
+  <properties>
+    <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+    <jruby.plugins.version>1.0.7</jruby.plugins.version>
+  </properties>
+  <repositories>
+    <repository>
+      <id>rubygems-releases</id>
+      <url>http://rubygems-proxy.torquebox.org/releases</url>
+    </repository>
+  </repositories>
+  <build>
+    <extensions>
+      <extension>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-extension</artifactId>
+        <version>${jruby.plugins.version}</version>
+      </extension>
+    </extensions>
+    <directory>${basedir}/pkg</directory>
+    <plugins>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <version>${jruby.plugins.version}</version>
+        <configuration>
+          <gemspec>unknown_license.gemspec</gemspec>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

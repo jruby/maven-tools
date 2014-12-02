@@ -74,4 +74,11 @@ describe Maven::Tools::DSL::ProfileGemspec do
     xml.must_equal( ProfileGemspecFile.read( 'jars_and_poms_include_jars.xml',
                                              'gemspec_spec' ) )
   end
+
+  it 'evals gemspec without previously known license' do
+    subject.new parent, 'unknown_license.gemspec'
+    xml = ""
+    Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
+    xml.must_equal( ProfileGemspecFile.read( 'unknown_license.xml', 'gemspec_spec' ) )
+  end
 end

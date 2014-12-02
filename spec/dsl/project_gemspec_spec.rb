@@ -94,4 +94,11 @@ describe Maven::Tools::DSL::ProjectGemspec do
     xml.must_equal( XmlFile.read( 'extended.xml',
                                   'gemspec_spec' ) )
   end
+
+  it 'evals gemspec with unknown license' do
+    subject.new parent, :name => 'unknown_license.gemspec'
+    xml = ""
+    Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
+    xml.must_equal( XmlFile.read( 'unknown_license.xml', 'gemspec_spec') )
+  end
 end
