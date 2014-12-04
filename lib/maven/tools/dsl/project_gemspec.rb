@@ -44,10 +44,14 @@ module Maven
           end
 
           spec.licenses.each do |l|
-            lic = Maven::Tools::LICENSES[ l.downcase ]
-            @parent.license( :name => lic.short,
-                             :url => lic.url,
-                             :comments => lic.name )
+            if Maven::Tools::LICENSES.include?(l.downcase)
+              lic = Maven::Tools::LICENSES[ l.downcase ]
+              @parent.license( :name => lic.short,
+                               :url => lic.url,
+                               :comments => lic.name )
+            else
+              @parent.license( l )
+            end
           end
           authors = [ spec.authors || [] ].flatten
           emails = [ spec.email || [] ].flatten
