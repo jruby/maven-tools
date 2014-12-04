@@ -5,11 +5,11 @@ module Maven
     class GemspecDependencies
 
       def initialize( gemspec )
-        if gemspec.is_a? Gem::Specification
-          @spec = gemspec
-        else
+        if gemspec.is_a? String
           warn 'DEPRECATED use Maven::Tools::DSL::Gemspec instead'
           @spec = Gem::Specification.load( gemspec )
+        else
+          @spec = gemspec
         end
         _setup
       end
