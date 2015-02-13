@@ -161,7 +161,9 @@ module Maven
       end
       private :prepare
       
-      ATTRS = :type=, :group_id=, :artifact_id=, :version=, :classifier=, :exclusions=, :scope=
+      unless defined? ATTRS
+        ATTRS = :type=, :group_id=, :artifact_id=, :version=, :classifier=, :exclusions=, :scope=
+      end
       def method_missing( m, arg = nil )
         if ATTRS.member? m
           # setter
