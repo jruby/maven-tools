@@ -187,7 +187,7 @@ project :name => 'my name', :url => 'example.com' do
             :finalName => :testing )
 
     jruby_plugin :gem, '1.0.0' do
-      gem :bundler, '1.7.7'
+      gem :bundler, '1.7.13'
     end
 
     plugin :antrun do

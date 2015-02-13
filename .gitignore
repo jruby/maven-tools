@@ -4,3 +4,4 @@ pkg
 Gemfile.lock
 *.gem
 .ruby-version
+pom.maven-tools.gemspec.xml

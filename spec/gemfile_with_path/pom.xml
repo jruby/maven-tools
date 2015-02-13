@@ -17,7 +17,7 @@
   <name>gemfile_with_path</name>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>1.0.7</jruby.plugins.version>
+    <jruby.plugins.version>1.0.8</jruby.plugins.version>
   </properties>
   <dependencies>
     <dependency>
@@ -29,7 +29,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>bundler</artifactId>
-      <version>1.7.7</version>
+      <version>1.7.13</version>
       <type>gem</type>
       <scope>provided</scope>
     </dependency>

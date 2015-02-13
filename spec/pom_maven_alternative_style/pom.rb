@@ -167,7 +167,7 @@ project 'my name', 'example.com' do
     end
     
     jruby_plugin :gem, '1.0.0' do
-      gem :bundler, '1.7.7'
+      gem :bundler, '1.7.13'
     end
 
     phase :package do
