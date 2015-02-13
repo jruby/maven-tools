@@ -34,6 +34,13 @@ module Maven
         result
       end
 
+      def use( plugin, version = nil, &block )
+        Kernel.gem( plugin.to_s, version ) if version
+        require plugin.to_s
+        const = plugin.to_s.split( /_/ ).collect{ |a| a.capitalize }.join
+        Object.const_get( const ).send( :maven, self, &block )
+      end
+
       def maven( val = nil, &block )
         if @context == nil
           tesla( &block )
