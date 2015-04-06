@@ -31,7 +31,7 @@ module Maven
         def process( spec, name, options )
           @parent.build.directory = '${basedir}/pkg'
           version = spec.version.to_s
-          if spec.version.prerelease? && options[ :snapshot ] != false
+          if spec.version.prerelease? && options[ :snapshot ] != false && ! version.end_with?( '-SNAPSHOT' )
             version += '-SNAPSHOT'
           end
           @parent.id "rubygems:#{spec.name}:#{version}"
