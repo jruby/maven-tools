@@ -102,12 +102,21 @@ module Maven
       end
 
       def self.from_coordinate( coord )
+        exclusions = nil
+        coord.sub!(/:\[.+\]/) do |s|
+          exclusions = s[1..-1]
+          ''
+        end
         args = coord.split( /:/ )
         # maven coordinates differ :(
         if args.size == 5
           classifier = args[ 4 ]
           args[ 4 ] = args[ 3 ]
           args[ 3 ] = classifier
+        end
+        if exclusions
+          args[ 4 ] ||= nil
+          args << exclusions
         end
         new( *args )
       end
