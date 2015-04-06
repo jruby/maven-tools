@@ -15,15 +15,12 @@
   <artifactId>pom_with_execute</artifactId>
   <version>0.0.0</version>
   <name>example with execute</name>
-  <properties>
-    <tesla.version>0.1.1</tesla.version>
-  </properties>
   <build>
     <plugins>
       <plugin>
-        <groupId>io.tesla.polyglot</groupId>
-        <artifactId>tesla-polyglot-maven-plugin</artifactId>
-        <version>${tesla.version}</version>
+        <groupId>io.takari.polyglot</groupId>
+        <artifactId>polyglot-maven-plugin</artifactId>
+        <version>0.1.18</version>
         <executions>
           <execution>
             <phase>validate</phase>
@@ -81,9 +78,9 @@
         </executions>
         <dependencies>
           <dependency>
-            <groupId>io.tesla.polyglot</groupId>
-            <artifactId>tesla-polyglot-ruby</artifactId>
-            <version>${tesla.version}</version>
+            <groupId>io.takari.polyglot</groupId>
+            <artifactId>polyglot-ruby</artifactId>
+            <version>0.1.18</version>
           </dependency>
         </dependencies>
       </plugin>

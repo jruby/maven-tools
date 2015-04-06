@@ -914,13 +914,13 @@ module Maven
 
       # hook for polyglot maven to register those tasks
       def add_execute_task( options, &block )
-        @model.properties[ 'tesla.version' ] = VERSIONS[ :tesla_version ]
-        plugin!( 'io.tesla.polyglot:tesla-polyglot-maven-plugin',
-                 '${tesla.version}' ) do
+        version = VERSIONS[ :polyglot_version ]
+        plugin!( 'io.takari.polyglot:polyglot-maven-plugin',
+                 version ) do
           execute_goal( :execute, options )
           
-          jar!( 'io.tesla.polyglot:tesla-polyglot-ruby',
-                '${tesla.version}' )
+          jar!( 'io.takari.polyglot:polyglot-ruby',
+                version )
         end
       end
 

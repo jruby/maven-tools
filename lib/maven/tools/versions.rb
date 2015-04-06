@@ -27,7 +27,8 @@ module Maven
         :jruby_plugins => "1.0.8",
         :bundler_version => "1.7.13",
         :jruby_version => "1.7.19",
-        :tesla_version => "0.1.1"
+        :tesla_version => "0.1.1",
+        :polyglot_version => "0.1.18"
       }.freeze
     end
   end

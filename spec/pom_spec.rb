@@ -1,5 +1,6 @@
 require File.expand_path( 'spec_helper', File.dirname( __FILE__ ) )
 require 'maven/tools/pom'
+require 'maven/tools/versions'
 
 describe Maven::Tools::POM do
 
@@ -13,6 +14,9 @@ describe Maven::Tools::POM do
         pom_xml.sub!( /<!--(.|\n)*-->\n/, '' )
         pom_xml.sub!( /<?.*?>\n/, '' )
         pom_xml.sub!( /<project([^>]|\n)*>/, '<project>' )
+        pom_xml.gsub!( /io.tesla.polyglot/, 'io.takari.polyglot' )
+        pom_xml.gsub!( /tesla-polyglot/, 'polyglot' )
+        pom_xml.gsub!( /${tesla.version}/, Maven::Tools::VERSIONS[ :polyglot_version ] )
 
         pom.to_s.gsub( /#{File.expand_path( dir )}\//, '' ).must_equal pom_xml
       end
