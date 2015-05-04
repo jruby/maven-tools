@@ -142,7 +142,15 @@ module Maven
             req.sub!( /#.*^/, '' )
             method = req.sub(/\s.*$/, '' ).to_sym
             line = req.sub(/^[^\s]*\s/, '' )
-            send method, line
+            if respond_to? method
+              if spec.platform.to_s == 'java'
+                send method, line
+              else
+                warn "jar dependency found on non-java platform gem - ignoring: #{req}"
+              end
+            else
+              warn "unknown declaration: #{req}"
+            end
           end
         end
 

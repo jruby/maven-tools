@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
 
   s.license = 'MIT'
 
+  s.platform = 'java'
   s.requirements << 'jar org.slf4j:slf4j-simple, 1.6.4'
   s.requirements << 'pom org.jruby:jruby, 1.7.16'
   s.requirements << 'jar org.jruby:jruby, 1.7.16, noasm, [org.jruby:jruby-stdlib]'
