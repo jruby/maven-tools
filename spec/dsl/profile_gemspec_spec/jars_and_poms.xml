@@ -6,7 +6,7 @@
   <name>profile_gemspec_spec</name>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>1.0.8</jruby.plugins.version>
+    <jruby.plugins.version>1.0.9</jruby.plugins.version>
   </properties>
   <dependencies>
     <dependency>
