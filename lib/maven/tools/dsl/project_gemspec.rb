@@ -43,7 +43,7 @@ module Maven
             @parent.scm :url => spec.homepage, :connection => con
           end
 
-          spec.licenses.each do |l|
+          spec.licenses.flatten.each do |l|
             if Maven::Tools::LICENSES.include?(l.downcase)
               lic = Maven::Tools::LICENSES[ l.downcase ]
               @parent.license( :name => lic.short,

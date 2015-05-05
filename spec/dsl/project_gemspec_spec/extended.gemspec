@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors = ['Christian Meier']
   s.email = ['m.kristian@web.de']
 
-  s.license = 'MIT'
+  s.license = ['MIT']
 
   s.platform = 'java'
   s.requirements << 'jar org.slf4j:slf4j-simple, 1.6.4'
