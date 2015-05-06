@@ -8,9 +8,6 @@ rvm:
 matrix:
   include:
     - rvm: jruby
-      jdk: openjdk6
-      script: ./mvnw test
-    - rvm: jruby
       jdk: openjdk7
       script: ./mvnw test
     - rvm: jruby
