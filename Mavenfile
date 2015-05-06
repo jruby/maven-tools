@@ -9,7 +9,7 @@ end
 #snapshot_repository :jruby, 'http://ci.jruby.org/snapshots/maven'
 
 # (jruby-1.6.7 produces a lot of yaml errors parsing gemspecs)
-properties( 'jruby.versions' => ['1.7.12', '1.7.19', '9.0.0.0.pre1'].join(','),
+properties( 'jruby.versions' => ['1.7.12', '1.7.19', '9.0.0.0.pre2'].join(','),
             'jruby.modes' => ['1.9', '2.0','2.1'].join(','),
             # just lock the versions
             'jruby.version' => '1.7.19',
