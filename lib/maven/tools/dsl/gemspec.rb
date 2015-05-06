@@ -97,9 +97,9 @@ module Maven
         def gem_specification( name )
           path = File.expand_path( name ) 
           spec_file = File.read( path )
-          begin
+          if spec_file.start_with?( '--- !ruby/object:Gem::Specification' )
             Gem::Specification.from_yaml( spec_file )
-          rescue Exception
+          else
             FileUtils.cd( @parent.basedir ) do
               return eval( spec_file, nil, path )
             end
