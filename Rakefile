@@ -1,11 +1,5 @@
 #-*- mode: ruby -*-
 
-begin
-  require 'maven/ruby/tasks'
-rescue LoadError
-  # ignore - can not add as development dependency to avoid circular dependencies
-end
-
 task :default => [ :specs ]
 
 desc 'generate licenses data from internet'
