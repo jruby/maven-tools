@@ -103,7 +103,7 @@ module Maven
 
       def self.from_coordinate( coord )
         exclusions = nil
-        coord.sub!(/:\[.+\]/) do |s|
+        coord.sub!(/:\[([^:]+:[^:]+)+\]/) do |s|
           exclusions = s[1..-1]
           ''
         end

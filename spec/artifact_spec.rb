@@ -6,8 +6,12 @@ describe Maven::Tools::Artifact do
   it 'should convert from coordinate' do
     Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:tes:123' ).to_s.must_equal 'sdas:das:jar:tes:123'
     Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:123' ).to_s.must_equal 'sdas:das:jar:123'
+    Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:tes:[123,234]' ).to_s.must_equal 'sdas:das:jar:tes:[123,234]'
+    Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:[123,234]' ).to_s.must_equal 'sdas:das:jar:[123,234]'
     Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:tes:123:[de:fr,gb:us]' ).to_s.must_equal 'sdas:das:jar:tes:123:[de:fr,gb:us]'
     Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:123:[de:fr,gb:us]' ).to_s.must_equal 'sdas:das:jar:123:[de:fr,gb:us]'
+    Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:tes:[123,234]:[de:fr,gb:us]' ).to_s.must_equal 'sdas:das:jar:tes:[123,234]:[de:fr,gb:us]'
+    Maven::Tools::Artifact.from_coordinate( 'sdas:das:jar:[123,234]:[de:fr,gb:us]' ).to_s.must_equal 'sdas:das:jar:[123,234]:[de:fr,gb:us]'
   end
 
   it 'should setup artifact' do
