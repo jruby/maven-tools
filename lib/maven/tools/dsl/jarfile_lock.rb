@@ -29,11 +29,14 @@ module Maven
           @file = File.expand_path( jarfile + ".lock" ) if jarfile
           if @file && File.exists?( @file )
             lock = YAML.load( File.read( @file ) )
-            if lock.is_a? Hash
+            case lock
+            when Hash
               @data = lock
-            else
+            when String
               # fallback on old format and treat them all as "runtime"
               data[ :runtime ] = lock.split( /\ / )
+            else
+              warn "unknown format of #{@file} - skip it"
             end
           end
         end
