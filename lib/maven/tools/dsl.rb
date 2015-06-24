@@ -335,6 +335,7 @@ module Maven
           warn "DEPRECATED use filename instead"
           file = jfile.file
         end
+        file = ::File.join( basedir, file ) unless ::File.exists?( file )
         dsl = Maven::Tools::DSL::Jarfile.new( @current, file, options[ :skip_lock ] )
 
         # TODO this setup should be part of DSL::Jarfile
