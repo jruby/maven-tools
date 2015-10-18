@@ -38,10 +38,17 @@ module Maven
       def initialize(file)
         super()
         current = nil
+        bundler = false
         f = file.is_a?(File) ? file.path: file
         if File.exists? f
           File.readlines(f).each do |line|
-            if line =~ /^    [^ ]/
+            if line =~ /^BUNDLED WITH/
+              bundler = true
+            elsif bundler
+              line.strip!
+              current = Dependency.new("bundler (#{line})")
+              self[current.name] = current
+            elsif line =~ /^    [^ ]/
               line.strip!
               current = Dependency.new(line)
               self[current.name] = current

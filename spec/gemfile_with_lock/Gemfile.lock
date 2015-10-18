@@ -40,3 +40,6 @@ DEPENDENCIES
   bouncy-castle-java!
   rspec (~> 2.11)
   virtus
+
+BUNDLED WITH
+   1.10.5

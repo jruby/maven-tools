@@ -181,15 +181,19 @@ module Maven
         end
 
         if pr && !pr.dependencies.empty?
+          locked = GemfileLock.new( lockfile )
+          has_bundler = gem?( 'bundler' )
           profile :gemfile_lock do
             activation do
               file( :exists => name + '.lock' )
             end
-            locked = GemfileLock.new( lockfile )
             done = add_scoped_hull( locked, pr.dependencies )
             done += add_scoped_hull( locked, pr.dependencies,
                                         done, :provided )
             add_scoped_hull( locked, pr.dependencies, done, :test )
+            if locked['bundler'] && !  has_bundler
+              gem( 'bundler', locked['bundler'].version )
+            end
           end
         end
 

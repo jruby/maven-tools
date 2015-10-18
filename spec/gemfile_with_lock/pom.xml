@@ -155,6 +155,14 @@
           </plugin>
         </plugins>
       </build>
+      <dependencies>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>bundler</artifactId>
+          <version>1.10.5</version>
+          <type>gem</type>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>
