@@ -1,0 +1,9 @@
+#-*- mode: ruby -*-
+
+packaging 'jrubyWar'
+
+final_name 'my'
+
+resource :includes => ['something']
+
+# vim: syntax=Ruby

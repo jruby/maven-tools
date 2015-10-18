@@ -633,6 +633,9 @@ module Maven
         resource = Resource.new
         fill_options( resource, options )
         nested_block( :test_resource, resource, block ) if block
+        unless resource.directory
+          resource.directory = '${basedir}'
+        end
         if @context == :project
           ( @current.build ||= Build.new ).test_resources << resource
         else
@@ -644,13 +647,30 @@ module Maven
         resource = Resource.new
         fill_options( resource, options )
         nested_block( :resource, resource, block ) if block
+        unless resource.directory
+          resource.directory = '${basedir}'
+        end
         if @context == :project
           ( @current.build ||= Build.new ).resources << resource
         else
           @current.resources << resource
         end
       end
-      
+
+      def packaging( val )
+        @current.packaging = val
+        if val =~ /jruby[WJ]ar/
+          if not @current.properties.key?( 'jruby9.plugins.version' ) and
+           not (@context == :profile and model.properties.key?( 'jruby9.plugins.version' ) )
+            properties( 'jruby9.plugins.version' => VERSIONS[ :jruby9_plugins ] )
+          end
+          extension 'de.saumya.mojo', 'jruby9-extensions', '${jruby9.plugins.version}'
+          build do
+            directory 'pkg'
+          end
+        end
+      end
+
       def build_method( m, val )
         m = "#{m}=".to_sym
         if @context == :project
