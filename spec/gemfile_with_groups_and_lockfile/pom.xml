@@ -26,6 +26,7 @@
     </repository>
   </repositories>
   <build>
+    <directory>pkg</directory>
     <plugins>
       <plugin>
         <groupId>de.saumya.mojo</groupId>

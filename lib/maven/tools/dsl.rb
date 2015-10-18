@@ -126,7 +126,11 @@ module Maven
           name = 'Gemfile'
         end
         name = ::File.join( basedir, name ) unless ::File.exists?( name )
-        
+        if @context == :project
+          build do
+            directory 'pkg'
+          end
+        end
         @inside_gemfile = true   
         # the eval might need those options for gemspec declaration
         lockfile = ::File.expand_path( name + '.lock' )
