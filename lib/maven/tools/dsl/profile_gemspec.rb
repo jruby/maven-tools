@@ -31,11 +31,6 @@ module Maven
           setup_gem_support( @parent, options, spec )
           super
         end
-
-        def help
-          warn "\n# Jarfile DSL #\n"
-          warn self.class.help_block( :local => "path-to-local-jar", :jar => nil, :pom => nil, :repository => nil, :snapshot_repository => nil, :jruby => nil, :scope => nil)[0..-2]
-        end
       end
     end
   end

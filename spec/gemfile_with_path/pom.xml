@@ -41,7 +41,7 @@
     </repository>
   </repositories>
   <build>
-    <directory>pkg</directory>
+    <directory>${basedir}/pkg</directory>
     <plugins>
       <plugin>
         <groupId>de.saumya.mojo</groupId>

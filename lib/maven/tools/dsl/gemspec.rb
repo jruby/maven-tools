@@ -41,13 +41,13 @@ module Maven
           spec = gem_specification( name )
           name ||= "#{spec.name}-#{spec.version}.gemspec"
           process( spec, name, options )
+          JarsLock.new( parent ) if parent.respond_to? :profile
         end
 
         attr_reader :parent
 
         def help
-          warn "\n# Jarfile DSL #\n"
-          warn self.class.help_block( :local => "path-to-local-jar", :jar => nil, :pom => nil, :repository => nil, :snapshot_repository => nil, :jruby => nil, :scope => nil)[0..-2]
+          warn "\n# gemspec(filename) - default find gemspec in current directory #\n"
         end
 
         def gem( scope, coord )

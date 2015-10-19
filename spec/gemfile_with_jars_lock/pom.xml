@@ -12,21 +12,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>no_group_id_given</groupId>
-  <artifactId>gemfile_without_gemspec</artifactId>
+  <artifactId>gemfile_with_jars_lock</artifactId>
   <version>0.0.0</version>
-  <name>gemfile_without_gemspec</name>
+  <name>gemfile_with_jars_lock</name>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <jruby.plugins.version>1.1.1</jruby.plugins.version>
   </properties>
-  <dependencies>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>virtus</artifactId>
-      <version>[0,)</version>
-      <type>gem</type>
-    </dependency>
-  </dependencies>
   <repositories>
     <repository>
       <id>rubygems-releases</id>
@@ -51,4 +43,28 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>Jars.lock</id>
+      <activation>
+        <file>
+          <exists>Jars.lock</exists>
+        </file>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcpkix-jdk15on</artifactId>
+          <version>1.50</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+          <version>1.50</version>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

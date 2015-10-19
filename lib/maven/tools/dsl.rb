@@ -4,6 +4,7 @@ require 'maven/tools/artifact'
 require 'maven/tools/jarfile'
 require 'maven/tools/versions'
 require 'maven/tools/gemfile_lock'
+require 'maven/tools/dsl/jars_lock'
 
 module Maven
   module Tools
@@ -128,7 +129,7 @@ module Maven
         name = ::File.join( basedir, name ) unless ::File.exists?( name )
         if @context == :project
           build do
-            directory 'pkg'
+            directory '${basedir}/pkg'
           end
         end
         @inside_gemfile = true   
@@ -173,7 +174,7 @@ module Maven
         end
 
         if pr && pr.dependencies.empty?
-          if @current.respond_to? :delete
+          if @current.profiles.respond_to? :delete
             @current.profiles.delete( pr )
           else
             @current.profiles.remove( pr )
@@ -206,6 +207,7 @@ module Maven
                           :args => 'install' )
           end
         end
+        DSL::JarsLock.new(self)
       ensure
         @inside_gemfile = nil
         @gemspec_args = nil
@@ -670,7 +672,7 @@ module Maven
           end
           extension 'de.saumya.mojo', 'jruby9-extensions', '${jruby9.plugins.version}'
           build do
-            directory 'pkg'
+            directory '${basedir}/pkg'
           end
         end
       end
