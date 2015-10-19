@@ -372,10 +372,10 @@ module Maven
             options[ :profile ] = @inside_gemfile
           end
           options[ :no_gems ] = gemspec_without_gem_dependencies?
-          require_relative 'dsl/project_gemspec'
+          require 'maven/tools/dsl/project_gemspec'
           DSL::ProjectGemspec.new( self, name, options )
         else
-          require_relative 'dsl/profile_gemspec'
+          require 'maven/tools/dsl/profile_gemspec'
           DSL::ProfileGemspec.new( self, name, options )
         end
       end
