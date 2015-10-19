@@ -132,7 +132,7 @@ module Maven
             directory '${basedir}/pkg'
           end
         end
-        @inside_gemfile = true   
+        @inside_gemfile = true
         # the eval might need those options for gemspec declaration
         lockfile = ::File.expand_path( name + '.lock' )
         if File.exists? lockfile

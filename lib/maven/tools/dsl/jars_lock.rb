@@ -24,6 +24,7 @@ module Maven
       class JarsLock
  
         def initialize( parent, file = 'Jars.lock' )
+          file = File.join( parent.basedir, file )
           if File.exists?(file)
             parent.profile File.basename(file) do
               parent.activation do

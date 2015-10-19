@@ -14,7 +14,6 @@
   <groupId>no_group_id_given</groupId>
   <artifactId>pom_from_jarfile_with_repos</artifactId>
   <version>0.0.0</version>
-  <name>pom_from_jarfile_with_repos</name>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
