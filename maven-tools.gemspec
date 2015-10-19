@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.test_files += Dir['spec/**/*.java']
   s.test_files += Dir['spec/**/*.xml']
   s.test_files += Dir['spec/**/*file']
-  s.test_files += Dir['spec/**/Gemfile.lock']
+  s.test_files += Dir['spec/**/*.lock']
   s.test_files += Dir['spec/**/.keep']
   s.test_files += Dir['spec/**/*gemspec']
   s.test_files += Dir['spec/**/*gem']
