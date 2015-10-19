@@ -17,7 +17,7 @@
   <packaging>jrubyJar</packaging>
   <name>mavenfile_jrubyJar</name>
   <properties>
-    <jruby9.plugins.version>0.2.1</jruby9.plugins.version>
+    <jruby9.plugins.version>0.2.2</jruby9.plugins.version>
   </properties>
   <build>
     <extensions>
