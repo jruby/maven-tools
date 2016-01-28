@@ -676,7 +676,7 @@ module Maven
            not (@context == :profile and model.properties.key?( 'jruby9.plugins.version' ) )
             properties( 'jruby9.plugins.version' => VERSIONS[ :jruby9_plugins ] )
           end
-          extension 'de.saumya.mojo', 'jruby9-extensions', '${jruby9.plugins.version}'
+          extension 'org.torquebox.mojo', 'jruby9-extensions', '${jruby9.plugins.version}'
           build do
             directory '${basedir}/pkg'
           end

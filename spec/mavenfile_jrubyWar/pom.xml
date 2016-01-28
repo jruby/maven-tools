@@ -17,12 +17,12 @@
   <packaging>jrubyWar</packaging>
   <name>mavenfile_jrubyWar</name>
   <properties>
-    <jruby9.plugins.version>0.2.2</jruby9.plugins.version>
+    <jruby9.plugins.version>0.3.0</jruby9.plugins.version>
   </properties>
   <build>
     <extensions>
       <extension>
-        <groupId>de.saumya.mojo</groupId>
+        <groupId>org.torquebox.mojo</groupId>
         <artifactId>jruby9-extensions</artifactId>
         <version>${jruby9.plugins.version}</version>
       </extension>

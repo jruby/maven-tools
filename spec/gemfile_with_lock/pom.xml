@@ -30,7 +30,7 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>1.1.2</jruby.plugins.version>
+    <jruby.plugins.version>1.1.4</jruby.plugins.version>
     <mavengem.wagon.version>0.2.0</mavengem.wagon.version>
   </properties>
   <dependencies>
@@ -136,7 +136,7 @@
                     <iceNine>0.11.0</iceNine>
                     <coercible>1.0.1</coercible>
                     <equalizer>0.1.0</equalizer>
-                    <rake>10.2.2</rake>
+                    <rake>10.3.0</rake>
                   </gems>
                 </configuration>
               </execution>

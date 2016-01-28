@@ -2,7 +2,7 @@
 :jruby:
 - joda-time:joda-time:jar:2.3
 - com.martiansoftware:nailgun-server:jar:0.9.1
-- com.github.jnr:jnr-netdb:jar:1.1.2
+- com.github.jnr:jnr-netdb:jar:1.1.4
 - com.headius:invokebinder:jar:1.2
 - org.jruby.joni:joni:jar:2.1.1
 - com.github.jnr:jnr-posix:jar:3.0.1
@@ -11,7 +11,7 @@
 - org.yaml:snakeyaml:jar:1.13
 - com.github.jnr:jnr-constants:jar:0.8.5
 - com.github.jnr:jffi:jar:native:1.2.7
-- com.jcraft:jzlib:jar:1.1.2
+- com.jcraft:jzlib:jar:1.1.4
 - com.github.jnr:jnr-enxio:jar:0.4
 - org.jruby:yecht:jar:1.0
 - org.jruby:jruby-stdlib:jar:1.7.11
@@ -22,7 +22,7 @@
 :runtime:
 - org.eclipse.sisu:org.eclipse.sisu.plexus:jar:0.0.0.M2a
 - com.google.guava:guava:jar:10.0.1
-- commons-logging:commons-logging:jar:1.1.2
+- commons-logging:commons-logging:jar:1.1.4
 - org.eclipse.aether:aether-connector-wagon:jar:0.9.0.M2
 - org.eclipse.aether:aether-impl:jar:0.9.0.M2
 - com.ning:async-http-client:jar:1.7.6
