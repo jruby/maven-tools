@@ -88,7 +88,13 @@ module Maven
       end
 
       def source(*args)
-        warn "ignore source #{args}" if !(args[0].to_s =~ /^https?:\/\/rubygems.org/) && args[0] != :rubygems
+        url = args[0].to_s
+        url = 'https://rubygems.org' if url == :rubygems
+        id = url unless url == 'https://rubygems.org'
+        if @context == :project
+          repository :id => id || 'mavengems', :url => "mavengem:#{url}"
+          extension! 'org.torquebox.mojo:mavengem-wagon', '${mavengem.wagon.version}'
+        end
       end
 
       def ruby( *args )
@@ -129,6 +135,7 @@ module Maven
         name = ::File.join( basedir, name ) unless ::File.exists?( name )
         if @context == :project
           build do
+            extension! 'org.torquebox.mojo:mavengem-wagon', '${mavengem.wagon.version}'
             directory '${basedir}/pkg'
           end
         end
@@ -262,10 +269,9 @@ module Maven
         
         unless options[ :only_metadata ]
         
-          if ( nil == model.repositories.detect { |r| r.id == 'rubygems-releases' } && options[ :no_rubygems_repo ] != true )
+          if ( nil == model.repositories.detect { |r| r.id == 'rubygems-releases' || r.id == 'mavengems' } && options[ :no_rubygems_repo ] != true )
             
-            repository( 'rubygems-releases',
-                        'http://rubygems-proxy.torquebox.org/releases' )
+            repository( 'mavengems', 'mavengem:https://rubygems.org' )
           end
           @needs_torquebox = true
 
@@ -803,6 +809,12 @@ module Maven
       end
 
       def extension( *args )
+        ext, build = do_extension( *args )
+        build.extensions << ext
+        ext
+      end
+
+      def do_extension( *args )
         build = if @context == :build
                   @current
                 else
@@ -811,6 +823,13 @@ module Maven
         args, options = args_and_options( *args )
         ext = fill_gav( Extension, args.join( ':' ) )
         fill_options( ext, options )
+        [ ext, build ]
+      end
+
+      def extension!( *args )
+        ext, build = do_extension( *args )
+        old = build.extensions.detect { |e| e.group_id == ext.group_id && e.artifact_id == ext.artifact_id }
+        build.extensions.remove( old ) if old
         build.extensions << ext
         ext
       end
@@ -826,6 +845,7 @@ module Maven
         if not @current.properties.key?( 'jruby.plugins.version' ) and
            not (@context == :profile and model.properties.key?( 'jruby.plugins.version' ) )
           properties( 'jruby.plugins.version' => VERSIONS[ :jruby_plugins ] )
+          properties( 'mavengem.wagon.version' => VERSIONS[ :mavengem_wagon ] )
         end
       end
 

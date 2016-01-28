@@ -1,5 +1,12 @@
 require 'virtus'
 
+# keep things in line with java collections
+class Array
+  def remove( *args )
+    delete( *args )
+  end
+end
+    
 module Maven
   module Tools
     Base = Virtus.model

@@ -1,5 +1,5 @@
 #-*- mode: ruby -*-
 
-gemspec :jar => nil
+gemfile :jar => nil
 
 # vim: syntax=Ruby

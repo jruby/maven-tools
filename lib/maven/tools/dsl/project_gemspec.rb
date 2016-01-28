@@ -60,6 +60,7 @@ module Maven
           end
   
           @parent.packaging 'gem'
+          @parent.extension! 'org.torquebox.mojo:mavengem-wagon:${mavengem.wagon.version}'
           if setup_gem_support( @parent, options, spec )
             @parent.extension 'de.saumya.mojo:gem-with-jar-extension:${jruby.plugins.version}'
           else

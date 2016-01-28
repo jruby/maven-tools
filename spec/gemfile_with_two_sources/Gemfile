@@ -1,0 +1,6 @@
+#-*- mode: ruby -*-
+
+source 'https://rubygems.org'
+source 'http://github.com/rubygems'
+
+# vim: syntax=Ruby

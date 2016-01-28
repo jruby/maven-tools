@@ -15,6 +15,15 @@
   <artifactId>gemspec_in_profile</artifactId>
   <version>0.0.0</version>
   <name>gemspec_in_profile</name>
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.torquebox.mojo</groupId>
+        <artifactId>mavengem-wagon</artifactId>
+        <version>${mavengem.wagon.version}</version>
+      </extension>
+    </extensions>
+  </build>
   <profiles>
     <profile>
       <id>gem</id>
@@ -33,6 +42,7 @@
       <properties>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
         <jruby.plugins.version>1.1.2</jruby.plugins.version>
+        <mavengem.wagon.version>0.2.0</mavengem.wagon.version>
       </properties>
       <dependencies>
         <dependency>
@@ -48,8 +58,8 @@
       </dependencies>
       <repositories>
         <repository>
-          <id>rubygems-releases</id>
-          <url>http://rubygems-proxy.torquebox.org/releases</url>
+          <id>mavengems</id>
+          <url>mavengem:https://rubygems.org</url>
         </repository>
       </repositories>
     </profile>

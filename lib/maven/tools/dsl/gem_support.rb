@@ -27,6 +27,7 @@ module Maven
           if not @parent.properties.key?( 'jruby.plugins.version' ) and
               not project.properties.key?( 'jruby.plugins.version' )
             @parent.properties( 'jruby.plugins.version' => VERSIONS[ :jruby_plugins ] )
+            @parent.properties( 'mavengem.wagon.version' => VERSIONS[ :mavengem_wagon ] )
           end
         end
 
@@ -42,10 +43,10 @@ module Maven
             name = spec.name
           end
 
-          if ( nil == project.current.repositories.detect { |r| r.id == 'rubygems-releases' } && options[ :no_rubygems_repo ] != true )
+          if ( nil == project.current.repositories.detect { |r| r.id == 'rubygems-releases' || r.id == 'mavengems' } && options[ :no_rubygems_repo ] != true )
               
-            @parent.repository( 'rubygems-releases',
-                                'http://rubygems-proxy.torquebox.org/releases' )
+            @parent.repository( 'mavengems',
+                                'mavengem:https://rubygems.org' )
           end
           @parent.needs_torquebox = true
             

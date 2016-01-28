@@ -1,5 +1,5 @@
 #-*- mode: ruby -*-
 
-gemspec :source => 'src/java'
+gemfile :source => 'src/java'
 
 # vim: syntax=Ruby

@@ -12,33 +12,22 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>no_group_id_given</groupId>
-  <artifactId>gemfile_with_path</artifactId>
+  <artifactId>gemfile_with_two_sources</artifactId>
   <version>0.0.0</version>
-  <name>gemfile_with_path</name>
+  <name>gemfile_with_two_sources</name>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <jruby.plugins.version>1.1.2</jruby.plugins.version>
     <mavengem.wagon.version>0.2.0</mavengem.wagon.version>
   </properties>
-  <dependencies>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rake</artifactId>
-      <version>[0,)</version>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>bundler</artifactId>
-      <version>1.10.6</version>
-      <type>gem</type>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
   <repositories>
     <repository>
       <id>mavengems</id>
       <url>mavengem:https://rubygems.org</url>
+    </repository>
+    <repository>
+      <id>http://github.com/rubygems</id>
+      <url>mavengem:http://github.com/rubygems</url>
     </repository>
   </repositories>
   <build>
@@ -61,16 +50,6 @@
             <goals>
               <goal>initialize</goal>
             </goals>
-          </execution>
-          <execution>
-            <id>bundle install</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <filename>bundle</filename>
-              <args>install</args>
-            </configuration>
           </execution>
         </executions>
       </plugin>

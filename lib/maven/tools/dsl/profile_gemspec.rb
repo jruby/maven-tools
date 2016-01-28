@@ -29,6 +29,10 @@ module Maven
 
         def process( spec, name, options )
           setup_gem_support( @parent, options, spec )
+          profile = @parent.current
+          @parent.instance_variable_set :@current, @parent.model
+          @parent.extension! 'org.torquebox.mojo:mavengem-wagon:${mavengem.wagon.version}'
+          @parent.instance_variable_set :@current, profile
           super
         end
       end
