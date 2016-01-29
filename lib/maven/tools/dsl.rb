@@ -90,11 +90,17 @@ module Maven
       def source(*args)
         url = args[0].to_s
         url = 'https://rubygems.org' if url == :rubygems
-        id = url unless url == 'https://rubygems.org'
-        if @context == :project
-          repository :id => id || 'mavengems', :url => "mavengem:#{url}"
-          extension! 'org.torquebox.mojo:mavengem-wagon', '${mavengem.wagon.version}'
+        id = url.gsub( /[\/:"<>|?*]/, '_').gsub(/_+/, '_') unless url == 'https://rubygems.org'
+
+        # we need to add the repo at project level
+        if @context == :profile
+          current = @current
+          @current = @model
         end
+
+        repository :id => id || 'mavengems', :url => "mavengem:#{url}"
+        extension! 'org.torquebox.mojo:mavengem-wagon', '${mavengem.wagon.version}'
+        @current = current if current
       end
 
       def ruby( *args )
@@ -145,7 +151,7 @@ module Maven
         if File.exists? lockfile
           pr = profile :gemfile do
             activation do
-              file( :missing => name + '.lock' )
+              file( :missing => name.sub(/#{basedir}./, '') + '.lock' )
             end
             
             FileUtils.cd( basedir ) do
@@ -193,7 +199,7 @@ module Maven
           has_bundler = gem?( 'bundler' )
           profile :gemfile_lock do
             activation do
-              file( :exists => name + '.lock' )
+              file( :exists => name.sub(/#{basedir}./, '') + '.lock' )
             end
             done = add_scoped_hull( locked, pr.dependencies )
             done += add_scoped_hull( locked, pr.dependencies,
@@ -701,9 +707,30 @@ module Maven
         build_method( __method__, val )
       end
 
+      def default_goal( val )
+        build_method( __method__, val )
+      end
+
       def output_directory( val )
         build_method( __method__, val )
       end
+
+      def test_output_directory( val )
+        build_method( __method__, val )
+      end
+
+      def source_directory( val )
+        build_method( __method__, val )
+      end
+
+      def script_source_directory( val )
+        build_method( __method__, val )
+      end
+
+      def test_source_directory( val )
+        build_method( __method__, val )
+      end
+
       def repository( *args, &block )
         do_repository( :repository=, *args, &block )
       end

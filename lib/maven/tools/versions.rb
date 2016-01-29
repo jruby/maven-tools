@@ -28,7 +28,7 @@ module Maven
         :jruby9_plugins => "0.3.0",
         :bundler_version => "1.10.6",
         :jruby_version => "1.7.24",
-        :polyglot_version => "0.1.18",
+        :polyglot_version => "0.1.15",
         :mavengem_wagon => "0.2.0"
       }.freeze
     end

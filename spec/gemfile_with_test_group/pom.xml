@@ -196,27 +196,27 @@
                     <i18n>0.6.9</i18n>
                     <json>1.8.1</json>
                     <minitest>5.3.3</minitest>
-                    <threadSafe>0.3.3</threadSafe>
+                    <thread_safe>0.3.3</thread_safe>
                     <tzinfo>1.1.0</tzinfo>
                     <builder>3.2.2</builder>
                     <arel>5.0.1.20140414130214</arel>
                     <activerecord-jdbcmysql-adapter>1.3.7</activerecord-jdbcmysql-adapter>
                     <activerecord-jdbc-adapter>1.3.7</activerecord-jdbc-adapter>
                     <jdbc-mysql>5.1.30</jdbc-mysql>
-                    <newrelicRpm>3.8.1.221</newrelicRpm>
+                    <newrelic_rpm>3.8.1.221</newrelic_rpm>
                     <aws-sdk>1.40.3</aws-sdk>
                     <nokogiri>1.6.1</nokogiri>
-                    <miniPortile>0.5.3</miniPortile>
+                    <mini_portile>0.5.3</mini_portile>
                     <grape>0.7.0</grape>
                     <hashie>2.1.1</hashie>
-                    <multiJson>1.10.0</multiJson>
-                    <multiXml>0.5.5</multiXml>
+                    <multi_json>1.10.0</multi_json>
+                    <multi_xml>0.5.5</multi_xml>
                     <rack-accept>0.4.5</rack-accept>
                     <rack-mount>0.8.3</rack-mount>
                     <virtus>1.0.2</virtus>
                     <axiom-types>0.1.1</axiom-types>
-                    <descendantsTracker>0.0.4</descendantsTracker>
-                    <iceNine>0.11.0</iceNine>
+                    <descendants_tracker>0.0.4</descendants_tracker>
+                    <ice_nine>0.11.0</ice_nine>
                     <coercible>1.0.0</coercible>
                     <equalizer>0.0.9</equalizer>
                   </gems>
@@ -245,13 +245,13 @@
                     <webmock>1.16.1</webmock>
                     <addressable>2.3.6</addressable>
                     <crack>0.4.2</crack>
-                    <safeYaml>1.0.3</safeYaml>
-                    <fakeSqs>0.1.0</fakeSqs>
+                    <safe_yaml>1.0.3</safe_yaml>
+                    <fake_sqs>0.1.0</fake_sqs>
                     <sinatra>1.4.5</sinatra>
                     <rack-protection>1.5.3</rack-protection>
                     <tilt>1.4.1</tilt>
                     <rack-test>0.6.2</rack-test>
-                    <databaseCleaner>1.2.0</databaseCleaner>
+                    <database_cleaner>1.2.0</database_cleaner>
                     <shoulda-matchers>2.6.1</shoulda-matchers>
                   </gems>
                 </configuration>

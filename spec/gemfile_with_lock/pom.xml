@@ -47,8 +47,8 @@
   </dependencies>
   <repositories>
     <repository>
-      <id>mavengems</id>
-      <url>mavengem:https://rubygems.org</url>
+      <id>http_localhost_8081_gems</id>
+      <url>mavengem:http://localhost:8081/gems</url>
     </repository>
   </repositories>
   <build>
@@ -131,9 +131,9 @@
                   <gems>
                     <virtus>1.0.2</virtus>
                     <axiom-types>0.1.1</axiom-types>
-                    <descendantsTracker>0.0.4</descendantsTracker>
-                    <threadSafe>0.3.3</threadSafe>
-                    <iceNine>0.11.0</iceNine>
+                    <descendants_tracker>0.0.4</descendants_tracker>
+                    <thread_safe>0.3.3</thread_safe>
+                    <ice_nine>0.11.0</ice_nine>
                     <coercible>1.0.1</coercible>
                     <equalizer>0.1.0</equalizer>
                     <rake>10.3.0</rake>

@@ -140,12 +140,14 @@ project 'my name', 'example.com' do
   end
 
   build do
+    default_goal :deploy
+    directory 'target'
+    final_name 'myproject'
     source_directory 'src'
     script_source_directory 'script'
     test_source_directory 'test'
     output_directory 'pkg'
     test_output_directory 'pkg/test'
-    default_goal :install
     extension 'org.group', 'gem-extension', '1.2'
     resource do
       target_path 'target'

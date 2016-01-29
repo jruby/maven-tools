@@ -101,8 +101,8 @@
                   <gems>
                     <copyright-header>1.0.12</copyright-header>
                     <github-linguist>2.6.7</github-linguist>
-                    <charlockHolmes>0.6.9.4</charlockHolmes>
-                    <escapeUtils>0.3.2</escapeUtils>
+                    <charlock_holmes>0.6.9.4</charlock_holmes>
+                    <escape_utils>0.3.2</escape_utils>
                     <mime-types>1.25.1</mime-types>
                     <pygments.rb>0.4.2</pygments.rb>
                     <posix-spawn>0.3.8</posix-spawn>

@@ -26,7 +26,7 @@
       <artifactId>myfirst</artifactId>
       <version>0</version>
       <scope>system</scope>
-      <systemPath>myfirst.jar</systemPath>
+      <systemPath>${basedir}/myfirst.jar</systemPath>
     </dependency>
   </dependencies>
 </project>

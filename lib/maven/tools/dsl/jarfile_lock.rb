@@ -40,7 +40,8 @@ module Maven
             end
           end
         end
-        
+        attr_reader :file
+
         def dump
           if @data and not @data.empty?
             File.write( @file, @data.to_yaml )

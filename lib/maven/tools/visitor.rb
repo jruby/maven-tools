@@ -127,6 +127,9 @@ module Maven
           attr = hash.select do |k, v|
             [ k, v ] if k.to_s.match( /^@/ )
           end
+          # workaround error with :configuration => :gems => { ... }
+          method = name == :gems ? :raw_tag : :tag
+
           start_tag( name, attr )
           hash.each do |k, v|
             case v
@@ -135,7 +138,7 @@ module Maven
             when Hash
               accept_hash( k, v )
             else
-              tag( k, v ) unless k.to_s.match( /^@/ )
+              send( method, k, v ) unless k.to_s.match( /^@/ )
             end
           end
           end_tag( name )

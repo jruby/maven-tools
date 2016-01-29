@@ -43,8 +43,7 @@ module Maven
             name = spec.name
           end
 
-          if ( nil == project.current.repositories.detect { |r| r.id == 'rubygems-releases' || r.id == 'mavengems' } && options[ :no_rubygems_repo ] != true )
-              
+          if ( nil == project.current.repositories.detect { |r| r.id == 'rubygems-releases' || r.id == 'mavengems' } && options[ :no_rubygems_repo ] != true && ! @parent.instance_variable_get(:@inside_gemfile))
             @parent.repository( 'mavengems',
                                 'mavengem:https://rubygems.org' )
           end

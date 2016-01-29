@@ -26,7 +26,7 @@
       <url>mavengem:https://rubygems.org</url>
     </repository>
     <repository>
-      <id>http://github.com/rubygems</id>
+      <id>http_github.com_rubygems</id>
       <url>mavengem:http://github.com/rubygems</url>
     </repository>
   </repositories>

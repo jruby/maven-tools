@@ -163,12 +163,14 @@ project :name => 'my name', :url => 'example.com' do
                :checksum_policy => 'none' )
   end
   build do
+    directory 'target'
+    final_name 'myproject'
     source_directory 'src'
     script_source_directory 'script'
     test_source_directory 'test'
     output_directory 'pkg'
     test_output_directory 'pkg/test'
-    default_goal :install
+    default_goal :deploy
     extension( :group_id => 'org.group', 
                :artifact_id => 'gem-extension',
                :version => '1.2' )

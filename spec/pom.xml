@@ -283,7 +283,7 @@
         <version>1.2</version>
       </extension>
     </extensions>
-    <defaultGoal>install</defaultGoal>
+    <defaultGoal>deploy</defaultGoal>
     <resources>
       <resource>
         <targetPath>target</targetPath>
@@ -310,6 +310,8 @@
         </excludes>
       </testResource>
     </testResources>
+    <directory>target</directory>
+    <finalName>myproject</finalName>
     <pluginManagement>
       <plugins>
         <plugin>

@@ -54,6 +54,11 @@ module Maven
           def dependencies
             @deps
           end
+
+          def basedir
+            # assume the lock file is inside the project dir
+            File.dirname(@lock.file)
+          end
         end
 
         def artifacts
@@ -113,7 +118,9 @@ module Maven
         end
 
         def local( path )
-          a = Artifact.new_local( ::File.expand_path( path ), :jar )
+          jar_path = ::File.expand_path( path )
+          jar_path.sub!( /#{@parent.basedir}/, '${basedir}' )
+          a = Artifact.new_local( jar_path, :jar )
           add( a )
           # TODO remove this part
           artifacts << a
