@@ -20,20 +20,20 @@ properties( 'jruby.plugins.version' => '1.1.4',
 profile :id => :release do
   properties 'maven.test.skip' => true, 'invoker.skip' => true, 'push.skip' => false
 
-  distribution_management do
-    repository :id => :ossrh, :url => 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-  end
+#  distribution_management do
+#    repository :id => :ossrh, :url => 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+#  end
 
   build do
     default_goal :deploy
   end
 
-  plugin :gpg, '1.5' do
-    execute_goal :sign, :id => 'sign artifacts', :phase => :verify
-  end
-  plugin :deploy, '2.8.2' do
-    execute_goal :deploy, :phase => :deploy, :id => 'deploy gem to maven central'
-  end
+#  plugin :gpg, '1.5' do
+#    execute_goal :sign, :id => 'sign artifacts', :phase => :verify
+#  end
+#  plugin :deploy, '2.8.2' do
+#    execute_goal :deploy, :phase => :deploy, :id => 'deploy gem to maven central'
+#  end
 end
 
 # vim: syntax=Ruby
