@@ -57,8 +57,7 @@ module Maven
           _deps( dep.type ) << "rubygems:#{dep.name}:#{to_version( *versions )}"
         end
         @spec.requirements.each do |req|
-          req.sub!( /#.*^/, '' )
-          coord = to_split_coordinate_with_scope( req )
+          coord = to_split_coordinate_with_scope(req.sub(/#.*^/, ''))
           if coord && coord.size > 1
             _deps( :java ) << coord
           end
