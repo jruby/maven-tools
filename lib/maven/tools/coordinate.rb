@@ -150,13 +150,13 @@ module Maven
         elsif arg =~ /<=/
           val = arg.sub(/<=\s*/, '')
           [(nil || low), "#{snapshot_version(val)}]"]
+          # treat '!=' the same way as '>' until proper mapping is implemented
+          # see https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html
         elsif arg =~ /!=/  
           val = arg.sub(/!=\s*/, '')
           ["(#{snapshot_version(val)}", (nil || high)]
-        # treat '!' the same way as '>' since maven can not describe such range
-        # TODO ensure !1 is a legal rubygems constraint  
-        elsif arg =~ /[!>]/  
-          val = arg.sub(/[!>]\s*/, '')
+        elsif arg =~ /[>]/  
+          val = arg.sub(/[>]\s*/, '')
           ["(#{snapshot_version(val)}", (nil || high)]
         elsif arg =~ /</
           val = arg.sub(/<\s*/, '')

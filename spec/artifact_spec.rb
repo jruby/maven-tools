@@ -28,8 +28,6 @@ describe Maven::Tools::Artifact do
     Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<=1' ).to_s.must_equal 'rubygems:asd:gem:[0,1]'
     Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '>1' ).to_s.must_equal 'rubygems:asd:gem:(1,)'
     Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<1' ).to_s.must_equal 'rubygems:asd:gem:[0,1)'
-    # not sure if this legal bundler/rubygems
-    Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '!1' ).to_s.must_equal 'rubygems:asd:gem:(1,)'
     Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '!=1' ).to_s.must_equal 'rubygems:asd:gem:(1,)'
     Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<2', '>1' ).to_s.must_equal 'rubygems:asd:gem:(1,2)'
     Maven::Tools::Artifact.from( :gem, 'rubygems:asd', '<=2', '>1' ).to_s.must_equal 'rubygems:asd:gem:(1,2]'
@@ -43,8 +41,6 @@ describe Maven::Tools::Artifact do
     Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<=1' ).to_s.must_equal 'org.something:asd:jar:[0,1]'
     Maven::Tools::Artifact.from( :jar, 'org.something:asd', '>1' ).to_s.must_equal 'org.something:asd:jar:(1,)'
     Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<1' ).to_s.must_equal 'org.something:asd:jar:[0,1)'
-    # not sure if this legal bundler/rubygems
-    Maven::Tools::Artifact.from( :jar, 'org.something:asd', '!1' ).to_s.must_equal 'org.something:asd:jar:(1,)'
     Maven::Tools::Artifact.from( :jar, 'org.something:asd', '!=1' ).to_s.must_equal 'org.something:asd:jar:(1,)'
     Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<2', '>1' ).to_s.must_equal 'org.something:asd:jar:(1,2)'
     Maven::Tools::Artifact.from( :jar, 'org.something:asd', '<=2', '>1' ).to_s.must_equal 'org.something:asd:jar:(1,2]'
