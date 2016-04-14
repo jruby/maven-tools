@@ -139,7 +139,7 @@ module Maven
 
         def other_deps( spec )
           spec.requirements.each do |req|
-            req.sub!( /#.*^/, '' )
+            req = req.sub( /#.*^/, '' )
             method = req.sub(/\s.*$/, '' ).to_sym
             line = req.sub(/^[^\s]*\s/, '' )
             if respond_to? method
