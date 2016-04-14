@@ -13,27 +13,15 @@ properties( 'jruby.plugins.version' => '1.1.4',
             'jruby.versions' => ['1.7.12', '${jruby.version}', '9.0.5.0'].join(','),
             'jruby.modes' => ['1.9', '2.0', '2.2'].join(','),
             # just lock the versions
-            'jruby.version' => '1.7.24',
-            'push.skip' => true )
-
+            'jruby.version' => '1.7.24' )
 
 profile :id => :release do
   properties 'maven.test.skip' => true, 'invoker.skip' => true, 'push.skip' => false
-
-#  distribution_management do
-#    repository :id => :ossrh, :url => 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-#  end
 
   build do
     default_goal :deploy
   end
 
-#  plugin :gpg, '1.5' do
-#    execute_goal :sign, :id => 'sign artifacts', :phase => :verify
-#  end
-#  plugin :deploy, '2.8.2' do
-#    execute_goal :deploy, :phase => :deploy, :id => 'deploy gem to maven central'
-#  end
 end
 
 # vim: syntax=Ruby
