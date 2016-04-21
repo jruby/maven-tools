@@ -185,10 +185,11 @@ project :name => 'my name', :url => 'example.com' do
                    :includes => [ '**/*' ],
                    :excludes => [ '*~' ] )
     plugin( :jar, '1.0',
-            :inherited => true,
+            :inherited => false,
+            :extensions => true,
             :finalName => :testing )
 
-    jruby_plugin :gem, '1.0.0' do
+    jruby_plugin :gem, '1.0.0', 'extensions' => false do
       gem :bundler, '1.7.13'
     end
 

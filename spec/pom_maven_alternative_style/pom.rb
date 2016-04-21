@@ -164,11 +164,11 @@ project 'my name', 'example.com' do
       excludes [ '*~' ]
     end
 
-    plugin :jar, '1.0', :inherited => true do
+    plugin :jar, '1.0', :inherited => false, :extensions => true do
       configuration :finalName => :testing
     end
     
-    jruby_plugin :gem, '1.0.0' do
+    jruby_plugin :gem, '1.0.0', 'extensions' => false do
       gem :bundler, '1.7.13'
     end
 

@@ -344,7 +344,8 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>1.0</version>
-        <inherited>true</inherited>
+        <extensions>true</extensions>
+        <inherited>false</inherited>
         <configuration>
           <finalName>testing</finalName>
         </configuration>
@@ -353,6 +354,7 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <version>1.0.0</version>
+        <extensions>false</extensions>
         <dependencies>
           <dependency>
             <groupId>rubygems</groupId>

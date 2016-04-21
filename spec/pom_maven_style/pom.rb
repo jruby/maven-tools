@@ -249,11 +249,13 @@ project do
     end
 
     plugin :jar, '1.0' do
-      inherited true
+      inherited false
+      extensions 'true'
       configuration :finalName => :testing
     end
 
     jruby_plugin :gem, '1.0.0' do
+      extensions false
       dependency do
         group_id 'rubygems'
         artifact_id 'bundler'

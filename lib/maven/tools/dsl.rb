@@ -410,10 +410,17 @@ module Maven
       alias :dependencies :licenses
       alias :repositories :licenses
       alias :plugin_repositories :licenses
-      alias :extensions :licenses
       alias :resources :licenses
       alias :testResources :licenses
       alias :plugins :licenses
+
+      def extensions(*args)
+        if @context == :plugin || @context == :report_plugin
+          @current.extensions = args[0]
+        else
+          yield
+        end
+      end
 
       def build( &block )
         build = @current.build ||= Build.new
@@ -1217,9 +1224,12 @@ module Maven
           reports = reports[ 0..-2 ]
           id = options.delete( :id ) || options.delete( 'id' )
           set.id = id if id
-          inherited = options.delete( :inherited ) ||
-            options.delete( 'inherited' )
-          set.inherited = inherited if inherited
+          inherited = options.delete( :inherited )
+          inherited = options.delete( 'inherited' ) if inherited.nil?
+          set.inherited = inherited unless inherited.nil?
+          extensions = options.delete( :extensions )
+          extensions = options.delete( 'extensions' ) if extensions.nil?
+          set.extensions = extensions unless extensions.nil?
         end
         set_config( set, options )
         set.reports = reports#.to_java
@@ -1373,8 +1383,12 @@ module Maven
 
       def prepare_config( receiver, options )
         return unless options
-        inherited = options.delete( 'inherited' ) || options.delete( :inherited )
-        receiver.inherited = inherited if inherited
+        inh = options.delete( 'inherited' )
+        inh = options.delete( :inherited ) if inh.nil?
+        receiver.inherited = inh unless inh.nil?
+        ext = options.delete( 'extensions' )
+        ext = options.delete( :extensions ) if ext.nil?
+        receiver.extensions = ext unless ext.nil?
       end
 
       def set_config( receiver, options )
