@@ -1,7 +1,6 @@
 require 'fileutils'
 require 'maven/tools/gemspec_dependencies'
 require 'maven/tools/artifact'
-require 'maven/tools/jarfile'
 require 'maven/tools/versions'
 require 'maven/tools/gemfile_lock'
 require 'maven/tools/dsl/jars_lock'
@@ -349,6 +348,9 @@ module Maven
       private :setup_jruby
       
       def jarfile( file = 'Jarfile', options = {} )
+        # need to do this lazy as it requires yaml and with this
+        # jar-dependencies which will require_jars_lock
+        require 'maven/tools/jarfile'
         if file.is_a? Hash 
           options = file
           file = 'Jarfile'
