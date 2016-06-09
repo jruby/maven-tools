@@ -146,7 +146,7 @@ module Maven
       end
       
       def escape_value( value )
-        value = value.to_s
+        value = value.to_s.dup
         value.gsub!( /&/, '&amp;' )
         # undo double quote, somehow xyz.gemspec.rz have encoded values
         value.gsub!( /&amp;(amp|lt|gt);/, '&\1;' )

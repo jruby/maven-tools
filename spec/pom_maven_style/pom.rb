@@ -248,184 +248,100 @@ project do
       excludes [ '*~' ]
     end
 
-    plugin :jar, '1.0' do
-      inherited false
-      extensions 'true'
-      configuration :finalName => :testing
-    end
-
-    jruby_plugin :gem, '1.0.0' do
-      extensions false
-      dependency do
-        group_id 'rubygems'
-        artifact_id 'bundler'
-        version '1.7.13'
-        type :gem
+    plugins do
+      plugin :jar, '1.0' do
+        inherited false
+        extensions 'true'
+        configuration :finalName => :testing
       end
-    end
 
-    plugin :antrun do
-      execute_goals( 'run' ) do
-        configuration( 'tasks' => {
-                         'exec' => {
-                           '@executable' => '/bin/sh',
-                           '@osfamily' => 'unix',
-                           'arg' => {
-                             '@line' => '-c \'cp "${jruby.basedir}/bin/jruby.bash" "${jruby.basedir}/bin/jruby"\''
+      jruby_plugin :gem, '1.0.0' do
+        extensions false
+        dependency do
+          group_id 'rubygems'
+          artifact_id 'bundler'
+          version '1.7.13'
+          type :gem
+        end
+      end
+
+      plugin :antrun do
+        execute_goals( 'run' ) do
+          configuration( 'tasks' => {
+                           'exec' => {
+                             '@executable' => '/bin/sh',
+                             '@osfamily' => 'unix',
+                             'arg' => {
+                               '@line' => '-c \'cp "${jruby.basedir}/bin/jruby.bash" "${jruby.basedir}/bin/jruby"\''
+                             }
+                           },
+                           'chmod' => {
+                             '@file' => '${jruby.basedir}/bin/jruby',
+                             '@perm' => '755'
                            }
-                         },
-                         'chmod' => {
-                           '@file' => '${jruby.basedir}/bin/jruby',
-                           '@perm' => '755'
-                         }
-                       } )
-        id 'copy'
-        phase 'package'
+                         } )
+          id 'copy'
+          phase 'package'
+        end
+        dependency do
+          group_id 'org.super.duper'
+          artifact_id 'executor'
+          version '1.0.0'
+        end
       end
-      dependency do
-        group_id 'org.super.duper'
-        artifact_id 'executor'
-        version '1.0.0'
-      end
-    end
     
-    plugin 'org.codehaus.mojo:exec-maven-plugin' do
-      execute_goal( 'exec' ) do
-        id 'invoker-generator'
-        configuration( 'arguments' => [ '-Djruby.bytecode.version=${base.java.version}',
-                                        '-classpath',
-                                        xml( '<classpath/>' ),
-                                        'org.jruby.anno.InvokerGenerator',
-                                        '${anno.sources}/annotated_classes.txt',
-                                        '${project.build.outputDirectory}' ],
-                       'executable' =>  'java',
-                       'classpathScope' =>  'compile' )
+      plugin 'org.codehaus.mojo:exec-maven-plugin' do
+        execute_goal( 'exec' ) do
+          id 'invoker-generator'
+          configuration( 'arguments' => [ '-Djruby.bytecode.version=${base.java.version}',
+                                          '-classpath',
+                                          xml( '<classpath/>' ),
+                                          'org.jruby.anno.InvokerGenerator',
+                                          '${anno.sources}/annotated_classes.txt',
+                                          '${project.build.outputDirectory}' ],
+                         'executable' =>  'java',
+                         'classpathScope' =>  'compile' )
+        end
       end
     end
 
     plugin_management do
-      plugin( "org.mortbay.jetty:jetty-maven-plugin:8.1" ) do
-        configuration( :path => '/',
-                       :connectors => [ { :@implementation => "org.eclipse.jetty.server.nio.SelectChannelConnector",
-                                          :port => '${run.port}' },
-                                        { :@implementation => "org.eclipse.jetty.server.ssl.SslSelectChannelConnector",
-                                          :port => '${run.sslport}',
-                                          :keystore => '${run.keystore}',
-                                          :keyPassword => '${run.keystore.pass}',
-                                          :trustPassword => '${run.truststore.pass}' } ],
-                       :httpConnector => { :port => '${run.port}' } )
+      plugins do
+        jruby_plugin( :gem, '1.1.5') do
+          configuration( :scope => :compile,
+                         :gems => {
+                           'thread_safe' => '0.3.3',
+                           'jdbc-mysql' => '5.1.30'
+                         } )
+        end
+        plugin( "org.mortbay.jetty:jetty-maven-plugin:8.1" ) do
+          configuration( :path => '/',
+                         :connectors => [ { :@implementation => "org.eclipse.jetty.server.nio.SelectChannelConnector",
+                                            :port => '${run.port}' },
+                                          { :@implementation => "org.eclipse.jetty.server.ssl.SslSelectChannelConnector",
+                                            :port => '${run.sslport}',
+                                            :keystore => '${run.keystore}',
+                                            :keyPassword => '${run.keystore.pass}',
+                                            :trustPassword => '${run.truststore.pass}' } ],
+                         :httpConnector => { :port => '${run.port}' } )
+        end
+      end
+    end
+  end
+  profiles do
+    profile :id => 'one' do
+      activation do
+        active_by_default false
+        jdk '1.7'
+        os :family => 'nix', :version => '2.7', :arch => 'x86_64', :name => 'linux'
+        file :missing => 'required_file', :exists => 'optional'
+        property :name => 'test', :value => 'extended'
       end
     end
   end
 end
 #   <build>
-#     <extensions>
-#       <extension>
-#         <groupId/>
-#         <artifactId/>
-#         <version/>
-#       </extension>
-#     </extensions>
-#     <defaultGoal/>
-#     <resources>
-#       <resource>
-#         <targetPath/>
-#         <filtering/>
-#         <directory/>
-#         <includes/>
-#         <excludes/>
-#       </resource>
-#     </resources>
-#     <testResources>
-#       <testResource>
-#         <targetPath/>
-#         <filtering/>
-#         <directory/>
-#         <includes/>
-#         <excludes/>
-#       </testResource>
-#     </testResources>
-#     <directory/>
-#     <finalName/>
 #     <filters/>
-#     <pluginManagement>
-#       <plugins>
-#         <plugin>
-#           <groupId/>
-#           <artifactId/>
-#           <version/>
-#           <extensions/>
-#           <executions>
-#             <execution>
-#               <id/>
-#               <phase/>
-#               <goals/>
-#               <inherited/>
-#               <configuration/>
-#             </execution>
-#           </executions>
-#           <dependencies>
-#             <dependency>
-#               <groupId/>
-#               <artifactId/>
-#               <version/>
-#               <type/>
-#               <classifier/>
-#               <scope/>
-#               <systemPath/>
-#               <exclusions>
-#                 <exclusion>
-#                   <artifactId/>
-#                   <groupId/>
-#                 </exclusion>
-#               </exclusions>
-#               <optional/>
-#             </dependency>
-#           </dependencies>
-#           <goals/>
-#           <inherited/>
-#           <configuration/>
-#         </plugin>
-#       </plugins>
-#     </pluginManagement>
-#     <plugins>
-#       <plugin>
-#         <groupId/>
-#         <artifactId/>
-#         <version/>
-#         <extensions/>
-#         <executions>
-#           <execution>
-#             <id/>
-#             <phase/>
-#             <goals/>
-#             <inherited/>
-#             <configuration/>
-#           </execution>
-#         </executions>
-#         <dependencies>
-#           <dependency>
-#             <groupId/>
-#             <artifactId/>
-#             <version/>
-#             <type/>
-#             <classifier/>
-#             <scope/>
-#             <systemPath/>
-#             <exclusions>
-#               <exclusion>
-#                 <artifactId/>
-#                 <groupId/>
-#               </exclusion>
-#             </exclusions>
-#             <optional/>
-#           </dependency>
-#         </dependencies>
-#         <goals/>
-#         <inherited/>
-#         <configuration/>
-#       </plugin>
-#     </plugins>
 #   </build>
 
 #   <reports/>

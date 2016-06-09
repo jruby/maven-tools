@@ -295,7 +295,7 @@ module Maven
       attribute :plugin_management, PluginManagement
       attribute :plugins, Array[ Plugin ]
     end
-    class Os
+    class ActivationOS
       include Base
 
       attribute :name, String
@@ -303,7 +303,7 @@ module Maven
       attribute :arch, String
       attribute :version, String
     end
-    class Property
+    class ActivationProperty
       include Base
 
       attribute :name, String
@@ -320,8 +320,8 @@ module Maven
 
       attribute :active_by_default, Boolean
       attribute :jdk, String
-      attribute :os, Os
-      attribute :property, Property
+      attribute :os, ActivationOS
+      attribute :property, ActivationProperty
       attribute :file, ActivationFile
     end
     class Profile

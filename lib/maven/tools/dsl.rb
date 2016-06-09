@@ -416,7 +416,7 @@ module Maven
       alias :plugin_repositories :licenses
       alias :resources :licenses
       alias :testResources :licenses
-      alias :plugins :licenses
+      alias :profiles :licenses
 
       def extensions(*args)
         if @context == :plugin || @context == :report_plugin
@@ -630,6 +630,19 @@ module Maven
         file.missing = options[ :missing ] || options[ 'missing' ]
         file.exists = options[ :exists ] || options[ 'exists' ]
         @current.file = file
+      end
+
+      def os( options )
+        os = ActivationOS.new
+        os.family = options[ :family ] || options[ 'family' ]
+        os.version = options[ :version ] || options[ 'version' ]
+        os.arch = options[ :arch ] || options[ 'arch' ]
+        os.name = options[ :name ] || options[ 'name' ]
+        @current.os = os
+      end
+
+      def jdk( version )
+        @current.jdk = version
       end
 
       def activation( &block )
@@ -934,21 +947,25 @@ module Maven
       end
       private :plugin_gav
 
-      def plugins
-        if @current.respond_to? :build
-          @current.build ||= Build.new
-          if @context == :overrides
-            @current.build.plugin_management ||= PluginManagement.new
-            @current.build.plugin_management.plugins
-          else
-            @current.build.plugins
-          end
+      def plugins(&block)
+        if block
+          block.call
         else
-          if @context == :overrides
-            @current.plugin_management ||= PluginManagement.new
-            @current.plugin_management.plugins
+          if @current.respond_to? :build
+            @current.build ||= Build.new
+            if @context == :overrides
+              @current.build.plugin_management ||= PluginManagement.new
+              @current.build.plugin_management.plugins
+            else
+              @current.build.plugins
+            end
           else
-            @current.plugins
+            if @context == :overrides
+              @current.plugin_management ||= PluginManagement.new
+              @current.plugin_management.plugins
+            else
+              @current.plugins
+            end
           end
         end
       end

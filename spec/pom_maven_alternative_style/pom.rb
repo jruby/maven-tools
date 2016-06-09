@@ -207,6 +207,11 @@ project 'my name', 'example.com' do
     end
 
     overrides do
+      jruby_plugin( :gem, '1.1.5', :scope => :compile,
+                    :gems => {
+                      'thread_safe' => '0.3.3',
+                      'jdbc-mysql' => '5.1.30'
+                    } )
       plugin( "org.mortbay.jetty:jetty-maven-plugin:8.1",
               :path => '/',
               :connectors => [ { :@implementation => "org.eclipse.jetty.server.nio.SelectChannelConnector",
@@ -219,6 +224,15 @@ project 'my name', 'example.com' do
               :httpConnector => { :port => '${run.port}' } )
     end
     
+  end
+  profile :id => 'one' do
+    activation do
+      active_by_default false
+      jdk '1.7'
+      os :family => 'nix', :version => '2.7', :arch => 'x86_64', :name => 'linux'
+      file :missing => 'required_file', :exists => 'optional'
+      property :name => 'test', :value => 'extended'
+    end
   end
 end
 
