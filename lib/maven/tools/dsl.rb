@@ -86,7 +86,7 @@ module Maven
         self.send a[:type].to_sym, a
       end
 
-      def source(*args)
+      def source(*args, &block)
         url = args[0].to_s
         url = 'https://rubygems.org' if url == :rubygems
         id = url.gsub( /[\/:"<>|?*]/, '_').gsub(/_+/, '_') unless url == 'https://rubygems.org'
@@ -100,6 +100,8 @@ module Maven
         repository :id => id || 'mavengems', :url => "mavengem:#{url}"
         extension! 'org.torquebox.mojo:mavengem-wagon', '${mavengem.wagon.version}'
         @current = current if current
+
+        block.call if block
       end
 
       def ruby( *args )

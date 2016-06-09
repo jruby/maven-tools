@@ -35,6 +35,12 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>paseserver</artifactId>
+      <version>[1.3,1.99999]</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
       <version>1.49</version>
@@ -49,6 +55,10 @@
     <repository>
       <id>mavengems</id>
       <url>mavengem:https://rubygems.org</url>
+    </repository>
+    <repository>
+      <id>https_example.com</id>
+      <url>mavengem:https://example.com</url>
     </repository>
   </repositories>
   <build>
