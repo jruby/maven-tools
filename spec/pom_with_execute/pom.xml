@@ -20,7 +20,7 @@
       <plugin>
         <groupId>io.takari.polyglot</groupId>
         <artifactId>polyglot-maven-plugin</artifactId>
-        <version>0.1.15</version>
+        <version>0.1.17</version>
         <executions>
           <execution>
             <phase>validate</phase>
@@ -80,7 +80,7 @@
           <dependency>
             <groupId>io.takari.polyglot</groupId>
             <artifactId>polyglot-ruby</artifactId>
-            <version>0.1.15</version>
+            <version>0.1.17</version>
           </dependency>
         </dependencies>
       </plugin>

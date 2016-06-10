@@ -10,10 +10,10 @@ end
 
 # (jruby-1.6.7 produces a lot of yaml errors parsing gemspecs)
 properties( 'jruby.plugins.version' => '1.1.4',
-            'jruby.versions' => ['1.7.12', '${jruby.version}', '9.0.5.0'].join(','),
+            'jruby.versions' => ['1.7.12', '1.7.25', '9.0.5.0', '9.1.2.0'].join(','),
             'jruby.modes' => ['1.9', '2.0', '2.2'].join(','),
             # just lock the versions
-            'jruby.version' => '1.7.24' )
+            'jruby.version' => '9.1.2.0' )
 
 profile :id => :release do
   properties 'maven.test.skip' => true, 'invoker.skip' => true, 'push.skip' => false
