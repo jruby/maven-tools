@@ -6,7 +6,7 @@
   <name>gemspec_spec</name>
   <properties>
     <jruby.plugins.version>1.1.5</jruby.plugins.version>
-    <mavengem.wagon.version>0.2.0</mavengem.wagon.version>
+    <mavengem.wagon.version>0.2.1</mavengem.wagon.version>
   </properties>
   <dependencies>
     <dependency>
