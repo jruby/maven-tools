@@ -24,7 +24,7 @@ module Maven
       VERSIONS = { 
         :jar_plugin => "2.4",
         :clean_plugin => "2.4",
-        :jruby_plugins => "1.1.5",
+        :jruby_plugins => "2.0.1",
         :jruby9_plugins => "0.3.0",
         :bundler_version => "1.10.6",
         :jruby_version => "9.1.2.0",
