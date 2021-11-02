@@ -29,7 +29,7 @@ module Maven
         :bundler_version => "1.10.6",
         :jruby_version => "9.1.2.0",
         :polyglot_version => "0.1.18",
-        :mavengem_wagon => "0.2.1"
+        :mavengem_wagon => "1.0.3"
       }.freeze
     end
   end

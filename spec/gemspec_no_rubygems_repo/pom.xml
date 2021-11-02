@@ -31,7 +31,7 @@
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <jruby.plugins.version>2.0.1</jruby.plugins.version>
-    <mavengem.wagon.version>0.2.1</mavengem.wagon.version>
+    <mavengem.wagon.version>1.0.3</mavengem.wagon.version>
   </properties>
   <dependencies>
     <dependency>
