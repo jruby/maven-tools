@@ -2,18 +2,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>rubygems</groupId>
   <artifactId>maven-tools</artifactId>
-  <version>123</version>
+  <version>1.1.6</version>
   <packaging>gem</packaging>
   <name>helpers for maven related tasks</name>
   <url>http://github.com/torquebox/maven-tools</url>
   <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
-  <licenses>
-    <license>
-      <name>MIT</name>
-      <url>http://opensource.org/licenses/MIT</url>
-      <comments>MIT license</comments>
-    </license>
-  </licenses>
   <developers>
     <developer>
       <name>Christian Meier</name>
@@ -24,53 +17,49 @@
     <connection>https://github.com/torquebox/maven-tools.git</connection>
     <url>http://github.com/torquebox/maven-tools</url>
   </scm>
+  <repositories>
+    <repository>
+      <id>rubygems</id>
+      <name>Rubygems Proxy</name>
+      <url>http://rubygems-proxy.torquebox.org/releases</url>
+      <layout>default</layout>
+        <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <jruby.plugins.version>2.0.1</jruby.plugins.version>
-    <mavengem.wagon.version>1.0.3</mavengem.wagon.version>
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.6.4</version>
+      <groupId>rubygems</groupId>
+      <artifactId>virtus</artifactId>
+      <version>[1.0,1.99999]</version>
+      <type>gem</type>
     </dependency>
     <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby</artifactId>
-      <version>1.7.16</version>
-      <type>pom</type>
+      <groupId>rubygems</groupId>
+      <artifactId>rake</artifactId>
+      <version>[10.0,10.99999]</version>
+      <type>gem</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby</artifactId>
-      <version>1.7.16</version>
-      <classifier>noasm</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jruby</groupId>
-          <artifactId>jruby-stdlib</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>rubygems</groupId>
+      <artifactId>minitest</artifactId>
+      <version>[5.3,5.99999]</version>
+      <type>gem</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>mavengems</id>
-      <url>mavengem:https://rubygems.org</url>
-    </repository>
-    <repository>
-      <id>http://localhost/repo</id>
-      <url>http://localhost/repo</url>
-    </repository>
-  </repositories>
   <build>
     <extensions>
-      <extension>
-        <groupId>org.torquebox.mojo</groupId>
-        <artifactId>mavengem-wagon</artifactId>
-        <version>${mavengem.wagon.version}</version>
-      </extension>
       <extension>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-extension</artifactId>
@@ -84,8 +73,18 @@
         <artifactId>gem-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
         <configuration>
-          <gemspec>extended.gemspec</gemspec>
+          <gemspec>maven-tools.gemspec</gemspec>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>minitest-maven-plugin</artifactId>
+        <version>${jruby.plugins.version}</version>
+        <executions>
+          <execution>
+            <goals><goal>spec</goal></goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
