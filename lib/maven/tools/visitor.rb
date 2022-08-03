@@ -65,7 +65,7 @@ module Maven
           buffer.push( buffer.empty? ? e : e.capitalize )
         end.join
       end
-      
+
       def accept_project( project )
         accept( 'project', project )
         @io.close if @io.respond_to? :close
@@ -144,7 +144,7 @@ module Maven
           end_tag( name )
         end
       end
-      
+
       def escape_value( value )
         value = value.to_s.dup
         value.gsub!( /&/, '&amp;' )

@@ -28,7 +28,14 @@ Gem::Specification.new do |s|
   s.test_files += Dir['spec/**/*gemspec']
   s.test_files += Dir['spec/**/*gem']
 
-  s.add_runtime_dependency 'virtus', '~> 1.0'
+  s.add_runtime_dependency 'dry-container', '~> 0.7.2'
+  s.add_runtime_dependency 'dry-configurable', '~> 0.12.1'
+  s.add_runtime_dependency 'dry-core', '~> 0.6.0'
+  s.add_runtime_dependency 'dry-inflector', '~> 0.2.0'
+  s.add_runtime_dependency 'dry-types', '~> 1.5.1'
+  s.add_runtime_dependency 'dry-struct', '~> 1.4.0'
+  s.add_runtime_dependency 'dry-struct-setters', '~> 0.4.0'
+
 
 # get them out from here until jruby-maven-plugin installs test gems somewhere else then runtime gems
 

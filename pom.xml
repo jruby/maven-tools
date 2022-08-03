@@ -1,12 +1,7 @@
 <project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>rubygems</groupId>
-  <artifactId>maven-tools</artifactId>
-  <version>1.1.6</version>
-  <packaging>gem</packaging>
-  <name>helpers for maven related tasks</name>
   <url>http://github.com/torquebox/maven-tools</url>
   <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
+
   <developers>
     <developer>
       <name>Christian Meier</name>
@@ -19,17 +14,8 @@
   </scm>
   <repositories>
     <repository>
-      <id>rubygems</id>
-      <name>Rubygems Proxy</name>
-      <url>http://rubygems-proxy.torquebox.org/releases</url>
-      <layout>default</layout>
-        <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-        <updatePolicy>never</updatePolicy>
-      </snapshots>
+      <id>mavengems</id>
+      <url>mavengem:https://rubygems.org</url>
     </repository>
   </repositories>
   <properties>
@@ -39,31 +25,73 @@
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>virtus</artifactId>
-      <version>[1.0,1.99999]</version>
+      <artifactId>dry-container</artifactId>
+      <version>0.7.2</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>dry-configurable</artifactId>
+      <version>0.12.1</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>dry-core</artifactId>
+      <version>0.6.0</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>dry-inflector</artifactId>
+      <version>0.2.0</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>dry-types</artifactId>
+      <version>1.5.1</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>dry-struct</artifactId>
+      <version>1.4.0</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>dry-struct-setters</artifactId>
+      <version>0.4.0</version>
       <type>gem</type>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rake</artifactId>
-      <version>[10.0,10.99999]</version>
+      <version>10.5.0</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>minitest</artifactId>
-      <version>[5.3,5.99999]</version>
+      <version>5.15.0</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <modelVersion>4.0.0</modelVersion>
+  <name>helpers for maven related tasks</name>
+  <groupId>rubygems</groupId>
+  <artifactId>maven-tools</artifactId>
+  <version>1.2.0</version>
+  <packaging>gem</packaging>
   <build>
     <extensions>
       <extension>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-extension</artifactId>
-        <version>${jruby.plugins.version}</version>
+        <groupId>org.torquebox.mojo</groupId>
+        <artifactId>mavengem-wagon</artifactId>
+        <version>1.0.3</version>
       </extension>
     </extensions>
     <directory>${basedir}/pkg</directory>
@@ -72,6 +100,7 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
+        <extensions>true</extensions>
         <configuration>
           <gemspec>maven-tools.gemspec</gemspec>
         </configuration>
