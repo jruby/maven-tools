@@ -34,7 +34,7 @@ describe Maven::Tools::DSL::ProjectGemspec do
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
     v = Maven::Tools::VERSION
     v += '-SNAPSHOT' if v =~ /.dev$/
-    xml.must_equal( XmlFile.read( 'maven-tools.xml', 'maven-tools',
+    _(xml).must_equal( XmlFile.read( 'maven-tools.xml', 'maven-tools',
                                   v ) )
   end
 
@@ -42,35 +42,35 @@ describe Maven::Tools::DSL::ProjectGemspec do
     subject.new parent, 'maven-tools.gemspec'
     xml = ""
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
-    xml.must_equal( XmlFile.read( 'maven-tools.xml', 'gemspec_spec' ) )
+    _(xml).must_equal( XmlFile.read( 'maven-tools.xml', 'gemspec_spec' ) )
   end
 
   it 'evals maven_tools.gemspec from yaml with profile' do
     subject.new parent, 'maven-tools.gemspec', :profile => :hidden
     xml = ""
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
-    xml.must_equal( XmlFile.read( 'profile.xml', 'gemspec_spec' ) )
+    _(xml).must_equal( XmlFile.read( 'profile.xml', 'gemspec_spec' ) )
   end
 
   it 'evals maven_tools.gemspec from yaml no gem dependencies' do
     subject.new parent, 'maven-tools.gemspec', :no_gems => true
     xml = ""
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
-    xml.must_equal( XmlFile.read( 'no_gems.xml', 'gemspec_spec' ) )
+    _(xml).must_equal( XmlFile.read( 'no_gems.xml', 'gemspec_spec' ) )
   end
 
   it 'evals snapshot.gemspec' do
     subject.new parent, 'snapshot.gemspec'
     xml = ""
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
-    xml.must_equal( XmlFile.read( 'snapshot.xml', 'snapshot', '1.a-SNAPSHOT' ) )
+    _(xml).must_equal( XmlFile.read( 'snapshot.xml', 'snapshot', '1.a-SNAPSHOT' ) )
   end
 
   it 'evals gemspec with jar and pom dependencies' do
     subject.new parent, 'jars_and_poms.gemspec'
     xml = ""
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
-    xml.must_equal( XmlFile.read( 'jars_and_poms.xml',
+    _(xml).must_equal( XmlFile.read( 'jars_and_poms.xml',
                                   'gemspec_spec' ) )
   end
 
@@ -78,7 +78,7 @@ describe Maven::Tools::DSL::ProjectGemspec do
     subject.new parent, :name => 'jars_and_poms.gemspec', :include_jars => true
     xml = ""
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
-    xml.must_equal( XmlFile.read( 'jars_and_poms_include_jars.xml',
+    _(xml).must_equal( XmlFile.read( 'jars_and_poms_include_jars.xml',
                                   'gemspec_spec' ) )
   end
 
@@ -91,7 +91,7 @@ describe Maven::Tools::DSL::ProjectGemspec do
     subject.new parent, :name => 'extended.gemspec'
     xml = ""
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
-    xml.must_equal( XmlFile.read( 'extended.xml',
+    _(xml).must_equal( XmlFile.read( 'extended.xml',
                                   'gemspec_spec' ) )
   end
 
@@ -99,6 +99,6 @@ describe Maven::Tools::DSL::ProjectGemspec do
     subject.new parent, :name => 'unknown_license.gemspec'
     xml = ""
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
-    xml.must_equal( XmlFile.read( 'unknown_license.xml', 'gemspec_spec') )
+    _(xml).must_equal( XmlFile.read( 'unknown_license.xml', 'gemspec_spec') )
   end
 end

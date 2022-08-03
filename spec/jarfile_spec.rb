@@ -38,7 +38,7 @@ describe Maven::Tools::Jarfile do
 
   it 'generates lockfile' do
     subject.generate_lockfile(%w( a b c d e f ruby.bundler:bla))
-    File.read(jfile_lock).must_equal <<-EOF
+    _(File.read(jfile_lock)).must_equal <<-EOF
 a
 b
 c
@@ -55,10 +55,10 @@ a:b:pom:3
 a:c:jar:1
 EOF
     end
-    subject.locked.must_equal ["a:b:pom:3", "a:c:jar:1"]
-    subject.locked?("a:b:pom:321").must_equal true
-    subject.locked?("a:b:jar:321").must_equal true
-    subject.locked?("a:d:jar:432").must_equal false
+    _(subject.locked).must_equal ["a:b:pom:3", "a:c:jar:1"]
+    _(subject.locked?("a:b:pom:321")).must_equal true
+    _(subject.locked?("a:b:jar:321")).must_equal true
+    _(subject.locked?("a:d:jar:432")).must_equal false
   end
 
   it 'populate repositories' do
@@ -70,11 +70,11 @@ source "http://example.org/repo/3"
 EOF
     end
     subject.populate_unlocked container
-    container.repositories.size.must_equal 3
-    container.artifacts.size.must_equal 0
-    container.repositories[0].must_equal "first"
-    container.repositories[1].must_equal "second"
-    container.repositories[2].must_equal "http://example.org/repo/3"
+    _(container.repositories.size).must_equal 3
+    _(container.artifacts.size).must_equal 0
+    _(container.repositories[0]).must_equal "first"
+    _(container.repositories[1]).must_equal "second"
+    _(container.repositories[2]).must_equal "http://example.org/repo/3"
   end
 
   it 'populate artifacts without locked' do
@@ -85,10 +85,10 @@ pom 'x:y', '987'
 EOF
     end
     subject.populate_unlocked container
-    container.repositories.size.must_equal 0
-    container.artifacts.size.must_equal 2
-    container.artifacts[0].to_s.must_equal "a:b:jar:123"
-    container.artifacts[1].to_s.must_equal "x:y:pom:987"
+    _(container.repositories.size).must_equal 0
+    _(container.artifacts.size).must_equal 2
+    _(container.artifacts[0].to_s).must_equal "a:b:jar:123"
+    _(container.artifacts[1].to_s).must_equal "x:y:pom:987"
   end
 
   it 'populate artifacts with locked' do
@@ -105,9 +105,9 @@ EOF
     end
     
     subject.populate_unlocked container
-    container.repositories.size.must_equal 0
-    container.artifacts.size.must_equal 1
-    container.artifacts[0].to_s.must_equal "x:y:pom:987"
+    _(container.repositories.size).must_equal 0
+    _(container.artifacts.size).must_equal 1
+    _(container.artifacts[0].to_s).must_equal "x:y:pom:987"
   end
 
   it 'populate locked artifacts' do
@@ -118,8 +118,8 @@ EOF
     end
     
     subject.populate_locked container
-    container.repositories.size.must_equal 0
-    container.artifacts.size.must_equal 1
-    container.artifacts[0].to_s.must_equal "a:b:jar:432"
+    _(container.repositories.size).must_equal 0
+    _(container.artifacts.size).must_equal 1
+    _(container.artifacts[0].to_s).must_equal "a:b:jar:432"
   end
 end

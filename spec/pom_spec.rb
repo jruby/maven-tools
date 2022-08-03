@@ -18,7 +18,7 @@ describe Maven::Tools::POM do
         pom_xml.gsub!( /tesla-polyglot/, 'polyglot' )
         pom_xml.gsub!( /${tesla.version}/, Maven::Tools::VERSIONS[ :polyglot_version ] )
 
-        pom.to_s.must_equal pom_xml
+        _(pom.to_s).must_equal pom_xml
       end
     end
   end
