@@ -1,7 +1,12 @@
 <project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>rubygems</groupId>
+  <artifactId>maven-tools</artifactId>
+  <version>1.2.0</version>
+  <packaging>gem</packaging>
+  <name>helpers for maven related tasks</name>
   <url>http://github.com/torquebox/maven-tools</url>
   <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
-
   <developers>
     <developer>
       <name>Christian Meier</name>
@@ -80,12 +85,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <modelVersion>4.0.0</modelVersion>
-  <name>helpers for maven related tasks</name>
-  <groupId>rubygems</groupId>
-  <artifactId>maven-tools</artifactId>
-  <version>1.2.0</version>
-  <packaging>gem</packaging>
   <build>
     <extensions>
       <extension>
