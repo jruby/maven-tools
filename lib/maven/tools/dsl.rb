@@ -98,7 +98,7 @@ module Maven
         end
 
         repository :id => id || 'mavengems', :url => "mavengem:#{url}"
-        extension! 'org.torquebox.mojo:mavengem-wagon', '${mavengem.wagon.version}'
+        extension! 'org.jruby.maven:mavengem-wagon', '${mavengem.wagon.version}'
         @current = current if current
 
         block.call if block
@@ -142,7 +142,7 @@ module Maven
         name = ::File.join( basedir, name ) unless ::File.exists?( name )
         if @context == :project
           build do
-            extension! 'org.torquebox.mojo:mavengem-wagon', '${mavengem.wagon.version}'
+            extension! 'org.jruby.maven:mavengem-wagon', '${mavengem.wagon.version}'
             directory '${basedir}/pkg'
           end
         end
@@ -706,7 +706,7 @@ module Maven
            not (@context == :profile and model.properties.key?( 'jruby9.plugins.version' ) )
             properties( 'jruby9.plugins.version' => VERSIONS[ :jruby9_plugins ] )
           end
-          extension 'org.torquebox.mojo', 'jruby9-extensions', '${jruby9.plugins.version}'
+          extension 'org.jruby.maven', 'jruby9-extensions', '${jruby9.plugins.version}'
           build do
             directory '${basedir}/pkg'
           end
@@ -901,7 +901,7 @@ module Maven
       end
 
       def do_jruby_plugin( method, *gav, &block )
-        gav[ 0 ] = "de.saumya.mojo:#{gav[ 0 ]}-maven-plugin"
+        gav[ 0 ] = "org.jruby.maven:#{gav[ 0 ]}-maven-plugin"
         if gav.size == 1 || gav[ 1 ].is_a?( Hash )
           setup_jruby_plugins_version
           gav.insert( 1, '${jruby.plugins.version}' )

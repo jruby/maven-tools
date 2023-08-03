@@ -207,7 +207,7 @@ project 'my name', 'example.com' do
     end
 
     overrides do
-      jruby_plugin( :gem, '2.0.1', :scope => :compile,
+      jruby_plugin( :gem, '3.0.0-SNAPSHOT', :scope => :compile,
                     :gems => {
                       'thread_safe' => '0.3.3',
                       'jdbc-mysql' => '5.1.30'

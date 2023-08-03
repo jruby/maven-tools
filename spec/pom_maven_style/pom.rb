@@ -307,7 +307,7 @@ project do
 
     plugin_management do
       plugins do
-        jruby_plugin( :gem, '2.0.1') do
+        jruby_plugin( :gem, '3.0.0-SNAPSHOT') do
           configuration( :scope => :compile,
                          :gems => {
                            'thread_safe' => '0.3.3',

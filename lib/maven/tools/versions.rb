@@ -24,12 +24,12 @@ module Maven
       VERSIONS = { 
         :jar_plugin => "2.4",
         :clean_plugin => "2.4",
-        :jruby_plugins => "2.0.1",
+        :jruby_plugins => "3.0.0-SNAPSHOT",
         :jruby9_plugins => "0.3.0",
         :bundler_version => "1.10.6",
         :jruby_version => "9.1.2.0",
         :polyglot_version => "0.1.18",
-        :mavengem_wagon => "1.0.3"
+        :mavengem_wagon => "2.0.0-SNAPSHOT"
       }.freeze
     end
   end
