@@ -39,4 +39,4 @@ jobs:
           bundle install --jobs=3 --retry=3
 
       - name: Run tests
-        run: ./mvnw test
+        run: ./mvnw -B test

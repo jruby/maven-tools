@@ -33,7 +33,7 @@ describe Maven::Tools::DSL::ProjectGemspec do
     xml = ""
     Maven::Tools::Visitor.new( xml ).accept_project( parent.model )
     v = Maven::Tools::VERSION
-    v += '-SNAPSHOT' if v =~ /.dev$/
+    v += '-SNAPSHOT' if v =~ /.[[:alpha:]][[:alnum:]]*$/
     xml.must_equal( XmlFile.read( 'maven-tools.xml', 'maven-tools',
                                   v ) )
   end

@@ -22,7 +22,7 @@
   <build>
     <extensions>
       <extension>
-        <groupId>org.torquebox.mojo</groupId>
+        <groupId>org.jruby.maven</groupId>
         <artifactId>jruby9-extensions</artifactId>
         <version>${jruby9.plugins.version}</version>
       </extension>

@@ -17,11 +17,22 @@
     <connection>https://github.com/torquebox/maven-tools.git</connection>
     <url>http://github.com/torquebox/maven-tools</url>
   </scm>
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>sonatype</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </pluginRepository>
+  </pluginRepositories>
   <repositories>
     <repository>
-      <id>rubygems</id>
-      <name>Rubygems Proxy</name>
-      <url>http://rubygems-proxy.torquebox.org/releases</url>
+      <id>mavengems</id>
+      <url>mavengem:https://rubygems.org</url>
       <layout>default</layout>
         <releases>
         <enabled>true</enabled>
@@ -34,7 +45,8 @@
   </repositories>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>2.0.1</jruby.plugins.version>
+    <jruby.plugins.version>3.0.0-SNAPSHOT</jruby.plugins.version>
+    <mavengem.plugins.version>2.0.0-SNAPSHOT</mavengem.plugins.version>
   </properties>
   <dependencies>
     <dependency>
@@ -61,7 +73,12 @@
   <build>
     <extensions>
       <extension>
-        <groupId>de.saumya.mojo</groupId>
+        <groupId>org.jruby.maven</groupId>
+        <artifactId>mavengem-wagon</artifactId>
+        <version>${mavengem.plugins.version}</version>
+      </extension>
+      <extension>
+        <groupId>org.jruby.maven</groupId>
         <artifactId>gem-extension</artifactId>
         <version>${jruby.plugins.version}</version>
       </extension>
@@ -69,7 +86,7 @@
     <directory>${basedir}/pkg</directory>
     <plugins>
       <plugin>
-        <groupId>de.saumya.mojo</groupId>
+        <groupId>org.jruby.maven</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
         <configuration>
@@ -77,7 +94,7 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>de.saumya.mojo</groupId>
+        <groupId>org.jruby.maven</groupId>
         <artifactId>minitest-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
         <executions>

@@ -30,14 +30,14 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>2.0.1</jruby.plugins.version>
-    <mavengem.wagon.version>1.0.3</mavengem.wagon.version>
+    <jruby.plugins.version>3.0.0-SNAPSHOT</jruby.plugins.version>
+    <mavengem.wagon.version>2.0.0-SNAPSHOT</mavengem.wagon.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>minitest</artifactId>
-      <version>[4.4.alhpa-SNAPSHOT,4.99999]</version>
+      <version>[5.3,5.99999]</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
@@ -47,26 +47,16 @@
       <id>mavengems</id>
       <url>mavengem:https://rubygems.org</url>
     </repository>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>rubygems-prereleases</id>
-      <url>http://rubygems-proxy.torquebox.org/prereleases</url>
-    </repository>
   </repositories>
   <build>
     <extensions>
       <extension>
-        <groupId>org.torquebox.mojo</groupId>
+        <groupId>org.jruby.maven</groupId>
         <artifactId>mavengem-wagon</artifactId>
         <version>${mavengem.wagon.version}</version>
       </extension>
       <extension>
-        <groupId>de.saumya.mojo</groupId>
+        <groupId>org.jruby.maven</groupId>
         <artifactId>gem-extension</artifactId>
         <version>${jruby.plugins.version}</version>
       </extension>
@@ -74,7 +64,7 @@
     <directory>${basedir}/pkg</directory>
     <plugins>
       <plugin>
-        <groupId>de.saumya.mojo</groupId>
+        <groupId>org.jruby.maven</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <version>${jruby.plugins.version}</version>
         <configuration>
