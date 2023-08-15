@@ -18,6 +18,14 @@ Contributing
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
+Building and releasing
+----------------------
+
+Specs can be run with `rake spec` but will also be run as part of maven test phase.
+
+Build the gem with mvn package, making sure that both lib/maven-tools/version.rb and pom.xml are updated to the new
+release version. The built gem will be in the pkg/ dir.
+
 meta-fu
 -------
 
