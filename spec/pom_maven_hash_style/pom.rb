@@ -227,7 +227,7 @@ project :name => 'my name', :url => 'example.com' do
     end
     
     plugin_management do
-      jruby_plugin( :gem, '3.0.0-SNAPSHOT', :scope => :compile,
+      jruby_plugin( :gem, '3.0.0', :scope => :compile,
                     :gems => {
                       'thread_safe' => '0.3.3',
                       'jdbc-mysql' => '5.1.30'

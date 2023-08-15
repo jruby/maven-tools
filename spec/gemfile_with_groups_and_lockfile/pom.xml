@@ -17,8 +17,8 @@
   <name>gemfile_with_groups_and_lockfile</name>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>3.0.0-SNAPSHOT</jruby.plugins.version>
-    <mavengem.wagon.version>2.0.0-SNAPSHOT</mavengem.wagon.version>
+    <jruby.plugins.version>3.0.0</jruby.plugins.version>
+    <mavengem.wagon.version>2.0.0</mavengem.wagon.version>
   </properties>
   <repositories>
     <repository>

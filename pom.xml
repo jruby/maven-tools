@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>rubygems</groupId>
   <artifactId>maven-tools</artifactId>
-  <version>1.1.6</version>
+  <version>1.2.1</version>
   <packaging>gem</packaging>
   <name>helpers for maven related tasks</name>
   <url>http://github.com/torquebox/maven-tools</url>
@@ -45,8 +45,8 @@
   </repositories>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>3.0.0-SNAPSHOT</jruby.plugins.version>
-    <mavengem.plugins.version>2.0.0-SNAPSHOT</mavengem.plugins.version>
+    <jruby.plugins.version>3.0.0</jruby.plugins.version>
+    <mavengem.plugins.version>2.0.0</mavengem.plugins.version>
   </properties>
   <dependencies>
     <dependency>
