@@ -139,7 +139,7 @@ module Maven
           options = name
           name = 'Gemfile'
         end
-        name = ::File.join( basedir, name ) unless ::File.exists?( name )
+        name = ::File.join( basedir, name ) unless ::File.exist?( name )
         if @context == :project
           build do
             extension! 'org.jruby.maven:mavengem-wagon', '${mavengem.wagon.version}'
@@ -149,7 +149,7 @@ module Maven
         @inside_gemfile = true
         # the eval might need those options for gemspec declaration
         lockfile = ::File.expand_path( name + '.lock' )
-        if File.exists? lockfile
+        if File.exist? lockfile
           pr = profile :gemfile do
             activation do
               file( :missing => name.sub(/#{basedir}./, '') + '.lock' )
@@ -304,7 +304,7 @@ module Maven
         end
         # TODO rename "no_rubygems_repo" to "no_jar_support"
         if  options[ :no_rubygems_repo ] != true && jar && ( source ||
-                    ::File.exists?( ::File.join( basedir, 'src', 'main', 'java' ) ) )
+                    ::File.exist?( ::File.join( basedir, 'src', 'main', 'java' ) ) )
           unless spec.nil? || spec.platform.to_s.match( /java|jruby/ )
             warn "gem is not a java platform gem but has a jar and source"
           end
@@ -361,7 +361,7 @@ module Maven
           warn "DEPRECATED use filename instead"
           file = jfile.file
         end
-        file = ::File.join( basedir, file ) unless ::File.exists?( file )
+        file = ::File.join( basedir, file ) unless ::File.exist?( file )
         dsl = Maven::Tools::DSL::Jarfile.new( @current, file, options[ :skip_lock ] )
 
         # TODO this setup should be part of DSL::Jarfile

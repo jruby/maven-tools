@@ -40,7 +40,7 @@ module Maven
       end
 
       def exists?
-        ::File.exists?(@file)
+        ::File.exist?(@file)
       end
 
       def mtime_lock
@@ -48,7 +48,7 @@ module Maven
       end
 
       def exists_lock?
-        ::File.exists?(@lockfile)
+        ::File.exist?(@lockfile)
       end
 
       def load_lockfile
@@ -83,7 +83,7 @@ module Maven
 
         def eval_file( file )
           warn "#{self.class} is deprecated"
-          if ::File.exists?( file )
+          if ::File.exist?( file )
             eval( ::File.read( file ), nil, file )
             self
           end
@@ -178,7 +178,7 @@ module Maven
 
       def populate_unlocked( container = nil, &block )
         warn 'DEPRECATED use Maven::Tools::DSL::Jarfile instead'
-        if ::File.exists?(@file)
+        if ::File.exist?(@file)
           dsl = Maven::Tools::DSL::Jarfile.new( nil, @file )
 
           if block

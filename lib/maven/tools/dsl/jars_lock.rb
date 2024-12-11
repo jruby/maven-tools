@@ -25,7 +25,7 @@ module Maven
  
         def initialize( parent, file = 'Jars.lock' )
           file = File.join( parent.basedir, file )
-          if File.exists?(file)
+          if File.exist?(file)
             parent.profile File.basename(file) do
               parent.activation do
                 parent.file( :exists => File.basename(file) )

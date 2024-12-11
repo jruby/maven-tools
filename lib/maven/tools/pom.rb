@@ -95,7 +95,7 @@ module Maven
       end
 
       def to_model( file )
-        if ::File.exists?( file )
+        if ::File.exist?( file )
           case file
           when /pom.rb/
             eval_pom( "tesla do\n#{ ::File.read( file ) }\nend", file )

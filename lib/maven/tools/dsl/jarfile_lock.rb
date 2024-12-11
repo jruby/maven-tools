@@ -27,7 +27,7 @@ module Maven
         
         def initialize( jarfile )
           @file = File.expand_path( jarfile + ".lock" ) if jarfile
-          if @file && File.exists?( @file )
+          if @file && File.exist?( @file )
             lock = YAML.load( File.read( @file ) )
             case lock
             when Hash

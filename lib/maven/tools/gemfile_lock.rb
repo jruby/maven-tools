@@ -40,7 +40,7 @@ module Maven
         current = nil
         bundler = false
         f = file.is_a?(File) ? file.path: file
-        if File.exists? f
+        if File.exist? f
           File.readlines(f).each do |line|
             if line =~ /^BUNDLED WITH/
               bundler = true

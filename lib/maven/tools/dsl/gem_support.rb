@@ -71,7 +71,7 @@ module Maven
           # TODO rename "no_rubygems_repo" to "no_jar_support"
           if(  options[ :no_rubygems_repo ] != true && 
                jar &&
-               ( source || File.exists?( File.join( project.basedir, 
+               ( source || File.exist?( File.join( project.basedir, 
                                                     'src/main/java' ) ) ) )
             
             unless spec.nil? || spec.platform.to_s.match( /java|jruby/ )
