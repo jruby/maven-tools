@@ -35,8 +35,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ./mvnw -B initialize
+          ./mvnw -ntp -B initialize
           bundle install --jobs=3 --retry=3
 
       - name: Run tests
-        run: ./mvnw -B test
+        run: ./mvnw -ntp -B test
