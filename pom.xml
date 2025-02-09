@@ -5,7 +5,7 @@
   <version>1.2.2</version>
   <packaging>gem</packaging>
   <name>helpers for maven related tasks</name>
-  <url>http://github.com/torquebox/maven-tools</url>
+  <url>http://github.com/jruby/maven-tools</url>
   <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
   <developers>
     <developer>
@@ -14,8 +14,8 @@
     </developer>
   </developers>
   <scm>
-    <connection>https://github.com/torquebox/maven-tools.git</connection>
-    <url>http://github.com/torquebox/maven-tools</url>
+    <connection>https://github.com/jruby/maven-tools.git</connection>
+    <url>http://github.com/jruby/maven-tools</url>
   </scm>
   <pluginRepositories>
     <pluginRepository>
