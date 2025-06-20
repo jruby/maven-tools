@@ -47,7 +47,6 @@ module Maven
             @parent.repository( 'mavengems',
                                 'mavengem:https://rubygems.org' )
           end
-          @parent.needs_torquebox = true
             
           setup_jruby_plugins_version( project )
           

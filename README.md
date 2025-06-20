@@ -1,8 +1,7 @@
 maven tools 
 ===========
 
-* [![Build Status](https://github.com/torquebox/maven-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/torquebox/maven-tools/actions/workflows/ci.yml)
-* [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/torquebox/maven-tools)
+* [![Build Status](https://github.com/jruby/maven-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/jruby/maven-tools/actions/workflows/ci.yml)
 
 Note on Ruby-1.8
 ----------------

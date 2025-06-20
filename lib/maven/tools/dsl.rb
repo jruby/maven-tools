@@ -18,16 +18,6 @@ module Maven
         @model.version = '0.0.0'
         @context = :project
         nested_block( :project, @model, block ) if block
-        if @needs_torquebox
-          if ! @model.repositories.detect { |r| r.id == 'rubygems-prereleases' }  && @model.dependencies.detect { |d| d.group_id == 'rubygems' && d.version.match( /-SNAPSHOT/ ) }
-            
-            @current = @model
-            snapshot_repository(  'rubygems-prereleases',
-                                  'http://rubygems-proxy.torquebox.org/prereleases' )
-            @current = nil
-          end
-          @needs_torquebox = nil
-        end
         result = @model
         @context = nil
         @model = nil
@@ -55,7 +45,6 @@ module Maven
 
       # TODO remove me
       def needs_torquebox= t
-        @needs_torquebox = t
       end
       # TODO remove me
       def current
@@ -280,7 +269,6 @@ module Maven
             
             repository( 'mavengems', 'mavengem:https://rubygems.org' )
           end
-          @needs_torquebox = true
 
           setup_jruby_plugins_version
         end
