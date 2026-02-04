@@ -267,7 +267,7 @@ files:
 - spec/gemspec_with_extras/bouncy-castle-java.gemspec
 - spec/gemspec_with_source_and_no_jar/bouncy-castle-java.gemspec
 - spec/gemfile_with_extras/bouncy-castle-java.gemspec
-homepage: http://github.com/torquebox/maven-tools
+homepage: https://github.com/jruby/maven-tools
 licenses:
 - MIT
 metadata: {}

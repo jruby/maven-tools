@@ -55,10 +55,10 @@ project :name => 'my name', :url => 'example.com' do
 
   modules 'part1', 'part2'
   
-  scm( :connection => 'scm:git:git://github.com/torquebox/maven-tools.git',
-       :developer_connection => 'scm:git:ssh://git@github.com/torquebox/maven-tools.git',
+  scm( :connection => 'scm:git:git://github.com/jruby/maven-tools.git',
+       :developer_connection => 'scm:git:ssh://git@github.com/jruby/maven-tools.git',
        :tag => 'first',
-       :url => 'http://github.com/torquebox/maven-tools' )
+       :url => 'https://github.com/jruby/maven-tools' )
   issue_management( :system => 'jira',
                     :url => 'https://issues.sonatype.org/' )
   ci_management( :system => 'travis',

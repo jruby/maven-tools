@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
 
   s.summary = 'helpers for maven related tasks'
   s.description = 'adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc'
-  s.homepage = 'http://github.com/torquebox/maven-tools'
+  s.homepage = 'https://github.com/jruby/maven-tools'
 
   s.authors = ['Christian Meier']
   s.email = ['m.kristian@web.de']

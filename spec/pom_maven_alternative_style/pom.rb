@@ -51,9 +51,9 @@ project 'my name', 'example.com' do
 
   modules 'part1', 'part2'
 
-  scm( 'scm:git:git://github.com/torquebox/maven-tools.git',
-       'scm:git:ssh://git@github.com/torquebox/maven-tools.git',
-       'http://github.com/torquebox/maven-tools',
+  scm( 'scm:git:git://github.com/jruby/maven-tools.git',
+       'scm:git:ssh://git@github.com/jruby/maven-tools.git',
+       'https://github.com/jruby/maven-tools',
        :tag => 'first' )
   issue_management( 'https://issues.sonatype.org/', 
                     :system => 'jira' )

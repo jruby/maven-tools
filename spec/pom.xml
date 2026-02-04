@@ -91,10 +91,10 @@
     <module>part2</module>
   </modules>
   <scm>
-    <connection>scm:git:git://github.com/torquebox/maven-tools.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/torquebox/maven-tools.git</developerConnection>
+    <connection>scm:git:git://github.com/jruby/maven-tools.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jruby/maven-tools.git</developerConnection>
     <tag>first</tag>
-    <url>http://github.com/torquebox/maven-tools</url>
+    <url>https://github.com/jruby/maven-tools</url>
   </scm>
   <issueManagement>
     <system>jira</system>
