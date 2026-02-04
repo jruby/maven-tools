@@ -32,9 +32,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'bigdecimal' # virtus is EOL, but depends on axiom-types which has a bigdecimal dependency
   s.add_runtime_dependency 'ostruct' # virtus is EOL, but depends on ostruct usage
 
-# get them out from here until jruby-maven-plugin installs test gems somewhere else then runtime gems
-
-  s.add_development_dependency 'rake', '~> 10.0'
+  s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'minitest', '~> 5.3'
 end
 

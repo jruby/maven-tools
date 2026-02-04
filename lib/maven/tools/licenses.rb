@@ -1,77 +1,121 @@
-require 'ostruct'
 module Maven
   module Tools
+    SpdxLicenseMeta = Struct.new(:short, :name, :url, keyword_init: true)
     LICENSES = {}
-    LICENSES[ "afl-3.0" ] = OpenStruct.new :short => "AFL-3.0", :name => "Academic Free License 3.0", :url => "http://opensource.org/licenses/AFL-3.0"
-    LICENSES[ "agpl-3.0" ] = OpenStruct.new :short => "AGPL-3.0", :name => "GNU Affero General Public License 3.0", :url => "http://opensource.org/licenses/AGPL-3.0"
-    LICENSES[ "apl-1.0" ] = OpenStruct.new :short => "APL-1.0", :name => "Adaptive Public License", :url => "http://opensource.org/licenses/APL-1.0"
-    LICENSES[ "apache-2.0" ] = OpenStruct.new :short => "Apache-2.0", :name => "Apache License 2.0", :url => "http://opensource.org/licenses/Apache-2.0"
-    LICENSES[ "apsl-2.0" ] = OpenStruct.new :short => "APSL-2.0", :name => "Apple Public Source License", :url => "http://opensource.org/licenses/APSL-2.0"
-    LICENSES[ "artistic-2.0" ] = OpenStruct.new :short => "Artistic-2.0", :name => "Artistic license 2.0", :url => "http://opensource.org/licenses/Artistic-2.0"
-    LICENSES[ "aal" ] = OpenStruct.new :short => "AAL", :name => "Attribution Assurance Licenses", :url => "http://opensource.org/licenses/AAL"
-    LICENSES[ "bsd-3-clause" ] = OpenStruct.new :short => "BSD-3-Clause", :name => "BSD 3-Clause \"New\" or \"Revised\" License", :url => "http://opensource.org/licenses/BSD-3-Clause"
-    LICENSES[ "bsd-2-clause" ] = OpenStruct.new :short => "BSD-2-Clause", :name => "BSD 2-Clause \"Simplified\" or \"FreeBSD\" License", :url => "http://opensource.org/licenses/BSD-2-Clause"
-    LICENSES[ "bsl-1.0" ] = OpenStruct.new :short => "BSL-1.0", :name => "Boost Software License", :url => "http://opensource.org/licenses/BSL-1.0"
-    LICENSES[ "cecill-2.1" ] = OpenStruct.new :short => "CECILL-2.1", :name => "CeCILL License 2.1", :url => "http://opensource.org/licenses/CECILL-2.1"
-    LICENSES[ "catosl-1.1" ] = OpenStruct.new :short => "CATOSL-1.1", :name => "Computer Associates Trusted Open Source License 1.1", :url => "http://opensource.org/licenses/CATOSL-1.1"
-    LICENSES[ "cddl-1.0" ] = OpenStruct.new :short => "CDDL-1.0", :name => "Common Development and Distribution License 1.0", :url => "http://opensource.org/licenses/CDDL-1.0"
-    LICENSES[ "cpal-1.0" ] = OpenStruct.new :short => "CPAL-1.0", :name => "Common Public Attribution License 1.0", :url => "http://opensource.org/licenses/CPAL-1.0"
-    LICENSES[ "cua-opl-1.0" ] = OpenStruct.new :short => "CUA-OPL-1.0", :name => "CUA Office Public License Version 1.0", :url => "http://opensource.org/licenses/CUA-OPL-1.0"
-    LICENSES[ "eudatagrid" ] = OpenStruct.new :short => "EUDatagrid", :name => "EU DataGrid Software License", :url => "http://opensource.org/licenses/EUDatagrid"
-    LICENSES[ "epl-1.0" ] = OpenStruct.new :short => "EPL-1.0", :name => "Eclipse Public License 1.0", :url => "http://opensource.org/licenses/EPL-1.0"
-    LICENSES[ "ecl-2.0" ] = OpenStruct.new :short => "ECL-2.0", :name => "Educational Community License, Version 2.0", :url => "http://opensource.org/licenses/ECL-2.0"
-    LICENSES[ "efl-2.0" ] = OpenStruct.new :short => "EFL-2.0", :name => "Eiffel Forum License V2.0", :url => "http://opensource.org/licenses/EFL-2.0"
-    LICENSES[ "entessa" ] = OpenStruct.new :short => "Entessa", :name => "Entessa Public License", :url => "http://opensource.org/licenses/Entessa"
-    LICENSES[ "eupl-1.1" ] = OpenStruct.new :short => "EUPL-1.1", :name => "European Union Public License, Version 1.1", :url => "http://opensource.org/licenses/EUPL-1.1"
-    LICENSES[ "fair" ] = OpenStruct.new :short => "Fair", :name => "Fair License", :url => "http://opensource.org/licenses/Fair"
-    LICENSES[ "frameworx-1.0" ] = OpenStruct.new :short => "Frameworx-1.0", :name => "Frameworx License", :url => "http://opensource.org/licenses/Frameworx-1.0"
-    LICENSES[ "agpl-3.0" ] = OpenStruct.new :short => "AGPL-3.0", :name => "GNU Affero General Public License v3", :url => "http://opensource.org/licenses/AGPL-3.0"
-    LICENSES[ "gpl-2.0" ] = OpenStruct.new :short => "GPL-2.0", :name => "GNU General Public License version 2.0", :url => "http://opensource.org/licenses/GPL-2.0"
-    LICENSES[ "gpl-3.0" ] = OpenStruct.new :short => "GPL-3.0", :name => "GNU General Public License version 3.0", :url => "http://opensource.org/licenses/GPL-3.0"
-    LICENSES[ "lgpl-2.1" ] = OpenStruct.new :short => "LGPL-2.1", :name => "GNU Library or \"Lesser\" General Public License version 2.1", :url => "http://opensource.org/licenses/LGPL-2.1"
-    LICENSES[ "lgpl-3.0" ] = OpenStruct.new :short => "LGPL-3.0", :name => "GNU Library or \"Lesser\" General Public License version 3.0", :url => "http://opensource.org/licenses/LGPL-3.0"
-    LICENSES[ "hpnd" ] = OpenStruct.new :short => "HPND", :name => "Historical Permission Notice and Disclaimer", :url => "http://opensource.org/licenses/HPND"
-    LICENSES[ "ipl-1.0" ] = OpenStruct.new :short => "IPL-1.0", :name => "IBM Public License 1.0", :url => "http://opensource.org/licenses/IPL-1.0"
-    LICENSES[ "ipa" ] = OpenStruct.new :short => "IPA", :name => "IPA Font License", :url => "http://opensource.org/licenses/IPA"
-    LICENSES[ "isc" ] = OpenStruct.new :short => "ISC", :name => "ISC License", :url => "http://opensource.org/licenses/ISC"
-    LICENSES[ "lppl-1.3c" ] = OpenStruct.new :short => "LPPL-1.3c", :name => "LaTeX Project Public License 1.3c", :url => "http://opensource.org/licenses/LPPL-1.3c"
-    LICENSES[ "lpl-1.02" ] = OpenStruct.new :short => "LPL-1.02", :name => "Lucent Public License Version 1.02", :url => "http://opensource.org/licenses/LPL-1.02"
-    LICENSES[ "miros" ] = OpenStruct.new :short => "MirOS", :name => "MirOS Licence", :url => "http://opensource.org/licenses/MirOS"
-    LICENSES[ "ms-pl" ] = OpenStruct.new :short => "MS-PL", :name => "Microsoft Public License", :url => "http://opensource.org/licenses/MS-PL"
-    LICENSES[ "ms-rl" ] = OpenStruct.new :short => "MS-RL", :name => "Microsoft Reciprocal License", :url => "http://opensource.org/licenses/MS-RL"
-    LICENSES[ "mit" ] = OpenStruct.new :short => "MIT", :name => "MIT license", :url => "http://opensource.org/licenses/MIT"
-    LICENSES[ "motosoto" ] = OpenStruct.new :short => "Motosoto", :name => "Motosoto License", :url => "http://opensource.org/licenses/Motosoto"
-    LICENSES[ "mpl-2.0" ] = OpenStruct.new :short => "MPL-2.0", :name => "Mozilla Public License 2.0", :url => "http://opensource.org/licenses/MPL-2.0"
-    LICENSES[ "multics" ] = OpenStruct.new :short => "Multics", :name => "Multics License", :url => "http://opensource.org/licenses/Multics"
-    LICENSES[ "nasa-1.3" ] = OpenStruct.new :short => "NASA-1.3", :name => "NASA Open Source Agreement 1.3", :url => "http://opensource.org/licenses/NASA-1.3"
-    LICENSES[ "ntp" ] = OpenStruct.new :short => "NTP", :name => "NTP License", :url => "http://opensource.org/licenses/NTP"
-    LICENSES[ "naumen" ] = OpenStruct.new :short => "Naumen", :name => "Naumen Public License", :url => "http://opensource.org/licenses/Naumen"
-    LICENSES[ "ngpl" ] = OpenStruct.new :short => "NGPL", :name => "Nethack General Public License", :url => "http://opensource.org/licenses/NGPL"
-    LICENSES[ "nokia" ] = OpenStruct.new :short => "Nokia", :name => "Nokia Open Source License", :url => "http://opensource.org/licenses/Nokia"
-    LICENSES[ "nposl-3.0" ] = OpenStruct.new :short => "NPOSL-3.0", :name => "Non-Profit Open Software License 3.0", :url => "http://opensource.org/licenses/NPOSL-3.0"
-    LICENSES[ "oclc-2.0" ] = OpenStruct.new :short => "OCLC-2.0", :name => "OCLC Research Public License 2.0", :url => "http://opensource.org/licenses/OCLC-2.0"
-    LICENSES[ "ofl-1.1" ] = OpenStruct.new :short => "OFL-1.1", :name => "Open Font License 1.1", :url => "http://opensource.org/licenses/OFL-1.1"
-    LICENSES[ "ogtsl" ] = OpenStruct.new :short => "OGTSL", :name => "Open Group Test Suite License", :url => "http://opensource.org/licenses/OGTSL"
-    LICENSES[ "osl-3.0" ] = OpenStruct.new :short => "OSL-3.0", :name => "Open Software License 3.0", :url => "http://opensource.org/licenses/OSL-3.0"
-    LICENSES[ "php-3.0" ] = OpenStruct.new :short => "PHP-3.0", :name => "PHP License 3.0", :url => "http://opensource.org/licenses/PHP-3.0"
-    LICENSES[ "postgresql" ] = OpenStruct.new :short => "PostgreSQL", :name => "The PostgreSQL License", :url => "http://opensource.org/licenses/PostgreSQL"
-    LICENSES[ "python-2.0" ] = OpenStruct.new :short => "Python-2.0", :name => "Python License", :url => "http://opensource.org/licenses/Python-2.0"
-    LICENSES[ "cnri-python" ] = OpenStruct.new :short => "CNRI-Python", :name => "CNRI Python license", :url => "http://opensource.org/licenses/CNRI-Python"
-    LICENSES[ "qpl-1.0" ] = OpenStruct.new :short => "QPL-1.0", :name => "Q Public License", :url => "http://opensource.org/licenses/QPL-1.0"
-    LICENSES[ "rpsl-1.0" ] = OpenStruct.new :short => "RPSL-1.0", :name => "RealNetworks Public Source License V1.0", :url => "http://opensource.org/licenses/RPSL-1.0"
-    LICENSES[ "rpl-1.5" ] = OpenStruct.new :short => "RPL-1.5", :name => "Reciprocal Public License 1.5", :url => "http://opensource.org/licenses/RPL-1.5"
-    LICENSES[ "rscpl" ] = OpenStruct.new :short => "RSCPL", :name => "Ricoh Source Code Public License", :url => "http://opensource.org/licenses/RSCPL"
-    LICENSES[ "simpl-2.0" ] = OpenStruct.new :short => "SimPL-2.0", :name => "Simple Public License 2.0", :url => "http://opensource.org/licenses/SimPL-2.0"
-    LICENSES[ "sleepycat" ] = OpenStruct.new :short => "Sleepycat", :name => "Sleepycat License", :url => "http://opensource.org/licenses/Sleepycat"
-    LICENSES[ "spl-1.0" ] = OpenStruct.new :short => "SPL-1.0", :name => "Sun Public License 1.0", :url => "http://opensource.org/licenses/SPL-1.0"
-    LICENSES[ "watcom-1.0" ] = OpenStruct.new :short => "Watcom-1.0", :name => "Sybase Open Watcom Public License 1.0", :url => "http://opensource.org/licenses/Watcom-1.0"
-    LICENSES[ "ncsa" ] = OpenStruct.new :short => "NCSA", :name => "University of Illinois/NCSA Open Source License", :url => "http://opensource.org/licenses/NCSA"
-    LICENSES[ "vsl-1.0" ] = OpenStruct.new :short => "VSL-1.0", :name => "Vovida Software License v. 1.0", :url => "http://opensource.org/licenses/VSL-1.0"
-    LICENSES[ "w3c" ] = OpenStruct.new :short => "W3C", :name => "W3C License", :url => "http://opensource.org/licenses/W3C"
-    LICENSES[ "wxwindows" ] = OpenStruct.new :short => "WXwindows", :name => "wxWindows Library License", :url => "http://opensource.org/licenses/WXwindows"
-    LICENSES[ "xnet" ] = OpenStruct.new :short => "Xnet", :name => "X.Net License", :url => "http://opensource.org/licenses/Xnet"
-    LICENSES[ "zpl-2.0" ] = OpenStruct.new :short => "ZPL-2.0", :name => "Zope Public License 2.0", :url => "http://opensource.org/licenses/ZPL-2.0"
-    LICENSES[ "zlib" ] = OpenStruct.new :short => "Zlib", :name => "zlib/libpng license", :url => "http://opensource.org/licenses/Zlib"
+    LICENSES[ "0bsd" ] = SpdxLicenseMeta.new( short: "0BSD", name: "Zero-Clause BSD", url: "https://opensource.org/license/0bsd" ).freeze
+    LICENSES[ "aal" ] = SpdxLicenseMeta.new( short: "AAL", name: "Attribution Assurance License", url: "https://opensource.org/license/attribution-php" ).freeze
+    LICENSES[ "afl-3.0" ] = SpdxLicenseMeta.new( short: "AFL-3.0", name: "Academic Free License v. 3.0", url: "https://opensource.org/license/afl-3-0-php" ).freeze
+    LICENSES[ "agpl-3.0-only" ] = SpdxLicenseMeta.new( short: "AGPL-3.0-only", name: "GNU Affero General Public License version 3", url: "https://opensource.org/license/agpl-v3" ).freeze
+    LICENSES[ "apache-1.1" ] = SpdxLicenseMeta.new( short: "Apache-1.1", name: "Apache Software License, version 1.1", url: "https://opensource.org/license/apache-1-1" ).freeze
+    LICENSES[ "apache-2.0" ] = SpdxLicenseMeta.new( short: "Apache-2.0", name: "Apache License, Version 2.0", url: "https://opensource.org/license/apache-2-0" ).freeze
+    LICENSES[ "apl-1.0" ] = SpdxLicenseMeta.new( short: "APL-1.0", name: "Adaptive Public License 1.0", url: "https://opensource.org/license/apl1-0-php" ).freeze
+    LICENSES[ "apsl-2.0" ] = SpdxLicenseMeta.new( short: "APSL-2.0", name: "Apple Public Source License 2.0", url: "https://opensource.org/license/apsl-2-0" ).freeze
+    LICENSES[ "artistic-1.0" ] = SpdxLicenseMeta.new( short: "Artistic-1.0", name: "Artistic License 1.0", url: "https://opensource.org/license/artistic-1-0" ).freeze
+    LICENSES[ "artistic-1.0-perl" ] = SpdxLicenseMeta.new( short: "Artistic-1.0-Perl", name: "Artistic License (Perl) 1.0", url: "https://opensource.org/license/artistic-perl-1-0-2" ).freeze
+    LICENSES[ "artistic-2.0" ] = SpdxLicenseMeta.new( short: "Artistic-2.0", name: "Artistic License 2.0", url: "https://opensource.org/license/artistic-2-0" ).freeze
+    LICENSES[ "blueoak-1.0.0" ] = SpdxLicenseMeta.new( short: "BlueOak-1.0.0", name: "Blue Oak Model License", url: "https://opensource.org/license/blue-oak-model-license" ).freeze
+    LICENSES[ "bsd-1-clause" ] = SpdxLicenseMeta.new( short: "BSD-1-Clause", name: "1-clause BSD License", url: "https://opensource.org/license/bsd-1-clause" ).freeze
+    LICENSES[ "bsd-2-clause" ] = SpdxLicenseMeta.new( short: "BSD-2-Clause", name: "The 2-Clause BSD License", url: "https://opensource.org/license/bsd-2-clause" ).freeze
+    LICENSES[ "bsd-2-clause-patent" ] = SpdxLicenseMeta.new( short: "BSD-2-Clause-Patent", name: "BSD+Patent", url: "https://opensource.org/license/bsdpluspatent" ).freeze
+    LICENSES[ "bsd-3-clause" ] = SpdxLicenseMeta.new( short: "BSD-3-Clause", name: "The 3-Clause BSD License", url: "https://opensource.org/license/bsd-3-clause" ).freeze
+    LICENSES[ "bsd-3-clause-lbnl" ] = SpdxLicenseMeta.new( short: "BSD-3-Clause-LBNL", name: "Lawrence Berkeley National Labs BSD Variant License", url: "https://opensource.org/license/bsd-3-clause-lbnl" ).freeze
+    LICENSES[ "bsd-3-clause-open-mpi" ] = SpdxLicenseMeta.new( short: "BSD-3-Clause-Open-MPI", name: "BSD-3-Clause-Open-MPI", url: "https://opensource.org/license/bsd-3-clause-open-mpi" ).freeze
+    LICENSES[ "bsl-1.0" ] = SpdxLicenseMeta.new( short: "BSL-1.0", name: "Boost Software License 1.0", url: "https://opensource.org/license/bsl-1-0" ).freeze
+    LICENSES[ "cal-1.0" ] = SpdxLicenseMeta.new( short: "CAL-1.0", name: "Cryptographic Autonomy License", url: "https://opensource.org/license/cal-1-0" ).freeze
+    LICENSES[ "catosl-1.1" ] = SpdxLicenseMeta.new( short: "CATOSL-1.1", name: "Computer Associates Trusted Open Source License 1.1", url: "https://opensource.org/license/ca-tosl1-1-php" ).freeze
+    LICENSES[ "cddl-1.0" ] = SpdxLicenseMeta.new( short: "CDDL-1.0", name: "Common Development and Distribution License 1.0", url: "https://opensource.org/license/cddl-1-0" ).freeze
+    LICENSES[ "cddl-1.1" ] = SpdxLicenseMeta.new( short: "CDDL-1.1", name: "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL)", url: "https://opensource.org/license/cddl-1-1" ).freeze
+    LICENSES[ "cecill-2.1" ] = SpdxLicenseMeta.new( short: "CECILL-2.1", name: "Cea Cnrs Inria Logiciel Libre License, version 2.1", url: "https://opensource.org/license/cecill-2-1" ).freeze
+    LICENSES[ "cern-ohl-p-2.0" ] = SpdxLicenseMeta.new( short: "CERN-OHL-P-2.0", name: "CERN Open Hardware Licence Version 2 - Permissive", url: "https://opensource.org/license/cern-ohl-p" ).freeze
+    LICENSES[ "cern-ohl-s-2.0 " ] = SpdxLicenseMeta.new( short: "CERN-OHL-S-2.0 ", name: "CERN Open Hardware Licence Version 2 - Strongly Reciprocal", url: "https://opensource.org/license/cern-ohl-s" ).freeze
+    LICENSES[ "cern-ohl-w-2.0" ] = SpdxLicenseMeta.new( short: "CERN-OHL-W-2.0", name: "CERN Open Hardware Licence Version 2 - Weakly Reciprocal", url: "https://opensource.org/license/cern-ohl-w" ).freeze
+    LICENSES[ "cnri-python" ] = SpdxLicenseMeta.new( short: "CNRI-Python", name: "The CNRI portion of the multi-part Python License", url: "https://opensource.org/license/cnri-python" ).freeze
+    LICENSES[ "cpal-1.0" ] = SpdxLicenseMeta.new( short: "CPAL-1.0", name: "Common Public Attribution License Version 1.0", url: "https://opensource.org/license/cpal-1-0" ).freeze
+    LICENSES[ "cpl-1.0" ] = SpdxLicenseMeta.new( short: "CPL-1.0", name: "Common Public License Version 1.0", url: "https://opensource.org/license/cpl1-0-txt" ).freeze
+    LICENSES[ "cua-opl-1.0" ] = SpdxLicenseMeta.new( short: "CUA-OPL-1.0", name: "CUA Office Public License", url: "https://opensource.org/license/cuaoffice-php" ).freeze
+    LICENSES[ "ecl-1.0" ] = SpdxLicenseMeta.new( short: "ECL-1.0", name: "Educational Community License, Version 1.0", url: "https://opensource.org/license/ecl-1-0" ).freeze
+    LICENSES[ "ecl-2.0" ] = SpdxLicenseMeta.new( short: "ECL-2.0", name: "Educational Community License, Version 2.0", url: "https://opensource.org/license/ecl-2-0" ).freeze
+    LICENSES[ "ecos-2.0" ] = SpdxLicenseMeta.new( short: "eCos-2.0", name: "eCos License version 2.0", url: "https://opensource.org/license/ecos-2-0" ).freeze
+    LICENSES[ "efl-1.0" ] = SpdxLicenseMeta.new( short: "EFL-1.0", name: "Eiffel Forum License, version 1", url: "https://opensource.org/license/efl-1-0" ).freeze
+    LICENSES[ "efl-2.0" ] = SpdxLicenseMeta.new( short: "EFL-2.0", name: "Eiffel Forum License, Version 2", url: "https://opensource.org/license/ver2_eiffel-php" ).freeze
+    LICENSES[ "entessa" ] = SpdxLicenseMeta.new( short: "Entessa", name: "Entessa Public License Version. 1.0", url: "https://opensource.org/license/entessa" ).freeze
+    LICENSES[ "epl-1.0" ] = SpdxLicenseMeta.new( short: "EPL-1.0", name: "Eclipse Public License -v 1.0", url: "https://opensource.org/license/epl-1-0" ).freeze
+    LICENSES[ "epl-2.0" ] = SpdxLicenseMeta.new( short: "EPL-2.0", name: "Eclipse Public License version 2.0", url: "https://opensource.org/license/epl-2-0" ).freeze
+    LICENSES[ "eudatagrid" ] = SpdxLicenseMeta.new( short: "EUDatagrid", name: "EU DataGrid Software License", url: "https://opensource.org/license/eudatagrid-php" ).freeze
+    LICENSES[ "eupl-1.1" ] = SpdxLicenseMeta.new( short: "EUPL-1.1", name: "The European Union Public License, version 1.1", url: "https://opensource.org/license/eupl-1-1" ).freeze
+    LICENSES[ "eupl-1.2" ] = SpdxLicenseMeta.new( short: "EUPL-1.2", name: "European Union Public Licence, version 1.2", url: "https://opensource.org/license/eupl-1-2" ).freeze
+    LICENSES[ "fair" ] = SpdxLicenseMeta.new( short: "Fair", name: "Fair License", url: "https://opensource.org/license/fair" ).freeze
+    LICENSES[ "frameworx-1.0" ] = SpdxLicenseMeta.new( short: "Frameworx-1.0", name: "Frameworx License 1.0", url: "https://opensource.org/license/frameworx-php" ).freeze
+    LICENSES[ "gpl-2.0" ] = SpdxLicenseMeta.new( short: "GPL-2.0", name: "GNU General Public License version 2", url: "https://opensource.org/license/gpl-2-0" ).freeze
+    LICENSES[ "gpl-3.0-only" ] = SpdxLicenseMeta.new( short: "GPL-3.0-only", name: "GNU General Public License version 3", url: "https://opensource.org/license/gpl-3-0" ).freeze
+    LICENSES[ "hpnd" ] = SpdxLicenseMeta.new( short: "HPND", name: "Historical Permission Notice and Disclaimer", url: "https://opensource.org/license/historical-php" ).freeze
+    LICENSES[ "icu" ] = SpdxLicenseMeta.new( short: "ICU", name: "ICU License", url: "https://opensource.org/license/icu-license" ).freeze
+    LICENSES[ "intel" ] = SpdxLicenseMeta.new( short: "Intel", name: "Intel Open Source License", url: "https://opensource.org/license/intel" ).freeze
+    LICENSES[ "ipa" ] = SpdxLicenseMeta.new( short: "IPA", name: "IPA Font License", url: "https://opensource.org/license/ipafont-html" ).freeze
+    LICENSES[ "ipl-1.0" ] = SpdxLicenseMeta.new( short: "IPL-1.0", name: "IBM Public License Version 1.0", url: "https://opensource.org/license/ibmpl-php" ).freeze
+    LICENSES[ "isc" ] = SpdxLicenseMeta.new( short: "ISC", name: "ISC License", url: "https://opensource.org/license/isc-license-txt" ).freeze
+    LICENSES[ "jam" ] = SpdxLicenseMeta.new( short: "Jam", name: "JAM License", url: "https://opensource.org/license/jam" ).freeze
+    LICENSES[ "lgpl-2.0-only" ] = SpdxLicenseMeta.new( short: "LGPL-2.0-only", name: "GNU Library General Public License version 2", url: "https://opensource.org/license/lgpl-2-0" ).freeze
+    LICENSES[ "lgpl-2.1" ] = SpdxLicenseMeta.new( short: "LGPL-2.1", name: "GNU Lesser General Public License version 2.1", url: "https://opensource.org/license/lgpl-2-1" ).freeze
+    LICENSES[ "lgpl-3.0-only" ] = SpdxLicenseMeta.new( short: "LGPL-3.0-only", name: "GNU Lesser General Public License version 3", url: "https://opensource.org/license/lgpl-3-0" ).freeze
+    LICENSES[ "liliq-p-1.1" ] = SpdxLicenseMeta.new( short: "LiLiQ-P-1.1", name: "Licence Libre du Québec – Permissive  version 1.1", url: "https://opensource.org/license/liliq-p-1-1" ).freeze
+    LICENSES[ "liliq-r-1.1" ] = SpdxLicenseMeta.new( short: "LiLiQ-R-1.1", name: "Licence Libre du Québec – Réciprocité version 1.1", url: "https://opensource.org/license/liliq-r-1-1" ).freeze
+    LICENSES[ "liliq-rplus-1.1" ] = SpdxLicenseMeta.new( short: "LiLiQ-Rplus-1.1", name: "Licence Libre du Québec – Réciprocité forte version 1.1", url: "https://opensource.org/license/liliq-rplus-1-1" ).freeze
+    LICENSES[ "lpl-1.0" ] = SpdxLicenseMeta.new( short: "LPL-1.0", name: "Lucent Public License, Plan 9, version 1.0", url: "https://opensource.org/license/lpl-1-0" ).freeze
+    LICENSES[ "lpl-1.02" ] = SpdxLicenseMeta.new( short: "LPL-1.02", name: "Lucent Public License Version 1.02", url: "https://opensource.org/license/lucent1-02-php" ).freeze
+    LICENSES[ "lppl-1.3c" ] = SpdxLicenseMeta.new( short: "LPPL-1.3c", name: "LaTeX Project Public License, Version 1.3c", url: "https://opensource.org/license/lppl" ).freeze
+    LICENSES[ "miros" ] = SpdxLicenseMeta.new( short: "MirOS", name: "MirOS Licence", url: "https://opensource.org/license/miros-html" ).freeze
+    LICENSES[ "mit" ] = SpdxLicenseMeta.new( short: "MIT", name: "The MIT License", url: "https://opensource.org/license/mit" ).freeze
+    LICENSES[ "mit-0" ] = SpdxLicenseMeta.new( short: "MIT-0", name: "MIT No Attribution License", url: "https://opensource.org/license/mit-0" ).freeze
+    LICENSES[ "mit-cmu" ] = SpdxLicenseMeta.new( short: "MIT-CMU", name: "CMU License", url: "https://opensource.org/license/cmu-license" ).freeze
+    LICENSES[ "motosoto" ] = SpdxLicenseMeta.new( short: "Motosoto", name: "Motosoto Open Source License", url: "https://opensource.org/license/motosoto" ).freeze
+    LICENSES[ "mpl-1.0" ] = SpdxLicenseMeta.new( short: "MPL-1.0", name: "Mozilla Public License, version 1.0", url: "https://opensource.org/license/mpl-1-0" ).freeze
+    LICENSES[ "mpl-1.1" ] = SpdxLicenseMeta.new( short: "MPL-1.1", name: "Mozilla Public License 1.1", url: "https://opensource.org/license/mpl-1-1" ).freeze
+    LICENSES[ "mpl-2.0" ] = SpdxLicenseMeta.new( short: "MPL-2.0", name: "Mozilla Public License 2.0", url: "https://opensource.org/license/mpl-2-0" ).freeze
+    LICENSES[ "ms-pl" ] = SpdxLicenseMeta.new( short: "MS-PL", name: "Microsoft Public License", url: "https://opensource.org/license/ms-pl-html" ).freeze
+    LICENSES[ "ms-rl" ] = SpdxLicenseMeta.new( short: "MS-RL", name: "Microsoft Reciprocal License", url: "https://opensource.org/license/ms-rl-html" ).freeze
+    LICENSES[ "mulanpsl-2.0" ] = SpdxLicenseMeta.new( short: "MulanPSL-2.0", name: "Mulan Permissive Software License v2", url: "https://opensource.org/license/mulanpsl-2-0" ).freeze
+    LICENSES[ "multics" ] = SpdxLicenseMeta.new( short: "Multics", name: "Multics License", url: "https://opensource.org/license/multics-txt" ).freeze
+    LICENSES[ "nasa-1.3" ] = SpdxLicenseMeta.new( short: "NASA-1.3", name: "NASA Open Source Agreement v1.3", url: "https://opensource.org/license/nasa1-3-php" ).freeze
+    LICENSES[ "naumen" ] = SpdxLicenseMeta.new( short: "Naumen", name: "NAUMEN Public License", url: "https://opensource.org/license/naumen-php" ).freeze
+    LICENSES[ "ncsa" ] = SpdxLicenseMeta.new( short: "NCSA", name: "The University of Illinois/NCSA Open Source License", url: "https://opensource.org/license/uoi-ncsa-php" ).freeze
+    LICENSES[ "ngpl" ] = SpdxLicenseMeta.new( short: "NGPL", name: "The Nethack General Public License", url: "https://opensource.org/license/nethack" ).freeze
+    LICENSES[ "nokia" ] = SpdxLicenseMeta.new( short: "NOKIA", name: "Nokia Open Source License Version 1.0a", url: "https://opensource.org/license/nokia" ).freeze
+    LICENSES[ "nposl-3.0" ] = SpdxLicenseMeta.new( short: "NPOSL-3.0", name: "Non-Profit Open Software License version 3.0", url: "https://opensource.org/license/nposl-3-0" ).freeze
+    LICENSES[ "ntp" ] = SpdxLicenseMeta.new( short: "NTP", name: "NTP License", url: "https://opensource.org/license/ntp-license-php" ).freeze
+    LICENSES[ "ofl-1.1" ] = SpdxLicenseMeta.new( short: "OFL-1.1", name: "SIL OPEN FONT LICENSE", url: "https://opensource.org/license/ofl-1-1" ).freeze
+    LICENSES[ "ogtsl" ] = SpdxLicenseMeta.new( short: "OGTSL", name: "Open Group Test Suite License", url: "https://opensource.org/license/opengroup-php" ).freeze
+    LICENSES[ "oldap-2.8" ] = SpdxLicenseMeta.new( short: "OLDAP-2.8", name: "OpenLDAP Public License Version 2.8", url: "https://opensource.org/license/oldap-2-8" ).freeze
+    LICENSES[ "olfl-1.3" ] = SpdxLicenseMeta.new( short: "OLFL-1.3", name: "Open Logistics Foundation License v1.3", url: "https://opensource.org/license/olfl-1-3" ).freeze
+    LICENSES[ "oset-pl-2.1" ] = SpdxLicenseMeta.new( short: "OSET-PL-2.1", name: "OSET Public License version 2.1", url: "https://opensource.org/license/opl-2-1" ).freeze
+    LICENSES[ "osl-1.0" ] = SpdxLicenseMeta.new( short: "OSL-1.0", name: "Open Software License, version 1.0", url: "https://opensource.org/license/osl-1-0" ).freeze
+    LICENSES[ "osl-2.1" ] = SpdxLicenseMeta.new( short: "OSL-2.1", name: "Open Software License 2.1", url: "https://opensource.org/license/osl-2-1" ).freeze
+    LICENSES[ "osl-3.0" ] = SpdxLicenseMeta.new( short: "OSL-3.0", name: "The Open Software License 3.0", url: "https://opensource.org/license/osl-3-0-php" ).freeze
+    LICENSES[ "php-3.0" ] = SpdxLicenseMeta.new( short: "PHP-3.0", name: "PHP License 3.0", url: "https://opensource.org/license/php-3-0" ).freeze
+    LICENSES[ "php-3.01" ] = SpdxLicenseMeta.new( short: "PHP-3.01", name: "PHP License 3.01", url: "https://opensource.org/license/php-3-01" ).freeze
+    LICENSES[ "postgresql" ] = SpdxLicenseMeta.new( short: "PostgreSQL", name: "The PostgreSQL License", url: "https://opensource.org/license/postgresql" ).freeze
+    LICENSES[ "psf-2.0" ] = SpdxLicenseMeta.new( short: "PSF-2.0", name: "Python License, Version 2", url: "https://opensource.org/license/python-2-0" ).freeze
+    LICENSES[ "qpl-1.0" ] = SpdxLicenseMeta.new( short: "QPL-1.0", name: "The Q Public License Version", url: "https://opensource.org/license/qpl-1-0" ).freeze
+    LICENSES[ "rpl-1.1" ] = SpdxLicenseMeta.new( short: "RPL-1.1", name: "Reciprocal Public License, version 1.1", url: "https://opensource.org/license/rpl-1-1" ).freeze
+    LICENSES[ "rpl-1.5" ] = SpdxLicenseMeta.new( short: "RPL-1.5", name: "Reciprocal Public License 1.5", url: "https://opensource.org/license/rpl-1-5" ).freeze
+    LICENSES[ "rpsl-1.0" ] = SpdxLicenseMeta.new( short: "RPSL-1.0", name: "RealNetworks Public Source License Version 1.0", url: "https://opensource.org/license/real-php" ).freeze
+    LICENSES[ "rscpl" ] = SpdxLicenseMeta.new( short: "RSCPL", name: "The Ricoh Source Code Public License", url: "https://opensource.org/license/ricohpl-php" ).freeze
+    LICENSES[ "simpl-2.0" ] = SpdxLicenseMeta.new( short: "SimPL-2.0", name: "Simple Public License", url: "https://opensource.org/license/simpl-2-0-html" ).freeze
+    LICENSES[ "sissl" ] = SpdxLicenseMeta.new( short: "SISSL", name: "Sun Industry Standards Source License", url: "https://opensource.org/license/sissl" ).freeze
+    LICENSES[ "sleepycat" ] = SpdxLicenseMeta.new( short: "Sleepycat", name: "The Sleepycat License", url: "https://opensource.org/license/sleepycat-php" ).freeze
+    LICENSES[ "spl-1.0" ] = SpdxLicenseMeta.new( short: "SPL-1.0", name: "Sun Public License, Version 1.0", url: "https://opensource.org/license/sunpublic-php" ).freeze
+    LICENSES[ "ucl-1.0" ] = SpdxLicenseMeta.new( short: "UCL-1.0", name: "Upstream Compatibility License v1.0", url: "https://opensource.org/license/ucl-1-0" ).freeze
+    LICENSES[ "unicode-dfs-2015" ] = SpdxLicenseMeta.new( short: "Unicode-DFS-2015", name: "Unicode, Inc. License Agreement - Data Files and Software", url: "https://opensource.org/license/unicode-inc-license-agreement-data-files-and-software" ).freeze
+    LICENSES[ "unlicense" ] = SpdxLicenseMeta.new( short: "Unlicense", name: "The Unlicense", url: "https://opensource.org/license/unlicense" ).freeze
+    LICENSES[ "upl-1.0" ] = SpdxLicenseMeta.new( short: "UPL-1.0", name: "The Universal Permissive License Version 1.0", url: "https://opensource.org/license/upl" ).freeze
+    LICENSES[ "vsl-0.1" ] = SpdxLicenseMeta.new( short: "VSL-0.1", name: "The Vovida Software License v. 1.0", url: "https://opensource.org/license/vovidapl-php" ).freeze
+    LICENSES[ "w3c-20150513" ] = SpdxLicenseMeta.new( short: "W3C-20150513", name: "The W3C® Software and Document license", url: "https://opensource.org/license/w3c" ).freeze
+    LICENSES[ "watcom-1.0" ] = SpdxLicenseMeta.new( short: "Watcom-1.0", name: "The Sybase Open Source Licence", url: "https://opensource.org/license/sybase-php" ).freeze
+    LICENSES[ "wxwindows" ] = SpdxLicenseMeta.new( short: "wxWindows", name: "The wxWindows Library Licence", url: "https://opensource.org/license/wxwindows-php" ).freeze
+    LICENSES[ "xnet" ] = SpdxLicenseMeta.new( short: "Xnet", name: "The X.Net, Inc. License", url: "https://opensource.org/license/xnet" ).freeze
+    LICENSES[ "zlib" ] = SpdxLicenseMeta.new( short: "Zlib", name: "The zlib/libpng License", url: "https://opensource.org/license/zlib" ).freeze
+    LICENSES[ "zpl-2.0" ] = SpdxLicenseMeta.new( short: "ZPL-2.0", name: "Zope Public License 2.0", url: "https://opensource.org/license/zpl-2-0" ).freeze
+    LICENSES[ "zpl-2.1" ] = SpdxLicenseMeta.new( short: "ZPL-2.1", name: "Zope Public License 2.1", url: "https://opensource.org/license/zpl-2-1" ).freeze
     LICENSES.freeze
   end
 end

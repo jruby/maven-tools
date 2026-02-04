@@ -58,14 +58,14 @@ dependencies:
     requirements:
     - - ~>
       - !ruby/object:Gem::Version
-        version: '10.0'
+        version: '13.0'
   type: :development
   prerelease: false
   version_requirements: !ruby/object:Gem::Requirement
     requirements:
     - - ~>
       - !ruby/object:Gem::Version
-        version: '10.0'
+        version: '13.0'
 - !ruby/object:Gem::Dependency
   name: minitest
   requirement: !ruby/object:Gem::Requirement

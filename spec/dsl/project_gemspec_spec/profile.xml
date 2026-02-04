@@ -10,8 +10,8 @@
   <licenses>
     <license>
       <name>MIT</name>
-      <url>http://opensource.org/licenses/MIT</url>
-      <comments>MIT license</comments>
+      <url>https://opensource.org/license/mit</url>
+      <comments>The MIT License</comments>
     </license>
   </licenses>
   <developers>
@@ -85,7 +85,7 @@
         <dependency>
           <groupId>rubygems</groupId>
           <artifactId>rake</artifactId>
-          <version>[10.0,10.99999]</version>
+          <version>[13.0,13.99999]</version>
           <type>gem</type>
           <scope>test</scope>
         </dependency>
