@@ -77,10 +77,10 @@ project do
   modules 'part1', 'part2'
 
   scm do
-    connection 'scm:git:git://github.com/torquebox/maven-tools.git'
-    developer_connection 'scm:git:ssh://git@github.com/torquebox/maven-tools.git'
+    connection 'scm:git:git://github.com/jruby/maven-tools.git'
+    developer_connection 'scm:git:ssh://git@github.com/jruby/maven-tools.git'
     tag 'first'
-    url 'http://github.com/torquebox/maven-tools'
+    url 'https://github.com/jruby/maven-tools'
   end
   issue_management do
     system 'jira'
@@ -307,7 +307,7 @@ project do
 
     plugin_management do
       plugins do
-        jruby_plugin( :gem, '3.0.0') do
+        jruby_plugin( :gem, '3.0.6') do
           configuration( :scope => :compile,
                          :gems => {
                            'thread_safe' => '0.3.3',

@@ -30,8 +30,8 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>3.0.0</jruby.plugins.version>
-    <mavengem.wagon.version>2.0.0</mavengem.wagon.version>
+    <jruby.plugins.version>3.0.6</jruby.plugins.version>
+    <mavengem.wagon.version>2.0.2</mavengem.wagon.version>
   </properties>
   <dependencies>
     <dependency>
@@ -72,7 +72,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <phase>prepare-package</phase>
@@ -88,7 +88,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>2.4</version>
+        <version>3.5.0</version>
         <configuration>
           <filesets>
             <fileset>

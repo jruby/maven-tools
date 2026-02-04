@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
 
   s.summary = 'helpers for maven related tasks'
   s.description = 'adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc'
-  s.homepage = 'http://github.com/torquebox/maven-tools'
+  s.homepage = 'https://github.com/jruby/maven-tools'
 
   s.authors = ['Christian Meier']
   s.email = ['m.kristian@web.de']
@@ -29,10 +29,10 @@ Gem::Specification.new do |s|
   s.test_files += Dir['spec/**/*gem']
 
   s.add_runtime_dependency 'virtus', '~> 1.0'
+  s.add_runtime_dependency 'bigdecimal' # virtus is EOL, but depends on axiom-types which has a bigdecimal dependency
+  s.add_runtime_dependency 'ostruct' # virtus is EOL, but depends on ostruct usage
 
-# get them out from here until jruby-maven-plugin installs test gems somewhere else then runtime gems
-
-  s.add_development_dependency 'rake', '~> 10.0'
+  s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'minitest', '~> 5.3'
 end
 

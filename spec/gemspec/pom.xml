@@ -21,18 +21,18 @@
   <licenses>
     <license>
       <name>EPL-1.0</name>
-      <url>http://opensource.org/licenses/EPL-1.0</url>
-      <comments>Eclipse Public License 1.0</comments>
+      <url>https://opensource.org/license/epl-1-0</url>
+      <comments>Eclipse Public License -v 1.0</comments>
     </license>
     <license>
       <name>GPL-2.0</name>
-      <url>http://opensource.org/licenses/GPL-2.0</url>
-      <comments>GNU General Public License version 2.0</comments>
+      <url>https://opensource.org/license/gpl-2-0</url>
+      <comments>GNU General Public License version 2</comments>
     </license>
     <license>
       <name>LGPL-2.1</name>
-      <url>http://opensource.org/licenses/LGPL-2.1</url>
-      <comments>GNU Library or "Lesser" General Public License version 2.1</comments>
+      <url>https://opensource.org/license/lgpl-2-1</url>
+      <comments>GNU Lesser General Public License version 2.1</comments>
     </license>
   </licenses>
   <developers>
@@ -47,8 +47,8 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>3.0.0</jruby.plugins.version>
-    <mavengem.wagon.version>2.0.0</mavengem.wagon.version>
+    <jruby.plugins.version>3.0.6</jruby.plugins.version>
+    <mavengem.wagon.version>2.0.2</mavengem.wagon.version>
   </properties>
   <dependencies>
     <dependency>

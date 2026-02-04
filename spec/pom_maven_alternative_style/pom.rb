@@ -51,9 +51,9 @@ project 'my name', 'example.com' do
 
   modules 'part1', 'part2'
 
-  scm( 'scm:git:git://github.com/torquebox/maven-tools.git',
-       'scm:git:ssh://git@github.com/torquebox/maven-tools.git',
-       'http://github.com/torquebox/maven-tools',
+  scm( 'scm:git:git://github.com/jruby/maven-tools.git',
+       'scm:git:ssh://git@github.com/jruby/maven-tools.git',
+       'https://github.com/jruby/maven-tools',
        :tag => 'first' )
   issue_management( 'https://issues.sonatype.org/', 
                     :system => 'jira' )
@@ -207,7 +207,7 @@ project 'my name', 'example.com' do
     end
 
     overrides do
-      jruby_plugin( :gem, '3.0.0', :scope => :compile,
+      jruby_plugin( :gem, '3.0.6', :scope => :compile,
                     :gems => {
                       'thread_safe' => '0.3.3',
                       'jdbc-mysql' => '5.1.30'

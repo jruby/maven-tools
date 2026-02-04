@@ -9,24 +9,28 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
 
       matrix:
-        ruby: [jruby-9.4.9.0, 3.3]
-        java: [8]
+        ruby: ['jruby-10', 'jruby-9.4', '4.0', '3.4', '3.3']
+        java: [8, 25]
+        exclude:
+          - ruby: 'jruby-10' # JRuby 10 requires Java 21+
+            java: 8
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
 
       - name: Set up java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v5
         with:
-          distribution: zulu
           java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: maven
 
       - name: Set up ruby
         uses: ruby/setup-ruby@v1

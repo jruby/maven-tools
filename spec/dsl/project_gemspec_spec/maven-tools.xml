@@ -5,13 +5,13 @@
   <version>VERSION</version>
   <packaging>gem</packaging>
   <name>helpers for maven related tasks</name>
-  <url>http://github.com/torquebox/maven-tools</url>
+  <url>https://github.com/jruby/maven-tools</url>
   <description>adds versions conversion from rubygems to maven and vice versa, ruby DSL for POM (Project Object Model from maven), pom generators, etc</description>
   <licenses>
     <license>
       <name>MIT</name>
-      <url>http://opensource.org/licenses/MIT</url>
-      <comments>MIT license</comments>
+      <url>https://opensource.org/license/mit</url>
+      <comments>The MIT License</comments>
     </license>
   </licenses>
   <developers>
@@ -21,13 +21,13 @@
     </developer>
   </developers>
   <scm>
-    <connection>https://github.com/torquebox/maven-tools.git</connection>
-    <url>http://github.com/torquebox/maven-tools</url>
+    <connection>https://github.com/jruby/maven-tools.git</connection>
+    <url>https://github.com/jruby/maven-tools</url>
   </scm>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>3.0.0</jruby.plugins.version>
-    <mavengem.wagon.version>2.0.0</mavengem.wagon.version>
+    <jruby.plugins.version>3.0.6</jruby.plugins.version>
+    <mavengem.wagon.version>2.0.2</mavengem.wagon.version>
   </properties>
   <dependencies>
     <dependency>
@@ -38,8 +38,20 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>bigdecimal</artifactId>
+      <version>[0,)</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>ostruct</artifactId>
+      <version>[0,)</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>rake</artifactId>
-      <version>[10.0,10.99999]</version>
+      <version>[13.0,13.99999]</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>

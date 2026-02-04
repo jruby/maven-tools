@@ -44,9 +44,6 @@ module Maven
       end
 
       # TODO remove me
-      def needs_torquebox= t
-      end
-      # TODO remove me
       def current
         @current
       end

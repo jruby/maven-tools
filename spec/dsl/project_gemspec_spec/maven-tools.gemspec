@@ -25,19 +25,47 @@ dependencies:
       - !ruby/object:Gem::Version
         version: '1.0'
 - !ruby/object:Gem::Dependency
+  name: bigdecimal
+  requirement: !ruby/object:Gem::Requirement
+    requirements:
+    - - '>='
+      - !ruby/object:Gem::Version
+        version: '0'
+  type: :runtime
+  prerelease: false
+  version_requirements: !ruby/object:Gem::Requirement
+    requirements:
+    - - '>='
+      - !ruby/object:Gem::Version
+        version: '0'
+- !ruby/object:Gem::Dependency
+  name: ostruct
+  requirement: !ruby/object:Gem::Requirement
+    requirements:
+    - - '>='
+      - !ruby/object:Gem::Version
+        version: '0'
+  type: :runtime
+  prerelease: false
+  version_requirements: !ruby/object:Gem::Requirement
+    requirements:
+    - - '>='
+      - !ruby/object:Gem::Version
+        version: '0'
+- !ruby/object:Gem::Dependency
   name: rake
   requirement: !ruby/object:Gem::Requirement
     requirements:
     - - ~>
       - !ruby/object:Gem::Version
-        version: '10.0'
+        version: '13.0'
   type: :development
   prerelease: false
   version_requirements: !ruby/object:Gem::Requirement
     requirements:
     - - ~>
       - !ruby/object:Gem::Version
-        version: '10.0'
+        version: '13.0'
 - !ruby/object:Gem::Dependency
   name: minitest
   requirement: !ruby/object:Gem::Requirement
@@ -239,7 +267,7 @@ files:
 - spec/gemspec_with_extras/bouncy-castle-java.gemspec
 - spec/gemspec_with_source_and_no_jar/bouncy-castle-java.gemspec
 - spec/gemfile_with_extras/bouncy-castle-java.gemspec
-homepage: http://github.com/torquebox/maven-tools
+homepage: https://github.com/jruby/maven-tools
 licenses:
 - MIT
 metadata: {}

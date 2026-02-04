@@ -56,10 +56,10 @@ prerequisites :maven => '3.0.5'
 modules 'part1', 'part2'
 
 scm do
-  connection 'scm:git:git://github.com/torquebox/maven-tools.git'
-  developer_connection 'scm:git:ssh://git@github.com/torquebox/maven-tools.git'
+  connection 'scm:git:git://github.com/jruby/maven-tools.git'
+  developer_connection 'scm:git:ssh://git@github.com/jruby/maven-tools.git'
   tag 'first'
-  url 'http://github.com/torquebox/maven-tools'
+  url 'https://github.com/jruby/maven-tools'
 end
 
 issue_management do
@@ -265,7 +265,7 @@ plugin 'org.codehaus.mojo:exec-maven-plugin' do
 end
 
 plugin_management do
-  jruby_plugin( :gem, '3.0.0', :scope => :compile,
+  jruby_plugin( :gem, '3.0.6', :scope => :compile,
                 :gems => {
                   'thread_safe' => '0.3.3',
                   'jdbc-mysql' => '5.1.30'
