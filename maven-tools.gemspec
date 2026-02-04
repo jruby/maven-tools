@@ -29,6 +29,8 @@ Gem::Specification.new do |s|
   s.test_files += Dir['spec/**/*gem']
 
   s.add_runtime_dependency 'virtus', '~> 1.0'
+  s.add_runtime_dependency 'bigdecimal' # virtus is EOL, but depends on axiom-types which has a bigdecimal dependency
+  s.add_runtime_dependency 'ostruct' # virtus is EOL, but depends on ostruct usage
 
 # get them out from here until jruby-maven-plugin installs test gems somewhere else then runtime gems
 
