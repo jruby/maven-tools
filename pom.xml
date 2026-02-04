@@ -45,8 +45,8 @@
   </repositories>
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-    <jruby.plugins.version>3.0.0</jruby.plugins.version>
-    <mavengem.plugins.version>2.0.0</mavengem.plugins.version>
+    <jruby.plugins.version>3.0.6</jruby.plugins.version>
+    <mavengem.wagon.version>2.0.2</mavengem.wagon.version>
   </properties>
   <dependencies>
     <dependency>
@@ -87,7 +87,7 @@
       <extension>
         <groupId>org.jruby.maven</groupId>
         <artifactId>mavengem-wagon</artifactId>
-        <version>${mavengem.plugins.version}</version>
+        <version>${mavengem.wagon.version}</version>
       </extension>
       <extension>
         <groupId>org.jruby.maven</groupId>
