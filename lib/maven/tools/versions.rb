@@ -22,13 +22,13 @@ module Maven
   module Tools
     unless defined? VERSIONS
       VERSIONS = { 
-        :jar_plugin => "2.4",
-        :clean_plugin => "2.4",
+        :clean_plugin => "3.5.0",
+        :jar_plugin => "3.5.0",
         :jruby_plugins => "3.0.6",
         :jruby9_plugins => "0.3.0",
         :bundler_version => "1.10.6",
-        :jruby_version => "9.1.2.0",
-        :polyglot_version => "0.1.18",
+        :jruby_version => "9.4.14.0",
+        :polyglot_version => "0.8.1",
         :mavengem_wagon => "2.0.2"
       }.freeze
     end
